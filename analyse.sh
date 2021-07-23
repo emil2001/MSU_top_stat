@@ -302,7 +302,34 @@ if [ "$mode" = "fcnc_var" ] || [ "$mode" = "full" ]; then
 fi
 
 #---------- 6. Run 2D SM analyse
-#---------- 6a. Create histogramms file
+
+
+#---------- 6a. Find QCD normalization
+if [ "$mode" = "qcd2d" ] || [ "$mode" = "full" ]; then
+  rm -rf "$workdir/qcd" && mkdir "$_" && cd "$_"
+  echo "$myname, find QCD normalization ... "
+  root -q -b -l "$cfgdir/tree_to_hists.C(\"QCD\",\""$release" SIG\",\"hists_QCD.root\",$((nbins*nbins))"
+  root -q -b -l "$srcdir/histsPlot.cpp(\"QCD_before\", \"hists_QCD.root\")"
+
+  python $cfgdir/create_card.py --fname="qcd" --nbins=$((nbins*nbins)) --input="hists_QCD.root" --mode="theta"
+  $srcdir/run_theta.sh qcd_theta.cfg
+
+  root -q -b -l "$srcdir/getQuantiles.cpp(\"qcd_theta.root\", \"f_Other\")"
+  IFS=" " read QCD_low QCD_norm QCD_upp <<< "`cat getQuantiles_temp.txt`"
+  echo "$myname, Other norm factors = $QCD_low $QCD_norm $QCD_upp ..."
+
+
+  root -q -b -l "$srcdir/getQuantiles.cpp(\"qcd_theta.root\", \"f_QCD\")"
+  IFS=" " read QCD_low QCD_norm QCD_upp <<< "`cat getQuantiles_temp.txt`"
+  echo "$myname, QCD norm factors = $QCD_low $QCD_norm $QCD_upp ..."
+
+  root -q -b -l "$srcdir/histsPlot.cpp(\"QCD_after\",\"hists_QCD.root\","$QCD_norm")"
+else echo "$myname, skip qcd normalization calcullations"; fi
+
+IFS=" " read QCD_low QCD_norm QCD_upp <<< "`cat $workdir/qcd/getQuantiles_temp.txt`"
+echo "$myname, QCD norm factors = $QCD_low $QCD_norm $QCD_upp ..."
+
+#---------- 6b. Create histogramms file
 make_hists(){
   nbins_=$1
   QCD_norm_=$2
@@ -340,7 +367,7 @@ if [ "$mode" = "hists2d" ] || [ "$mode" = "full" ]; then
   if [ "$mode" = "hists2d" ]; then exit; fi
 else echo "$myname, skip recreating histogramms files"; fi
 
-#---------- 6b. Run SM analyse
+#---------- 6c. Run SM analyse
 make_analyse_theta(){
   input_hists=$1 # "$workdir/hists/hists_SM2D.root"
   nbins_=$2

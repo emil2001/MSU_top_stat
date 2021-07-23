@@ -2,6 +2,7 @@
 
 #include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRoot.cpp"
 #include "/afs/cern.ch/user/p/pmandrik/public/PMANDRIK_LIBRARY/pmlib_tree_to_hist.hh"
+#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRootStackDrawer.cpp"
 #include "/afs/cern.ch/user/p/pmandrik/public/PMANDRIK_LIBRARY/pmlib_other.hh"
 
 using namespace mRoot;
