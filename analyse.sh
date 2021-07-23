@@ -308,7 +308,7 @@ fi
 if [ "$mode" = "qcd2d" ] || [ "$mode" = "full" ]; then
   rm -rf "$workdir/qcd" && mkdir "$_" && cd "$_"
   echo "$myname, find QCD normalization ... "
-  root -q -b -l "$cfgdir/tree_to_hists.C(\"QCD\",\""$release" SIG\",\"hists_QCD.root\",$((nbins*nbins))"
+  root -q -b -l "$cfgdir/tree_to_hists.C(\"QCD\",\""$release" SIG\",\"hists_QCD.root\", $((nbins*nbins)))"
   root -q -b -l "$srcdir/histsPlot.cpp(\"QCD_before\", \"hists_QCD.root\")"
 
   python $cfgdir/create_card.py --fname="qcd" --nbins=$((nbins*nbins)) --input="hists_QCD.root" --mode="theta"
@@ -394,14 +394,14 @@ if [ "$mode" = "sm2d" ] || [ "$mode" = "full" ]; then
   echo "$myname, SM2D  ... "
   if [ "$package" = "def" ] || [ "$package" = "all" ]; then
     mkdir -p "$workdir/sm2d/def" && cd "$_"
-    make_analyse_theta "$workdir/hists2d/hists_SM2D.root" $nbins $niters "$workdir/hists2d/" sm
+    make_analyse_theta "$workdir/hists2d/hists_SM2D.root" $((nbins*nbins)) $niters "$workdir/hists2d/" sm
     mv getTable_SM.pdf table_sm_theta_def.pdf
   fi
 
   if [ "$package" = "qcd" ] || [ "$package" = "all" ]; then
     for QCD_qut in "0.50" "0.55" "0.60" "0.65" "0.70" "0.75" "0.80" "0.85" "0.90" "0.95"; do
       mkdir -p "$workdir/sm2d/QCD_"$QCD_qut && cd "$_"
-      make_analyse_theta "$workdir/hists2d/QCD_"$QCD_qut"/hists_SM2D.root" $nbins $niters "$workdir/hists2d/" sm
+      make_analyse_theta "$workdir/hists2d/QCD_"$QCD_qut"/hists_SM2D.root" $((nbins*nbins)) $niters "$workdir/hists2d/" sm
       mv "$workdir/sm2d/QCD_"$QCD_qut"/sm_theta.root" "$workdir/sm2d/QCD_"$QCD_qut".root"
     done
     root -q -b -l "$srcdir/plotResultsForDifferentConditions.cpp(\"$workdir/sm2d/\", \"QCD_.+\.root\", \"sigma_t_ch\", \"t_ch_vs_QCD_cut\")"
@@ -411,7 +411,7 @@ if [ "$mode" = "sm2d" ] || [ "$mode" = "full" ]; then
   if [ "$package" = "bins" ] || [ "$package" = "all" ]; then
     for nbins_alt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do
       mkdir -p "$workdir/sm2d/bins_"$nbins_alt && cd "$_"
-      make_analyse_theta "$workdir/hists2d/bins_"$nbins_alt"/hists_SM2D.root" $nbins_alt $niters "$workdir/hists2d/" sm
+      make_analyse_theta "$workdir/hists2d/bins_"$nbins_alt"/hists_SM2D.root" $((nbins_alt*nbins_alt)) $niters "$workdir/hists2d/" sm
       mv "$workdir/sm2d/bins_"$nbins_alt"/sm_theta.root" "$workdir/sm2d/bins_"$nbins_alt".root"
     done
     root -q -b -l "$srcdir/plotResultsForDifferentConditions.cpp(\"$workdir/sm2d/\", \"bins_.+\.root\", \"sigma_t_ch\", \"t_ch_vs_nbins\")"
@@ -421,7 +421,7 @@ if [ "$mode" = "sm2d" ] || [ "$mode" = "full" ]; then
   if [ "$package" = "iters" ] || [ "$package" = "all" ]; then
     for iters in 50000 100000 200000 300000 400000 500000 750000 1000000 1500000 2000000; do
       mkdir -p "$workdir/sm2d/iters_"$iters && cd "$_"
-      make_analyse_theta "$workdir/hists2d/hists_SM2D.root" $nbins $iters "$workdir/hists2d/" sm
+      make_analyse_theta "$workdir/hists2d/hists_SM2D.root" $((nbins*nbins)) $iters "$workdir/hists2d/" sm
       mv "$workdir/sm2d/iters_"$iters"/sm_theta.root" "$workdir/sm2d/iters_"$iters".root"
     done
     root -q -b -l "$srcdir/plotResultsForDifferentConditions.cpp(\"$workdir/sm2d/\", \"iters_.+\.root\", \"sigma_t_ch\", \"t_ch_vs_MCMC_iters\")"
