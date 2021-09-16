@@ -56,9 +56,9 @@ def sm(args):
 
   interp_pars  = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2" ]
   interp_pars += ["PileUp", "pdf"]
-  interp_pars += ["UnclMET", "MER"] # PUJetIdTag
-  interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
-  interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
+ # interp_pars += ["UnclMET", "MER"] # PUJetIdTag
+ # interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
+ # interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
   muRmuF_pars  = ["Fac", "Ren", "RenFac"]
   interp_pars += muRmuF_pars
@@ -157,10 +157,11 @@ def fcnc_1d(args, coupling_hist_name):
   mult_errs = [0.025]
 
   interp_pars  = ["TagRate", "MistagRate" ] # "PUJetIdTag" "PUJetIdMistag"
-  interp_pars  = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2"]
-  interp_pars += ["UnclMET", "PileUp", "pdf", "PUJetIdTag", "MER"]
-  interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
-  interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
+  interp_pars = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2"]
+  interp_pars += ["PileUp", "pdf"]
+  #interp_pars += ["UnclMET", "MER", "PUJetIdTag"]
+  #interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
+  #interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
   ren_pars     = ["Fac", "Ren", "RenFac"]
   interp_pars += ren_pars
@@ -220,7 +221,6 @@ def fcnc_1d(args, coupling_hist_name):
       if param.name in xsr_pars  and name not in has_xsr : continue
       if param.name in pss_names : continue
       interp_pars += [ param ]
-
     if name == "fcnc_tcg" :
       norm_parameter = atd.Parameter("KC", "flat_distribution", "mult")
       norm_parameter.options["mean"]  = 0.0
@@ -231,7 +231,7 @@ def fcnc_1d(args, coupling_hist_name):
       norm_parameter = atd.Parameter("KU", "flat_distribution", "mult")
       norm_parameter.options["mean"]  = 0.0
       norm_parameter.options["range"] = '(0.0,4.0)'
-      chanal.parameters += [ norm_parameter, norm_parameter ]
+      chanal.parameters += [ norm_parameter, norm_parameter]
       chanal.used_in_toydata = False
     else :
       norm_parameter = atd.Parameter( "sigma_" + name, "log_normal", "mult")
@@ -248,11 +248,13 @@ def fcnc_1d(args, coupling_hist_name):
 def FcncTugModel(args):
   datacard = fcnc_1d(args, "fcnc_tug")
   datacard.name = "FcncTugModel"
+  print(datacard.name)
   return datacard
 
 def FcncTcgModel(args):
   datacard = fcnc_1d(args, "fcnc_tcg")
   datacard.name = "FcncTcgModel"
+  print(datacard.name)
   return datacard
 
 def expected_sm(args):
@@ -277,19 +279,19 @@ def expected_sm(args):
 def sys_impact(args):
   ### PARCE RESULTS
   dic = {}
-  file = open("../../sm/getTable_SM.tex")
+  file = open("../../sm/def/getTable_sm.tex")
   data = file.read()
-  print (data)
+  print data
   for line in data.split("\n"):
     # sigma\_t\_ch & 0.897 & 0.944 & 0.993 \\
     if line.count("&") != 3 : continue
     if line.count("central") != 0 : continue
     parts = line.split("&")
     name = parts[0].replace("\\", "").strip()
-    print (parts)
+    print parts
     dic[ name ] = [float(parts[1]), float(parts[3].split()[0])]
   ### #
-  print (dic)
+  print dic
   def get_posterior_median_width(name):
     return dic[ name ][0], dic[ name ][1]
   
@@ -325,7 +327,7 @@ def sys_impact(args):
   params = list(set(params))
 
   for param in params:
-    print (param.name, "<----------------------------")
+    print param.name, "<----------------------------"
     dcard = copy.deepcopy(datacard)
     dcard.name = dcard.name + "_" + param.name
     assepted_pars = ["cta_norm", "uta_norm"]
@@ -349,7 +351,7 @@ def sys_impact(args):
       else :       par = atd.Parameter( par.name, "delta_distribution", "mult" )
   
       par_left, par_right  = get_posterior_median_width( par.name )
-      print (par_left, par_right)
+      print par_left, par_right
 
 
       for chanal in dcard.chanals: 
@@ -371,9 +373,113 @@ def sys_impact(args):
       else : pass 
 
     for chanal in dcard.chanals:
-      print (chanal.name)
-      print ([p.name for p in chanal.parameters])
-      print ([p.options for p in chanal.parameters])
+      print chanal.name
+      print [p.name for p in chanal.parameters]
+      print [p.options for p in chanal.parameters]
+  
+
+  return None;
+
+def sys_impact2d(args):
+  ### PARCE RESULTS
+  dic = {}
+  file = open("../../sm2d/def/getTable_sm.tex")
+  data = file.read()
+  print data
+  for line in data.split("\n"):
+    # sigma\_t\_ch & 0.897 & 0.944 & 0.993 \\
+    if line.count("&") != 3 : continue
+    if line.count("central") != 0 : continue
+    parts = line.split("&")
+    name = parts[0].replace("\\", "").strip()
+    print parts
+    dic[ name ] = [float(parts[1]), float(parts[3].split()[0])]
+  ### #
+  print dic
+  def get_posterior_median_width(name):
+    return dic[ name ][0], dic[ name ][1]
+  
+  datacard = expected_sm(args)
+
+  dcard_exp  = copy.deepcopy(datacard)
+  dcard_exp.name = "expected_"+dcard_exp.name + ""
+  dcard_exp.save( args.mode.split(" ") )
+
+  datacard.input_file_mc   = args.input
+  datacard.input_file_data = args.input_data
+  datacard.mcmc_iters      = args.niters
+  datacard.enable_barlow_beston = False
+  datacard.seed            = 0
+  datacard.dice_poisson    = False
+  datacard.dice_systematic = False
+  datacard.azimov          = True
+  datacard.mcmc_chains     = args.nchains
+
+  unmarges = [ ["ttbar", "colourFlipUp"],["ttbar", "erdOnUp"],["ttbar", "QCDbasedUp"] ]
+  for chname, sys in unmarges:
+    dcard = copy.deepcopy(datacard)
+    dcard.name = "expected_" + dcard.name + "_" + sys
+
+    for chanal in dcard.chanals:
+      if chanal.name != chname : continue
+      chanal.alt_hist_name = chname + "_" + sys
+
+    dcard.save( args.mode.split(" ") )
+  
+  params = []
+  for chanal in datacard.chanals: params += chanal.parameters
+  params = list(set(params))
+
+  for param in params:
+    print param.name, "<----------------------------"
+    dcard = copy.deepcopy(datacard)
+    dcard.name = dcard.name + "_" + param.name
+    assepted_pars = ["cta_norm", "uta_norm"]
+    if param.name in assepted_pars: continue
+
+    pars = []
+    for chanal in dcard.chanals: pars += chanal.parameters
+    pars = list(set(pars))
+
+    for par in pars:
+      if par.name != param.name : continue
+
+      par_mean  = par.options.get("mean", None)
+      par_width = par.options.get("width", None)
+
+      par_mean  = 1.0
+      if par.type == "shape" : 
+        par_mean  = 0.0
+        par_width = 1.0
+        par = atd.Parameter( par.name, "delta_distribution", "shape" )
+      else :       par = atd.Parameter( par.name, "delta_distribution", "mult" )
+  
+      par_left, par_right  = get_posterior_median_width( par.name )
+      print par_left, par_right
+
+
+      for chanal in dcard.chanals: 
+        for i in xrange(len(chanal.parameters)):
+          if chanal.parameters[i].name == par.name : 
+            chanal.parameters[i] = par
+      
+      par.options["mean"]  = par_left
+      dcard_minus = copy.deepcopy(dcard)
+      dcard_minus.name = "expected_"+dcard.name + "_minus"
+      dcard_minus.save( args.mode.split(" ") )
+
+      par.options["mean"]  = par_right
+      dcard_plus  = copy.deepcopy(dcard)
+      dcard_plus.name = "expected_"+dcard.name + "_plus"
+      dcard_plus.save( args.mode.split(" ") )
+
+      if par.type == "shape" : pass
+      else : pass 
+
+    for chanal in dcard.chanals:
+      print chanal.name
+      print [p.name for p in chanal.parameters]
+      print [p.options for p in chanal.parameters]
   
 
   return None;
@@ -394,11 +500,11 @@ if __name__ == "__main__":
   parser.add_argument('--nchains',dest='nchains',type=int, default=1, help='')
   args = parser.parse_args()
 
-  print ("create_card.py call ...")
+  print "create_card.py call ..."
   flist = [f for f in globals().values() if (type(f) == type(atd.test) and f.__name__ == args.fname) ]
 
   if flist : 
-    print ("create_card.py will use ", args.fname, " -> ", flist, "with parameters ", args.input, args)
+    print "create_card.py will use ", args.fname, " -> ", flist, "with parameters ", args.input, args
     datacard = flist[0](args)
 
     # set some options

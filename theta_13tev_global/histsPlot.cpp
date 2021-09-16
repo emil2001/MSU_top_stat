@@ -1,12 +1,9 @@
 
-#ifndef histsPlot_h
-#define histsPlot_h
 
-#include "sm_all.h"
-#include "mRootStackDrawer.cpp"
+#include "getQuantiles.cpp"
+#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRootStackDrawer.cpp"
 
-
-int histsPlot(string mode, TString inputFileName, float scaleFactor){
+int histsPlot(string mode, TString inputFileName, float scaleFactor=0.){
   TFile *file = TFile::Open( inputFileName );
 
   mRoot::StackDrawer drawer;
@@ -29,7 +26,6 @@ int histsPlot(string mode, TString inputFileName, float scaleFactor){
   canv->Print( (mode + ".png").c_str() );
 
   return 0;
-};
+}
 
 
-#endif
