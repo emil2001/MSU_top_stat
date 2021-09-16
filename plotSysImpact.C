@@ -168,15 +168,15 @@ void save_plot_unc(vector<string> labels, vector<double> values, string mode, do
   Tl.DrawLatex(-0.15, items.size() + 2,"Uncertainty #theta");
   // Tl.DrawLatex(0.10, 10.85,"xxx fb^{-1} (13 TeV)");
 
-  canv->Print( (name + ".png").c_str() );
-  canv->Print( (name + ".pdf").c_str() );
+  canv->Print( ("./sys_check/" + name + ".png").c_str() );
+  canv->Print( ("./sys_check/" + name + ".pdf").c_str() );
 
-  TFile * file = new TFile("SysCheck.root", "RECREATE");
+  TFile * file = new TFile("./sys_check/SysCheck.root", "RECREATE");
   canv->Write();
   file->Close();
 }
 
-void plotSysImpact(){
+void plotSysImpact(string release){
 
     int font = 132;
     gStyle->SetFrameBorderMode(0);
@@ -225,7 +225,7 @@ void plotSysImpact(){
   
   gStyle->SetLabelSize(0.055, "Y");
 
-  auto dirs_all = mRoot::get_directories( "2021_deep/sys_check/sm/." ); // sys_check/cta/btag/
+  auto dirs_all = mRoot::get_directories( "../"+release+"/sys_check/sm/." ); // sys_check/cta/btag/
   sort(dirs_all.begin(), dirs_all.end());
   
   vector<double> qvs;
@@ -237,7 +237,7 @@ void plotSysImpact(){
     if(dir == "sigma_t_ch_minus") continue;
     if(dir.find("plus") == string::npos and dir.find("minus") == string::npos)  continue;
 
-    string path = "2021_deep/sys_check/sm/" + dir + "/expected_sm_jul_"+dir+"_theta.root";
+    string path = "../"+release+"/sys_check/sm/" + dir + "/expected_sm_"+dir+"_theta.root";
     auto qv = getQuantiles(path, "sigma_t_ch", 0.5);
     cout << dir << " " << qv << endl;
     
@@ -247,20 +247,20 @@ void plotSysImpact(){
     qvs.push_back(qv);
   }
 
-  vector<string> alters = { "colourFlipUp", "erdOnUp", "QCDbasedUp" };
-  for(string dir : alters){
-    string path = "2021_deep/sys_check/sm/" + dir + "/expected_sm_jul_"+dir+"_theta.root";
-    auto qv = getQuantiles(path, "sigma_t_ch", 0.5);
-    cout << dir << " " << qv << endl;
-    
-    dirs.push_back(dir + "_minus");
-    qvs.push_back(qv);
+//  vector<string> alters = { "colourFlipUp", "erdOnUp", "QCDbasedUp" };
+//  for(string dir : alters){
+//    string path = "../2021_UL17_deep2/sys_check/sm/" + dir + "/expected_sm_"+dir+"_theta.root";
+//    auto qv = getQuantiles(path, "sigma_t_ch", 0.5);
+//    cout << dir << " " << qv << endl;
+//    
+//    dirs.push_back(dir + "_minus");
+//    qvs.push_back(qv);
 
-    dirs.push_back(dir + "_plus");
-    qvs.push_back(qv);
-  }
+//    dirs.push_back(dir + "_plus");
+//    qvs.push_back(qv);
+//  }
   
-  double qv_nominal = getQuantiles("2021_deep/sys_check/sm/expected/expected_sm_jul_theta.root", "sigma_t_ch", 0.5);
+  double qv_nominal = getQuantiles("../"+release+"/sys_check/sm/expected/expected_sm_theta.root", "sigma_t_ch", 0.5);
   
   save_plot_unc(dirs, qvs, "", qv_nominal, "sys_check");
 }

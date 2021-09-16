@@ -1,6 +1,7 @@
 
 
 #include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRoot.cpp"
+//#include "mRoot.cpp"
 #include "/afs/cern.ch/user/p/pmandrik/public/PMANDRIK_LIBRARY/pmlib_tree_to_hist.hh"
 #include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRootStackDrawer.cpp"
 #include "/afs/cern.ch/user/p/pmandrik/public/PMANDRIK_LIBRARY/pmlib_other.hh"
@@ -78,14 +79,14 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
   string SELECTION_Wlight = "*((Wjets_type == 6))";
 
   string PREFIX_NTUPLES, PATH_PREFIX, PATH_EXCLUDE, PATH_SUSTEMATIC;
-  string NN_MC, NN_QCD, NN_train_events, NN_MC_tcg, NN_MC_tug;
+  string NN_MC, NN_QCD, NN_train_events, NN_MC_tcg, NN_MC_tug, NN_train_events_tcg, NN_train_events_tug, QCD_train_events;
   bool use_comphep = false;
 
   //---------- 1. DATA -------------------------------------------------------------------------------------------------------------------------
   vector <string> FILES_DATA        = {"Data.root"};
 
   //---------- 2. QCD DATA -------------------------------------------------------------------------------------------------------------------------
-  vector <string> FILES_QCD_DATA    = {"QCD_data.root"}; // QCD_data.root
+  vector <string> FILES_QCD_DATA    = {"QCD_IsoVVL.root"}; // QCD_data.root
 
   //---------- 3. OTHER -------------------------------------------------------------------------------------------------------------------------
   vector <string> FILES_DY     = {"DY_10-50.root", "DY_50-Inf.root"};
@@ -113,7 +114,8 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
 
     NN_QCD = "BNN_qcd_tchan_5vars_2";
     NN_train_events = "/afs/cern.ch/user/a/azaboren/work/public/andrew/Networks/dnn/bnn-hep/test/bnn_sm_UL17_dr08_low_level_trainEvents.txt";
-
+    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_1d_UL17_JetID_trainEvents.txt";
+    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_1d_UL17_JetID_trainEvents.txt";
     NN_MC  = "DNN_sm_pow_comph_Wjets";
     NN_MC_tcg = "BNN_tcg";
     NN_MC_tug = "BNN_tug_wjets";
@@ -125,7 +127,9 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     string ppath = " /scratch2/pvolkov/samples/UL17_JetId/" ;
     PATH_PREFIX     = ppath + "" ;
     PATH_SUSTEMATIC = ppath + "" ;
-
+    QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/qcd_tchan_UL18_JetID_trainEvents.txt";
+    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_1d_UL17_JetID_trainEvents.txt";
+    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_1d_UL17_JetID_trainEvents.txt";
     NN_QCD = "DNN_qcd_allchan";
     NN_train_events = "/afs/cern.ch/user/a/azaboren/work/public/andrew/Networks/dnn/bnn-hep/test/bnn_sm_UL17_dr08_low_level_trainEvents.txt";
     if(MODE == "SM") NN_MC  = "DNN_sm_low_level_UL17_JetID";
@@ -134,28 +138,52 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     FILES_TC     = {"t-channel-tbar_4f.root", "t-channel-top_4f.root"};
     FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
   }
-  else if ( RELEASE=="2021_UL17_JetID_HL_allchan"){
-    string ppath = " /scratch2/pvolkov/samples/UL17_JetId/" ;
+  else if ( RELEASE=="2021_UL18_JetID"){
+    string ppath = " /scratch2/azaboren/andrew/UL18_JetID/tuples_merged/" ;
     PATH_PREFIX     = ppath + "" ;
     PATH_SUSTEMATIC = ppath + "" ;
 
-    NN_QCD = "DNN_qcd_allchan";
-    NN_train_events = "/afs/cern.ch/user/a/azaboren/work/public/andrew/Networks/dnn/bnn-hep/test/bnn_sm_UL17_dr08_low_level_trainEvents.txt";
-    if(MODE == "SM") NN_MC  = "DNN_sm_high_level_UL17_JetID";
+    NN_QCD = "DNN_qcd_tchan";
+//    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_1d_UL17_JetID_trainEvents.txt";
+//    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_1d_UL17_JetID_trainEvents.txt";
+    NN_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/bnn_sm_UL18_low_level_trainEvents.txt";
+    QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/qcd_tchah_UL18_JetID_trainEvents.txt";
+    if(MODE == "SM") NN_MC  = "DNN_sm_low_level";
+    NN_MC_tug = "DNN_fcnc_tug_UL17_JetID";
+    NN_MC_tcg = "DNN_fcnc_tcg_UL17_JetID";
     use_comphep = false;
-
+    
     FILES_TC     = {"t-channel-tbar_4f.root", "t-channel-top_4f.root"};
     FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
   }
-  
-  else if ( RELEASE=="2021_UL17_deep3"){
-    string ppath = " /scratch2/pvolkov/samples/UL17_promt_dr08_2/" ;
+  else if ( RELEASE=="2021_UL17_JetID_FCNC_1d"){
+    string ppath = " /scratch2/pvolkov/samples/UL17_JetId/" ;
     PATH_PREFIX     = ppath + "" ;
     PATH_SUSTEMATIC = ppath + "" ;
-    NN_QCD = "DNN_qcd_tchan";
-    NN_train_events = "/afs/cern.ch/work/p/pvolkov/public/Networks/13Tev/UL17/dr08/sm_super/bnn_sm_super_trainEvents.txt";
-    if(MODE == "SM") NN_MC  = "DNN_sm_super";
+    NN_QCD = "DNN_qcd_tchan_2";
+    NN_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_1d_UL17_JetID_trainEvents.txt";
+    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_1d_UL17_JetID_trainEvents.txt";
+    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_1d_UL17_JetID_trainEvents.txt";
+    if(MODE == "SM") NN_MC  = "DNN_sm_super_LL_UL17_JetID";
     use_comphep = false;
+    NN_MC_tug = "DNN_fcnc_tug_1d_UL17_JetID";
+    NN_MC_tcg = "DNN_fcnc_tcg_1d_UL17_JetID";
+    
+    FILES_TC     = {"t-channel-tbar_4f.root", "t-channel-top_4f.root"};
+    FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
+  }
+  else if ( RELEASE=="2021_UL17_JetID_FCNC_2d"){
+    string ppath = " /scratch2/pvolkov/samples/UL17_JetId/" ;
+    PATH_PREFIX     = ppath + "" ;
+    PATH_SUSTEMATIC = ppath + "" ;
+    NN_QCD = "DNN_qcd_tchan_2";
+    NN_train_events = "/afs/cern.ch/user/a/azaboren/work/public/andrew/Networks/dnn/bnn-hep/test/bnn_sm_UL17_dr08_low_level_trainEvents.txt";
+    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_sm2d_UL17_JetID_trainEvents.txt";
+    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_sm2d_UL17_JetID_trainEvents.txt";
+    if(MODE == "SM") NN_MC  = "DNN_sm_super_LL_UL17_JetID";
+    use_comphep = false;
+    NN_MC_tug = "DNN_fcnc_tug_2d_UL17_JetID";
+    NN_MC_tcg = "DNN_fcnc_tcg_2d_UL17_JetID";	
     
     FILES_TC     = {"t-channel-tbar_4f.root", "t-channel-top_4f.root"};
     FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
@@ -187,7 +215,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     vrule    = NN_QCD; 
 
     PREFIX_NTUPLES = PATH_PREFIX + CENTRAL_FOLDER +"/";
-    EventsExcluder * excl = new EventsExcluder( NN_train_events );
+    EventsExcluder * excl = new EventsExcluder( QCD_train_events );
     excl->Print();
 
     string data_weight = "(N_BJ==1)";
@@ -213,13 +241,21 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
 
     string mc_selection_TW  = mc_selection;
     string mc_selection_sch = mc_selection;
-    EventsExcluder * excl   = new EventsExcluder( NN_train_events );
     vrule = NN_MC;
-
+    
     // FCNC <
-    if(MODE == "FCNC_tcg") vrule = NN_MC_tcg;
-    if(MODE == "FCNC_tug") vrule = NN_MC_tug;
+    if(MODE == "FCNC_tcg"){
+	vrule = NN_MC_tcg; 
+	NN_train_events = NN_train_events_tcg;
+	} 
+    if(MODE == "FCNC_tug"){ 
+	vrule = NN_MC_tug; 
+	NN_train_events = NN_train_events_tug;
+	}
     // >
+    
+    EventsExcluder * excl   = new EventsExcluder( NN_train_events );
+
     if(excl != nullptr) excl->Print();
 
     string mc_selection_WQQ    = mc_selection+SELECTION_WQQ;
@@ -326,7 +362,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
 
 
     // FILL SYSTEMATIC WITCH PRESENT IN THE DIFFERENT F0LDERS
-/*    for(auto fprefix : VARIATION_SYS_T1){
+    for(auto fprefix : VARIATION_SYS_T1){
       if( fprefix == "JER" ){
         for(int i = 0; i < JER_SYS_NAMES.size(); i++){
           string jer_bin_name = JER_SYS_NAMES[i];
@@ -411,7 +447,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
           if(MODE == "FCNC_tcg") fill_hist("fcnc_tcg_"+sname,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TCG,  tree_name, vrule, mc_selection + extra_select, excl);
         }
       }
-    }*/
+    }
 
     // tW-chan: hdamp и isr/fsr (в tW нет PS weights, но не знаю, используешь ли ты эти семплы сейчас)
     // ttbar: hdamp, tune, colourFlip, erdOn, qcd_based и отдельные isr/fsr (как альтернатива PSweights).

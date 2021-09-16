@@ -1,9 +1,6 @@
 
 #ifndef get_quantiles_hh
 #define get_quantiles_hh 1
-#include "sm_all.h"
-
-using namespace std;
 
 double get_qv(TH1D* histe, double qfrac){
   int Nbins = histe->GetXaxis()->GetNbins();

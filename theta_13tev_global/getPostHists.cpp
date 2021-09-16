@@ -80,7 +80,10 @@ void getPostHists(string hist_file_name, string model_file, string chan_file_nam
   msg("getPostHists() ... GET POSTFIT RESULT");
   for(auto param : parameters){
     TH1D * hist = param->hist;
-    if( hist->GetTitle() == TString("KU") or hist->GetTitle() == TString("KC") ) continue;
+    //if( hist->GetTitle() == TString("KU") or hist->GetTitle() == TString("KC") ){
+    // cout << hist->GetTitle() <<endl;
+    // continue;
+    // }
 
     double alpha = 0.3173;
     double c = get_qv(hist, 0.5) ;
