@@ -108,6 +108,7 @@ namespace mRoot{
       int event_index = 0;
       double rmin = 1., rmax = 0.;
       double value;
+      pair <double, double> p;
       for (auto name: input_file_names) {
           TFile *file = TFile::Open((prefix + name).c_str());
           if (!file or file->IsZombie()) {
@@ -149,7 +150,8 @@ namespace mRoot{
 
       }
       cout << "rmin " << rmin << "rmax " << rmax << endl;
-      return make_pair(rmin, rmax);
+      p = make_pair(rmin, rmax);
+      return p;
   }
 
 
