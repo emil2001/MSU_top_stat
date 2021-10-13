@@ -3,7 +3,7 @@
 #define mRoot_hh 1
 
 // MROOT
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/msg.hh"
+#include "msg.hh"
 
 namespace mRoot{
 
@@ -343,7 +343,7 @@ namespace mRoot{
   };
 };
 
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRootTreeToHist.cpp"
+#include "mRootTreeToHist.cpp"
 
 #endif
 

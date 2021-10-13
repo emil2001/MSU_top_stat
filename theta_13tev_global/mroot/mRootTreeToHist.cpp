@@ -97,6 +97,60 @@ namespace mRoot{
     bool reverse;
   };
 
+  //Search for ranges of values for hists plotter
+  double hist_range (string prefix,             // path to input files
+          vector<string> input_file_names,  // vector of names of input files
+          string tree_name,                // name of tree
+          string value_rule,               // formula of value to evaluate
+          EventsExcluder * event_excluder = nullptr  // contain list of events per file
+                   ) {
+      cout << "Finding hists range..." << endl;
+      int event_index = 0;
+      double rmin, rmax = 1., 0.;
+      for (auto name: input_file_names) {
+          TFile *file = TFile::Open((prefix + name).c_str());
+          if (!file or file->IsZombie()) {
+              cerr << __FUNCTION__ << ": can't open file name \"" << name << "\", skip ... " << endl;
+              continue;
+          }
+
+          TTreeReader *reader = new TTreeReader(tree_name.c_str(), file);
+          if (!reader->GetTree()) {
+              cerr << __FUNCTION__ << ": can't get ttree \"" << tree_name << "\" in file \"" << file->GetName()
+                   << "\", skip ... " << endl;
+              file->Close();
+              continue;
+          }
+
+          TTreeFormula value_f(value_rule.c_str(), value_rule.c_str(), reader->GetTree());
+
+          if (value_f.GetNdim() == 0) {
+              reader->GetTree()->Print();
+              return;
+          }
+
+          if (event_excluder != nullptr) event_excluder->SetExcludedEventsFile(name);
+          event_index = -1;
+
+          while (reader->Next()) {
+              event_index++;
+              value = value_f.EvalInstance();
+              if (value > rmax) {
+                  rmax = value;
+              }
+              if (value < rmin) {
+                  rmin = value;
+              }
+              if (event_excluder != nullptr and event_excluder->IsExcludedMod(event_index)) {
+                  continue;
+              }
+          }
+
+      }
+      cout << "rmin " << rmin << "rmax " << rmax << endl;
+      return rmin, rmax;
+  }
+
 
   // multiple files with same ttree and value_rule -> single hist -> save in file
   // fill_hist(hist_name, nbins, rmax, rmin, output_file, prefix, input_file_names, tree_name, value_rule, weight_rule, event_excluder){

@@ -1,9 +1,9 @@
 
 
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRoot.cpp"
-//#include "mRoot.cpp"
+//#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRoot.cpp"
+#include "theta_13tev_global/mroot/mRoot.cpp"
 #include "/afs/cern.ch/user/p/pmandrik/public/PMANDRIK_LIBRARY/pmlib_tree_to_hist.hh"
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRootStackDrawer.cpp"
+#include "theta_13tev_global/mroot/mRootStackDrawer.cpp"
 #include "/afs/cern.ch/user/p/pmandrik/public/PMANDRIK_LIBRARY/pmlib_other.hh"
 
 using namespace mRoot;
@@ -15,6 +15,100 @@ void get_renorm_factor(std::string prefix, vector<string> files, std::string tre
   answer_1 = to_string(central_integral / alt_integral_1) + " * ";
   answer_2 = to_string(central_integral / alt_integral_2) + " * ";
 }
+
+double get_range(vector<string> FILES,
+                 vector<string> FILES_FCNC_TUG,
+                 vector<string> FILES_FCNC_TCG,
+                 vector<string> FILES_DATA,
+                 string PATH_PREFIX,
+                 string CENTRAL_FOLDER,
+                 string tree_name,
+                 string vrule,
+                 EventsExcluder * event_excluder excl){
+    string PREFIX_NTUPLES = PATH_PREFIX + CENTRAL_FOLDER +"/";
+    vector<string> VARIATION_SYS_T1 = { "UnclMET", "MER", "JER", "JEC" };
+    vector<string> JER_SYS_FOLDERS = { "eta0-193", "eta193-25", "eta25-3_p0-50", "eta25-3_p50-Inf", "eta3-5_p0-50", "eta3-5_p50-Inf" };
+    vector<string> JER_SYS_U, JER_SYS_D   ;
+    for(auto it : JER_SYS_FOLDERS){
+        JER_SYS_U.push_back( "JERUp_" + it );
+        JER_SYS_D.push_back( "JERDown_" + it );
+    }
+    vector<string> JER_SYS_NAMES = {"JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"};
+
+    vector<string> JEC_SYS_FOLDERS = {"eta0-25", "eta25-5"};
+    vector<string> JEC_SYS_U, JEC_SYS_D;
+    for(auto it : JEC_SYS_FOLDERS){
+        JEC_SYS_U.push_back( "JECUp_" + it );
+        JEC_SYS_D.push_back( "JECDown_" + it );
+    }
+    vector<string> JEC_SYS_NAMES = {"JEC_eta0_25", "JEC_eta25_5",};
+    vector<double> rmin_v;
+    vector<double> rmax_v;
+    if(MODE == "FCNC_tug") {
+        r1, r2 = hist_range(PREFIX_NTUPLES, FILES+FILES_FCNC_TUG, tree_name, vrule, excl);
+        r3, r4 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+    }
+    if(MODE == "FCNC_tcg") {
+        r1, r2 = hist_range(PREFIX_NTUPLES, FILES+FILES_FCNC_TCG, tree_name, vrule, excl);
+        r3, r4 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+    }
+    rmin_v.push_back(min(r1,r3));
+    rmax_v.push_back(max(r2,r4));
+    //DIFFERENT F0LDERS
+    for(auto fprefix : VARIATION_SYS_T1){
+        if( fprefix == "JER" ){
+            for(int i = 0; i < JER_SYS_NAMES.size(); i++){
+                string jer_bin_name = JER_SYS_NAMES[i];
+                vector<string> jer_bin_files = { JER_SYS_D[i], JER_SYS_U[i] };
+                vector<string> jer_bin_file_pstfixs = {"Down", "Up"};
+                for(int j = 0; j < 2; j++){
+                    string extra_select = "";
+                    string pstfix = jer_bin_file_pstfixs[j];
+                    string sname = jer_bin_name + pstfix;
+                    PREFIX_NTUPLES = PATH_PREFIX + jer_bin_files[j] + "/";
+                    if(MODE == "FCNC_tug") {
+                        r1, r2 = hist_range(PREFIX_NTUPLES, FILES+FILES_FCNC_TUG, tree_name, vrule, excl);
+                        r3, r4 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+                    }
+                    if(MODE == "FCNC_tcg") {
+                        r1, r2 = hist_range(PREFIX_NTUPLES, FILES+FILES_FCNC_TCG, tree_name, vrule, excl);
+                        r3, r4 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+                    }
+                    rmin_v.push_back(min(r1,r3));
+                    rmax_v.push_back(max(r2,r4));
+                }
+            }
+        } else if( fprefix == "JEC" ){
+            for(int i = 0; i < JEC_SYS_NAMES.size(); i++){
+                string jec_bin_name = JEC_SYS_NAMES[i];
+                vector<string> jec_bin_files = { JEC_SYS_D[i], JEC_SYS_U[i] };
+                vector<string> jec_bin_file_pstfixs = {"Down", "Up"};
+                for(int j = 0; j < 2; j++){
+                    string extra_select = "";
+                    string pstfix = jec_bin_file_pstfixs[j];
+                    string sname = jec_bin_name + pstfix;
+                    PREFIX_NTUPLES = PATH_PREFIX + jec_bin_files[j] + "/";
+                    if(MODE == "FCNC_tug") {
+                        r1, r2 = hist_range(PREFIX_NTUPLES, FILES+FILES_FCNC_TUG, tree_name, vrule, excl);
+                        r3, r4 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+                    }
+                    if(MODE == "FCNC_tcg") {
+                        r1, r2 = hist_range(PREFIX_NTUPLES, FILES+FILES_FCNC_TCG, tree_name, vrule, excl);
+                        r3, r4 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+                    }
+                    rmin_v.push_back(min(r1,r3));
+                    rmax_v.push_back(max(r2,r4));
+                }
+
+                }
+            }
+        }
+    rmin = std::min_element(rmin_v.begin(), rmin_v.end());
+    rmax = std::max_element(rmax_v.begin(), rmax_v.end());
+    return rmin, rmax;
+    }
+
+
 
 int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBINS, double QCD_norm = -1.0, double QCD_qut = -1.0){
   cout << "tree_to_hists.C, welcome to the converter from mensura ntuples to hists ..." << endl;
@@ -82,6 +176,8 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
   string NN_MC, NN_QCD, NN_train_events, NN_MC_tcg, NN_MC_tug, NN_train_events_tcg, NN_train_events_tug, QCD_train_events;
   bool use_comphep = false;
 
+
+  vector <string> FILES       = {"QCD_IsoVVL.root", "DY_10-50.root", "DY_50-Inf.root", "ttbar.root", "WW.root", "WZ.root", "ZZ.root", "s-channel.root", "tW-channel-top.root","tW-channel-tbar.root", "t-channel-top.root", "t-channel-tbar.root"};
   //---------- 1. DATA -------------------------------------------------------------------------------------------------------------------------
   vector <string> FILES_DATA        = {"Data.root"};
 
@@ -241,7 +337,6 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     string data_weight = "(N_BJ==1)";
     string qcd_weight  = "weight * (N_BJ==1) * 50";
     string mc_weight   = "weight * (N_BJ==1)";
-
     //fill_hist(hist_name, nbins, rmax, rmin, output_file, prefix, input_file_names, tree_name, value_rule, weight_rule, event_excluder)
     fill_hist("data",   NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_DATA,     tree_name, vrule, data_weight,     nullptr);
     fill_hist("QCD",    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_QCD_DATA, tree_name, vrule, qcd_weight,      excl);
@@ -283,7 +378,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     string mc_selection_Wb     = mc_selection+SELECTION_Wb;
     string mc_selection_Wother = mc_selection+SELECTION_Wother;
     string mc_selection_Wlight = mc_selection+SELECTION_Wlight;
-
+    rmin, rmax = get_range(FILES, FILES_FCNC_TUG, FILES_FCNC_TCG, FILES_DATA, PATH_PREFIX, CENTRAL_FOLDER, tree_name, vrule, excl);
     PREFIX_NTUPLES = PATH_PREFIX + CENTRAL_FOLDER+"/";
     fill_hist("data",    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_DATA,     tree_name, vrule, data_selection, nullptr);
     fill_hist("QCD",     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_QCD_DATA, tree_name, vrule,  qcd_selection, excl);

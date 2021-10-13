@@ -15,7 +15,7 @@
 #include <string>
 #include <regex>
 
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRootNiceColors.cpp"
+#include "mRootNiceColors.cpp"
 
 namespace mRoot {
   class StackDrawer{
