@@ -58,8 +58,8 @@ void get_range(vector<string> FILES,
         p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
         p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
     }
-    rmin_v.push_back(max(p1.first,p2.first));
-    rmax_v.push_back(min(p1.second,p2.second));
+    rmin_v.push_back(min(p1.first,p2.first));
+    rmax_v.push_back(max(p1.second,p2.second));
     //DIFFERENT F0LDERS
     for(auto fprefix : VARIATION_SYS_T1){
         if( fprefix == "JER" ){
@@ -80,8 +80,8 @@ void get_range(vector<string> FILES,
                         p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
                         //p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
-                    rmin_v.push_back(max(p1.first,p2.first));
-                    rmax_v.push_back(min(p1.second,p2.second));
+                    rmin_v.push_back(min(p1.first,p2.first));
+                    rmax_v.push_back(max(p1.second,p2.second));
                 }
             }
         } else if( fprefix == "JEC" ){
@@ -102,15 +102,15 @@ void get_range(vector<string> FILES,
                         p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
                         //p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
-                    rmin_v.push_back(max(p1.first,p2.first));
-                    rmax_v.push_back(min(p1.second,p2.second));
+                    rmin_v.push_back(min(p1.first,p2.first));
+                    rmax_v.push_back(max(p1.second,p2.second));
                 }
 
                 }
             }
         }
-    rmin = *max_element(rmin_v.begin(), rmin_v.end());
-    rmax = *min_element(rmax_v.begin(), rmax_v.end());
+    rmin = *min_element(rmin_v.begin(), rmin_v.end());
+    rmax = *max_element(rmax_v.begin(), rmax_v.end());
     cout << "!!!!!!!!!!!!!RMIN " << rmin << " RMAX " << rmax << endl;
     return;
     }
