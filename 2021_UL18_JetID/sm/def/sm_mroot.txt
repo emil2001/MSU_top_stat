@@ -1,0 +1,14 @@
+
+t_ch |jes lf hf hfstats1 hfstats2 lfstats1 lfstats2 cferr1 cferr2 PileUp pdf LepId LepTrig LepIso  |lumi sigma_t_ch 
+s_ch |jes lf hf hfstats1 hfstats2 lfstats1 lfstats2 cferr1 cferr2 PileUp pdf LepId LepTrig LepIso Fac Ren RenFac  |lumi sigma_s_ch 
+tW_ch |jes lf hf hfstats1 hfstats2 lfstats1 lfstats2 cferr1 cferr2 PileUp pdf LepId LepTrig LepIso  |lumi sigma_tW_ch 
+ttbar |jes lf hf hfstats1 hfstats2 lfstats1 lfstats2 cferr1 cferr2 PileUp pdf LepId LepTrig LepIso Fac Ren RenFac  |lumi sigma_ttbar 
+Diboson |jes lf hf hfstats1 hfstats2 lfstats1 lfstats2 cferr1 cferr2 PileUp pdf LepId LepTrig LepIso  |lumi sigma_Diboson 
+DY |jes lf hf hfstats1 hfstats2 lfstats1 lfstats2 cferr1 cferr2 PileUp pdf LepId LepTrig LepIso Fac Ren RenFac  |lumi sigma_DY 
+WQQ |jes lf hf hfstats1 hfstats2 lfstats1 lfstats2 cferr1 cferr2 PileUp pdf LepId LepTrig LepIso Fac Ren RenFac  |lumi sigma_WQQ 
+Wc |jes lf hf hfstats1 hfstats2 lfstats1 lfstats2 cferr1 cferr2 PileUp pdf LepId LepTrig LepIso Fac Ren RenFac  |lumi sigma_Wc 
+Wb |jes lf hf hfstats1 hfstats2 lfstats1 lfstats2 cferr1 cferr2 PileUp pdf LepId LepTrig LepIso Fac Ren RenFac  |lumi sigma_Wb 
+Wother |jes lf hf hfstats1 hfstats2 lfstats1 lfstats2 cferr1 cferr2 PileUp pdf LepId LepTrig LepIso Fac Ren RenFac  |lumi sigma_Wother 
+Wlight |jes lf hf hfstats1 hfstats2 lfstats1 lfstats2 cferr1 cferr2 PileUp pdf LepId LepTrig LepIso  |lumi sigma_Wlight 
+QCD | |lumi sigma_QCD 
+

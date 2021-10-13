@@ -56,15 +56,15 @@ def sm(args):
 
   interp_pars  = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2" ]
   interp_pars += ["PileUp", "pdf"]
- # interp_pars += ["UnclMET", "MER"] # PUJetIdTag
- # interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
- # interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
+  interp_pars += ["UnclMET", "MER"] # PUJetIdTag
+  interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
+  interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
   muRmuF_pars  = ["Fac", "Ren", "RenFac"]
   interp_pars += muRmuF_pars
   xsr_pars     = ["Isr", "Fsr"]
-  #interp_pars += xsr_pars
-  #interp_pars = []
+ # interp_pars += xsr_pars
+ # interp_pars = []
 
   has_muRmuF, has_xsr = [], []
   has_muRmuF = ["s_ch", "ttbar", "WQQ", "Wb", "Wc", "Wother", "DY"]
@@ -156,18 +156,20 @@ def fcnc_1d(args, coupling_hist_name):
   mult_pars = ["lumi"]
   mult_errs = [0.025]
 
-  interp_pars  = ["TagRate", "MistagRate" ] # "PUJetIdTag" "PUJetIdMistag"
+ # interp_pars  = ["TagRate", "MistagRate" ] # "PUJetIdTag" "PUJetIdMistag"
   interp_pars = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2"]
   interp_pars += ["PileUp", "pdf"]
-  #interp_pars += ["UnclMET", "MER", "PUJetIdTag"]
-  #interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
-  #interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
+  interp_pars += ["UnclMET", "MER"]# "PUJetIdTag"
+  interp_pars += ["JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf" ]
+  #interp_pars += ["JER_eta0_193"] #, "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
+  interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
   ren_pars     = ["Fac", "Ren", "RenFac"]
-  interp_pars += ren_pars
+  #interp_pars += ren_pars
   xsr_pars     = ["Isr", "Fsr"]
-  interp_pars += xsr_pars
-
+  #interp_pars += xsr_pars
+  test_pars = ["JER_eta0_193"]
+  
   pss = ["_G2GG_muR_", "_G2QQ_muR_", "_Q2QG_muR_", "_X2XG_muR_", "_G2GG_cNS_", "_G2QQ_cNS_", "_Q2QG_cNS_", "_X2XG_cNS_"]
   pss = []
   pss_names = []
@@ -182,7 +184,7 @@ def fcnc_1d(args, coupling_hist_name):
   
   has_red = ["s_ch", "ttbar", "WQQ", "Wb", "Wc", "Wother", "DY"]
   has_xsr = []
-
+  has_jer = ["ttbar", "t_ch", "s_ch"]
   datacard.parameters_order_list  = [ "sigma_" + name for name, err, rang in zip( chanals_names[::3], chanals_names[1::3], chanals_names[2::3] ) ] 
   datacard.parameters_order_list += mult_pars + interp_pars
 
@@ -194,7 +196,6 @@ def fcnc_1d(args, coupling_hist_name):
     parameter.options["width"]   =  err
     parameter.options["range"]   =  '(-2.5,2.5)'
     common_mult_pars += [ parameter ]
-
   # define common interp parameters
   common_interp_pars = []
   for name in interp_pars :
@@ -219,19 +220,21 @@ def fcnc_1d(args, coupling_hist_name):
     for param in common_interp_pars:
       if param.name in ren_pars  and name not in has_red : continue
       if param.name in xsr_pars  and name not in has_xsr : continue
+     # if param.name in test_pars  and name not in has_jer : continue
       if param.name in pss_names : continue
       interp_pars += [ param ]
+      print(param.name, name)
     if name == "fcnc_tcg" :
       norm_parameter = atd.Parameter("KC", "flat_distribution", "mult")
       norm_parameter.options["mean"]  = 0.0
-      norm_parameter.options["range"] = '(0.0,4.0)'
-      chanal.parameters += [ norm_parameter, norm_parameter ]
+      norm_parameter.options["range"] = '(0.0,2.0)'
+      chanal.parameters += [ norm_parameter]
       chanal.used_in_toydata = False
     elif name == "fcnc_tug" :
       norm_parameter = atd.Parameter("KU", "flat_distribution", "mult")
       norm_parameter.options["mean"]  = 0.0
-      norm_parameter.options["range"] = '(0.0,4.0)'
-      chanal.parameters += [ norm_parameter, norm_parameter]
+      norm_parameter.options["range"] = '(0.0,2.0)'
+      chanal.parameters += [ norm_parameter]
       chanal.used_in_toydata = False
     else :
       norm_parameter = atd.Parameter( "sigma_" + name, "log_normal", "mult")

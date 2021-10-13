@@ -144,18 +144,38 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     PATH_SUSTEMATIC = ppath + "" ;
 
     NN_QCD = "DNN_qcd_tchan";
-//    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_1d_UL17_JetID_trainEvents.txt";
-//    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_1d_UL17_JetID_trainEvents.txt";
+    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/bnn_tcg_3D_UL18_JetID_trainEvents.txt";
+    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/bnn_tug_3D_UL18_JetID_trainEvents.txt";
     NN_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/bnn_sm_UL18_low_level_trainEvents.txt";
     QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/qcd_tchah_UL18_JetID_trainEvents.txt";
     if(MODE == "SM") NN_MC  = "DNN_sm_low_level";
-    NN_MC_tug = "DNN_fcnc_tug_UL17_JetID";
-    NN_MC_tcg = "DNN_fcnc_tcg_UL17_JetID";
+    NN_MC_tug = "DNN_fcnc_tug_3D_UL18_JetID";
+    NN_MC_tcg = "DNN_fcnc_tcg_3D_UL18_JetID";
     use_comphep = false;
     
     FILES_TC     = {"t-channel-tbar_4f.root", "t-channel-top_4f.root"};
     FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
   }
+  else if ( RELEASE=="2021_UL18_JetID_super"){
+    string ppath = " /scratch2/azaboren/andrew/UL18_JetID/tuples_merged/" ;
+    PATH_PREFIX     = ppath + "" ;
+    PATH_SUSTEMATIC = ppath + "" ;
+
+    NN_QCD = "DNN_qcd_tchan";
+    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/tcg_3D_new_trainEvents.txt";
+    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/tug_3D_new_trainEvents.txt";
+    NN_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/bnn_sm_UL18_super_trainEvents.txt";
+    QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/qcd_tchah_UL18_JetID_trainEvents.txt";
+    if(MODE == "SM") NN_MC  = "DNN_sm_super_UL18_JetID";
+    NN_MC_tug = "DNN_fcnc_tug_new";
+    NN_MC_tcg = "DNN_fcnc_tcg_new";
+    use_comphep = false;
+    
+    FILES_TC     = {"t-channel-tbar_4f.root", "t-channel-top_4f.root"};
+    FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
+  }
+  
+
   else if ( RELEASE=="2021_UL17_JetID_FCNC_1d"){
     string ppath = " /scratch2/pvolkov/samples/UL17_JetId/" ;
     PATH_PREFIX     = ppath + "" ;
@@ -215,11 +235,11 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     vrule    = NN_QCD; 
 
     PREFIX_NTUPLES = PATH_PREFIX + CENTRAL_FOLDER +"/";
-    EventsExcluder * excl = new EventsExcluder( QCD_train_events );
-    excl->Print();
+    //EventsExcluder * excl = new EventsExcluder( QCD_train_events );
+    //excl->Print();
 
     string data_weight = "(N_BJ==1)";
-    string qcd_weight  = "weight * (N_BJ==1)";
+    string qcd_weight  = "weight * (N_BJ==1) * 50";
     string mc_weight   = "weight * (N_BJ==1)";
 
     //fill_hist(hist_name, nbins, rmax, rmin, output_file, prefix, input_file_names, tree_name, value_rule, weight_rule, event_excluder)
@@ -236,7 +256,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     // if( BACKGROUND_QCD_CUT ) qcd_qut = "(BNN_qcd_tchan_5vars_2 > 0.2) * (BNN_qcd_tchan_5vars_2 < " + std::to_string( QCD_qut ) + ")";
 
     string data_selection   = qcd_qut + " * (N_BJ==1)";
-    string qcd_selection    = qcd_qut + " * weight * " + to_string( QCD_norm );
+    string qcd_selection    = qcd_qut + " * weight * 50 * " + to_string( QCD_norm );
     string mc_selection     = qcd_qut + " * weight * (N_BJ==1)";
 
     string mc_selection_TW  = mc_selection;
@@ -254,9 +274,9 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
 	}
     // >
     
-    EventsExcluder * excl   = new EventsExcluder( NN_train_events );
+    //EventsExcluder * excl   = new EventsExcluder( NN_train_events );
 
-    if(excl != nullptr) excl->Print();
+    //if(excl != nullptr) excl->Print();
 
     string mc_selection_WQQ    = mc_selection+SELECTION_WQQ;
     string mc_selection_Wc     = mc_selection+SELECTION_Wc;

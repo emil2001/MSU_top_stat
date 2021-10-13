@@ -60,8 +60,8 @@ void plotResultsForDifferentConditions(std::string input_folder_name, std::strin
       cout << "plotResultsForDifferentConditions(): Can't parce file name " << fname << endl;
       return;
     }
-    x_vals.push_back( atof( fname_parts.at(1).c_str() ) );
-    cout << fname << " " << atof( fname_parts.at(1).c_str() ) << endl;
+    x_vals.push_back( atof( fname_parts.back().c_str() ) );
+    cout << fname << " " << atof( fname_parts.back().c_str() ) << endl;
     
     pm::Limits limit = get_result_from_file( input_folder_name + "/" + fname, parameter_name );
     if(limit.c_1s <= 0) continue;

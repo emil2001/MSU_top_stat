@@ -1,7 +1,7 @@
 
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRoot.cpp"
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRootStatModel.cpp"
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/msg.hh"
+#include "mroot/mRoot.cpp"
+#include "mroot/mRootStatModel.cpp"
+#include "mroot/msg.hh"
 #include "getTable.cpp"
 using namespace mRoot;
 

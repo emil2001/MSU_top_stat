@@ -162,18 +162,21 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
       string hname = param->name;
       if( hname != "KU" and hname != "KC" and hname != "cta_norm" and hname != "uta_norm") continue;
 
-      double up1 = pow(get_qv(hist, 0.95 ), 2);
-      double up2 = pow(get_qv(hist, 0.98 ), 2);
-
-      cout << hist->GetTitle() << " " << up1 << " " << up2 << endl;
-      out_string += string(hist->GetTitle()) + " process normalisation & " + get_string(up1, 3) + " & " + get_string(up2, 3) + " \\\\ \n ";
+      //double up1 = pow(get_qv(hist, 0.95 ), 2);
+     // double up2 = pow(get_qv(hist, 0.98 ), 2);
+      double up = get_qv(hist, 0.95);
+      cout << hist->GetTitle() << " " << up << endl;
+      //cout << hist->GetTitle() << " " << up1 << " " << up2 << endl;
+      out_string += string(hist->GetTitle()) + " process normalisation & " + get_string(sqrt(up), 3) + " \\\\ \n";
+       //" & " + get_string(up2, 3) + " \\\\ \n ";
 
       // https://arxiv.org/pdf/0810.3889.pdf
       double Cq = 1.1964;
       double Kappa_q = 0.03;
-      double Br_1 = Cq * up1 * Kappa_q * Kappa_q;
-      double Br_2 = Cq * up2 * Kappa_q * Kappa_q;
-      out_string += string(hist->GetTitle()) + " branching" + " & " + get_string(Br_1, 3) + " & " + get_string(Br_2, 3) + " \\\\ \n ";
+      double Br_1 = Cq * up * Kappa_q * Kappa_q;
+      //double Br_2 = Cq * up2 * Kappa_q * Kappa_q;
+      out_string += string(hist->GetTitle()) + " branching" + " & " + get_string(Br_1, 3) + " \\\\ \n";
+      // + " & " + get_string(Br_2, 3) + " \\\\ \n ";
     }
     out_string += " 7+8 TeV branching KU obs (exp) & 2.0 (2.8) \\times 10^{-5} & \\\\ \n";
     out_string += " 7+8 TeV branching KC obs (exp) & 4.1 (2.8) \\times 10^{-4} & \\\\ \n";
@@ -182,8 +185,14 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
     // INCLUDE BURN IN STUDY IMAGE ===================================================================
     out_string += "\n \\newpage \n";
     out_string += "\n \\textbf{BURN IN STUDY} \\\\ \n";
-    out_string += " \\includegraphics[width=0.9\\linewidth]{BurnInStudy" + postfix + "Theta_" + cname + ".png} ";
-    cout << "BurnInStudy" + postfix + "Theta.png " << endl;
+    string burninstudy_name = "BurnInStudy" + postfix + "Theta_" + cname + ".png";
+    ReplaceStringInPlace(burninstudy_name, string("_"), string("X"));
+    
+    TString cmd = "mv BurnInStudy" + postfix + "Theta_" + cname + ".png BurnInStudy" + postfix + "ThetaXchainX" + cname.back() + ".png";
+    
+    cout << gSystem->Exec(cmd) << endl;
+    out_string += " \\includegraphics[width=0.9\\linewidth]{" + burninstudy_name + "}";
+    cout << burninstudy_name << endl;
 
     // COVARIANCE TABLE =================================================================== 
     out_string += "\n \\newpage \n"; 
@@ -245,7 +254,7 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
 
     // ALL MCMC CHAINS TABLE ===================================================================
     out_string += "\n \\newpage \n";
-    out_string += "\n \\textbf{MCMC OUPUT CHAINS} \\\\ \n";
+    out_string += "\n \\textbf{MCMC OUTPUT CHAINS} \\\\ \n";
     int new_line = 0;
     string chains_path = ("chains_" + postfix);
     ReplaceStringInPlace(chains_path, string("_"), string("X"));
@@ -284,6 +293,7 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
       string name = fname.Data();
       if( name.find(".pdf") == string::npos) continue;
       string pattern = postfix;
+      if( pattern == "sm") pattern = "SM";
       if( pattern == "FcncTugModel" ) pattern = "FCNC_tug";
       if( pattern == "FcncTcgModel" ) pattern = "FCNC_tcg";
       if( name.find( pattern ) == string::npos) continue;

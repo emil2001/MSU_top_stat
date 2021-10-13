@@ -3,10 +3,11 @@
 #---------- 0. Please Set Parameters
 
 nbins=20
-niters=500000
-release="2021_UL18_JetID" # "2020_novenber_NoIsoCut"
-burn_in_frac=0.1 
+niters=500000 #500000
+release="2021_UL18_JetID_super" # "2020_novenber_NoIsoCut"
+burn_in_frac=0.1
 nchains=3
+
 
 mode=$1
 #  possible modes:
@@ -94,7 +95,7 @@ fi
 if [ "$mode" = "qcd" ] || [ "$mode" = "full" ]; then
   rm -rf "$workdir/qcd" && mkdir "$_" && cd "$_"
   echo "$myname, find QCD normalization ... "
-  root -q -b -l "$cfgdir/tree_to_hists.C(\"QCD\",\""$release" SIG\",\"hists_QCD.root\",$nbins)"
+  root -q -b -l "$cfgdir/tree_to_hists.C(\"QCD\",\""$release" SIG\",\"hists_QCD.root\", $nbins)"
   root -q -b -l "$srcdir/histsPlot.cpp(\"QCD_before\", \"hists_QCD.root\")"
 
   python $cfgdir/create_card.py --fname="qcd" --nbins=$nbins --input="hists_QCD.root" --mode="theta"
@@ -144,7 +145,7 @@ if [ "$mode" = "hists" ] || [ "$mode" = "full" ]; then
     done
   fi
   if [ "$submode" = "sm_bins" ] || [ "$submode" = "sm_all" ]  || [ "$submode" = "all" ]; then
-    for nbins_alt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do
+    for nbins_alt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do #1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
       mkdir -p "$workdir/hists/bins_"$nbins_alt && cd "$_"
       make_hists $nbins_alt $QCD_norm 0.70 SM
     done
@@ -178,6 +179,7 @@ else echo "$myname, skip recreating histogramms files"; fi
 
 #---------- 4. Run SM analyse
 make_analyse_theta(){
+  
   input_hists=$1 # "$workdir/hists/hists_SM.root"
   nbins_=$2
   niters_=$3
@@ -224,7 +226,8 @@ if [ "$mode" = "sm" ] || [ "$mode" = "full" ]; then
   fi
   
   if [ "$package" = "bins" ] || [ "$package" = "all" ]; then
-    for nbins_alt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do
+    for nbins_alt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do 
+    #1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22
       mkdir -p "$workdir/sm/bins_"$nbins_alt && cd "$_"
       make_analyse_theta "$workdir/hists/bins_"$nbins_alt"/hists_SM.root" $nbins_alt $niters "$workdir/hists/" sm
       mv "$workdir/sm/bins_"$nbins_alt"/sm_theta.root" "$workdir/sm/bins_"$nbins_alt".root"
