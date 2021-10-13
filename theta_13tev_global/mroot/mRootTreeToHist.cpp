@@ -144,6 +144,10 @@ namespace mRoot{
           }
 
       }
+      if (rmin == 1. || rmax == 0.) {
+          rmin = 0.;
+          rmax = 1.;
+      }
       cout << "rmin " << rmin << "rmax " << rmax << endl;
       return make_pair(rmin, rmax);
   }
