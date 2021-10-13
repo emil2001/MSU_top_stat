@@ -98,7 +98,7 @@ namespace mRoot{
   };
 
   //Search for ranges of values for hists plotter
-  double hist_range (string prefix,             // path to input files
+  auto hist_range (string prefix,             // path to input files
           vector<string> input_file_names,  // vector of names of input files
           string tree_name,                // name of tree
           string value_rule,               // formula of value to evaluate
@@ -149,7 +149,7 @@ namespace mRoot{
 
       }
       cout << "rmin " << rmin << "rmax " << rmax << endl;
-      return rmin, rmax;
+      return make_pair(rmin, rmax);
   }
 
 
