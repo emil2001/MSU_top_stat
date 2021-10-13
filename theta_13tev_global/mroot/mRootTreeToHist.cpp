@@ -124,11 +124,7 @@ namespace mRoot{
           }
 
           TTreeFormula value_f(value_rule.c_str(), value_rule.c_str(), reader->GetTree());
-
-          if (value_f.GetNdim() == 0) {
-              reader->GetTree()->Print();
-              return;
-          }
+          
 
           if (event_excluder != nullptr) event_excluder->SetExcludedEventsFile(name);
           event_index = -1;
