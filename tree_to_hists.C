@@ -16,7 +16,7 @@ void get_renorm_factor(std::string prefix, vector<string> files, std::string tre
   answer_2 = to_string(central_integral / alt_integral_2) + " * ";
 }
 
-double get_range(vector<string> FILES,
+void get_range(vector<string> FILES,
                  vector<string> FILES_FCNC_TUG,
                  vector<string> FILES_FCNC_TCG,
                  vector<string> FILES_DATA,
@@ -25,7 +25,9 @@ double get_range(vector<string> FILES,
                  string CENTRAL_FOLDER,
                  string tree_name,
                  string vrule,
-                 EventsExcluder * excl){
+                 EventsExcluder * excl,
+                 double & rmin,
+                 double & rmax){
     string PREFIX_NTUPLES = PATH_PREFIX + CENTRAL_FOLDER +"/";
     pair<double, double> p1, p2;
     vector<string> VARIATION_SYS_T1 = { "UnclMET", "MER", "JER", "JEC" };
@@ -109,7 +111,7 @@ double get_range(vector<string> FILES,
         }
     rmin = std::min_element(rmin_v.begin(), rmin_v.end());
     rmax = std::max_element(rmax_v.begin(), rmax_v.end());
-    return rmin, rmax;
+    return;
     }
 
 
