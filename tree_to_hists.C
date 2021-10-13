@@ -25,7 +25,7 @@ double get_range(vector<string> FILES,
                  string CENTRAL_FOLDER,
                  string tree_name,
                  string vrule,
-                 EventsExcluder * event_excluder excl){
+                 EventsExcluder * excl){
     string PREFIX_NTUPLES = PATH_PREFIX + CENTRAL_FOLDER +"/";
     double r1, r2, r3, r4;
     vector<string> VARIATION_SYS_T1 = { "UnclMET", "MER", "JER", "JEC" };

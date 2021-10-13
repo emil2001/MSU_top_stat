@@ -106,7 +106,8 @@ namespace mRoot{
                    ) {
       cout << "Finding hists range..." << endl;
       int event_index = 0;
-      double rmin, rmax = 1., 0.;
+      double rmin = 1., rmax = 0.;
+      double value;
       for (auto name: input_file_names) {
           TFile *file = TFile::Open((prefix + name).c_str());
           if (!file or file->IsZombie()) {
