@@ -98,7 +98,7 @@ namespace mRoot{
   };
 
   //Search for ranges of values for hists plotter
-  auto hist_range (string prefix,             // path to input files
+  pair<double, double> hist_range (string prefix,             // path to input files
           vector<string> input_file_names,  // vector of names of input files
           string tree_name,                // name of tree
           string value_rule,               // formula of value to evaluate
@@ -108,7 +108,6 @@ namespace mRoot{
       int event_index = 0;
       double rmin = 1., rmax = 0.;
       double value;
-      pair <double, double> p;
       for (auto name: input_file_names) {
           TFile *file = TFile::Open((prefix + name).c_str());
           if (!file or file->IsZombie()) {
@@ -150,8 +149,7 @@ namespace mRoot{
 
       }
       cout << "rmin " << rmin << "rmax " << rmax << endl;
-      p = make_pair(rmin, rmax);
-      return p;
+      return make_pair(rmin, rmax);
   }
 
 
