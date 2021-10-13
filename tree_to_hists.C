@@ -109,8 +109,8 @@ void get_range(vector<string> FILES,
                 }
             }
         }
-    rmin = std::min_element(rmin_v.begin(), rmin_v.end());
-    rmax = std::max_element(rmax_v.begin(), rmax_v.end());
+    rmin = min_element(rmin_v.begin(), rmin_v.end());
+    rmax = max_element(rmax_v.begin(), rmax_v.end());
     return;
     }
 
@@ -384,7 +384,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     string mc_selection_Wb     = mc_selection+SELECTION_Wb;
     string mc_selection_Wother = mc_selection+SELECTION_Wother;
     string mc_selection_Wlight = mc_selection+SELECTION_Wlight;
-    rmin, rmax = get_range(FILES, FILES_FCNC_TUG, FILES_FCNC_TCG, FILES_DATA, MODE, PATH_PREFIX, CENTRAL_FOLDER, tree_name, vrule, excl);
+    rmin, rmax = get_range(FILES, FILES_FCNC_TUG, FILES_FCNC_TCG, FILES_DATA, MODE, PATH_PREFIX, CENTRAL_FOLDER, tree_name, vrule, excl, rmin, rmax);
     PREFIX_NTUPLES = PATH_PREFIX + CENTRAL_FOLDER+"/";
     fill_hist("data",    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_DATA,     tree_name, vrule, data_selection, nullptr);
     fill_hist("QCD",     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_QCD_DATA, tree_name, vrule,  qcd_selection, excl);
