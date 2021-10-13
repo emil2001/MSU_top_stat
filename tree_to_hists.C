@@ -109,8 +109,8 @@ void get_range(vector<string> FILES,
                 }
             }
         }
-    rmin = *min_element(rmin_v.begin(), rmin_v.end());
-    rmax = *max_element(rmax_v.begin(), rmax_v.end());
+    rmin = *max_element(rmin_v.begin(), rmin_v.end());
+    rmax = *min_element(rmax_v.begin(), rmax_v.end());
     cout << "!!!!!!!!!!!!!RMIN " << rmin << " RMAX " << rmax << endl;
     return;
     }
