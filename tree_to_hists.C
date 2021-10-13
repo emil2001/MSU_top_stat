@@ -58,8 +58,8 @@ void get_range(vector<string> FILES,
         p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
         p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
     }
-    rmin_v.push_back(min(p1.first,p2.first));
-    rmax_v.push_back(max(p1.second,p2.second));
+    rmin_v.push_back(max(p1.first,p2.first));
+    rmax_v.push_back(min(p1.second,p2.second));
     //DIFFERENT F0LDERS
     for(auto fprefix : VARIATION_SYS_T1){
         if( fprefix == "JER" ){
@@ -74,14 +74,14 @@ void get_range(vector<string> FILES,
                     PREFIX_NTUPLES = PATH_PREFIX + jer_bin_files[j] + "/";
                     if(MODE == "FCNC_tug") {
                         p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TUG, tree_name, vrule, excl);
-                        p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+                        //p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
                     if(MODE == "FCNC_tcg") {
                         p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
-                        p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+                        //p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
-                    rmin_v.push_back(min(p1.first,p2.first));
-                    rmax_v.push_back(max(p1.second,p2.second));
+                    rmin_v.push_back(max(p1.first,p2.first));
+                    rmax_v.push_back(min(p1.second,p2.second));
                 }
             }
         } else if( fprefix == "JEC" ){
@@ -96,14 +96,14 @@ void get_range(vector<string> FILES,
                     PREFIX_NTUPLES = PATH_PREFIX + jec_bin_files[j] + "/";
                     if(MODE == "FCNC_tug") {
                         p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TUG, tree_name, vrule, excl);
-                        p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+                        //p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
                     if(MODE == "FCNC_tcg") {
                         p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
-                        p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+                        //p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
-                    rmin_v.push_back(min(p1.first,p2.first));
-                    rmax_v.push_back(max(p1.second,p2.second));
+                    rmin_v.push_back(max(p1.first,p2.first));
+                    rmax_v.push_back(min(p1.second,p2.second));
                 }
 
                 }
