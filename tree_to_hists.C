@@ -20,15 +20,19 @@ double get_range(vector<string> FILES,
                  vector<string> FILES_FCNC_TUG,
                  vector<string> FILES_FCNC_TCG,
                  vector<string> FILES_DATA,
+                 string MODE,
                  string PATH_PREFIX,
                  string CENTRAL_FOLDER,
                  string tree_name,
                  string vrule,
                  EventsExcluder * event_excluder excl){
     string PREFIX_NTUPLES = PATH_PREFIX + CENTRAL_FOLDER +"/";
+    double r1, r2, r3, r4;
     vector<string> VARIATION_SYS_T1 = { "UnclMET", "MER", "JER", "JEC" };
     vector<string> JER_SYS_FOLDERS = { "eta0-193", "eta193-25", "eta25-3_p0-50", "eta25-3_p50-Inf", "eta3-5_p0-50", "eta3-5_p50-Inf" };
-    vector<string> JER_SYS_U, JER_SYS_D   ;
+    vector<string> JER_SYS_U, JER_SYS_D;
+    FILES_FCNC_TUG.insert(FILES_FCNC_TUG.end(), FILES.begin(), FILES.end());
+    FILES_FCNC_TCG.insert(FILES_FCNC_TCG.end(), FILES.begin(), FILES.end());
     for(auto it : JER_SYS_FOLDERS){
         JER_SYS_U.push_back( "JERUp_" + it );
         JER_SYS_D.push_back( "JERDown_" + it );
@@ -45,11 +49,11 @@ double get_range(vector<string> FILES,
     vector<double> rmin_v;
     vector<double> rmax_v;
     if(MODE == "FCNC_tug") {
-        r1, r2 = hist_range(PREFIX_NTUPLES, FILES+FILES_FCNC_TUG, tree_name, vrule, excl);
+        r1, r2 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TUG, tree_name, vrule, excl);
         r3, r4 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
     }
     if(MODE == "FCNC_tcg") {
-        r1, r2 = hist_range(PREFIX_NTUPLES, FILES+FILES_FCNC_TCG, tree_name, vrule, excl);
+        r1, r2 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
         r3, r4 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
     }
     rmin_v.push_back(min(r1,r3));
@@ -67,11 +71,11 @@ double get_range(vector<string> FILES,
                     string sname = jer_bin_name + pstfix;
                     PREFIX_NTUPLES = PATH_PREFIX + jer_bin_files[j] + "/";
                     if(MODE == "FCNC_tug") {
-                        r1, r2 = hist_range(PREFIX_NTUPLES, FILES+FILES_FCNC_TUG, tree_name, vrule, excl);
+                        r1, r2 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TUG, tree_name, vrule, excl);
                         r3, r4 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
                     if(MODE == "FCNC_tcg") {
-                        r1, r2 = hist_range(PREFIX_NTUPLES, FILES+FILES_FCNC_TCG, tree_name, vrule, excl);
+                        r1, r2 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
                         r3, r4 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
                     rmin_v.push_back(min(r1,r3));
@@ -89,11 +93,11 @@ double get_range(vector<string> FILES,
                     string sname = jec_bin_name + pstfix;
                     PREFIX_NTUPLES = PATH_PREFIX + jec_bin_files[j] + "/";
                     if(MODE == "FCNC_tug") {
-                        r1, r2 = hist_range(PREFIX_NTUPLES, FILES+FILES_FCNC_TUG, tree_name, vrule, excl);
+                        r1, r2 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TUG, tree_name, vrule, excl);
                         r3, r4 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
                     if(MODE == "FCNC_tcg") {
-                        r1, r2 = hist_range(PREFIX_NTUPLES, FILES+FILES_FCNC_TCG, tree_name, vrule, excl);
+                        r1, r2 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
                         r3, r4 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
                     rmin_v.push_back(min(r1,r3));
@@ -369,16 +373,16 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
 	}
     // >
     
-    //EventsExcluder * excl   = new EventsExcluder( NN_train_events );
+    EventsExcluder * excl   = new EventsExcluder( NN_train_events );
 
-    //if(excl != nullptr) excl->Print();
+    if(excl != nullptr) excl->Print();
 
     string mc_selection_WQQ    = mc_selection+SELECTION_WQQ;
     string mc_selection_Wc     = mc_selection+SELECTION_Wc;
     string mc_selection_Wb     = mc_selection+SELECTION_Wb;
     string mc_selection_Wother = mc_selection+SELECTION_Wother;
     string mc_selection_Wlight = mc_selection+SELECTION_Wlight;
-    rmin, rmax = get_range(FILES, FILES_FCNC_TUG, FILES_FCNC_TCG, FILES_DATA, PATH_PREFIX, CENTRAL_FOLDER, tree_name, vrule, excl);
+    rmin, rmax = get_range(FILES, FILES_FCNC_TUG, FILES_FCNC_TCG, FILES_DATA, MODE, PATH_PREFIX, CENTRAL_FOLDER, tree_name, vrule, excl);
     PREFIX_NTUPLES = PATH_PREFIX + CENTRAL_FOLDER+"/";
     fill_hist("data",    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_DATA,     tree_name, vrule, data_selection, nullptr);
     fill_hist("QCD",     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_QCD_DATA, tree_name, vrule,  qcd_selection, excl);
