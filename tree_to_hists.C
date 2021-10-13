@@ -27,7 +27,7 @@ double get_range(vector<string> FILES,
                  string vrule,
                  EventsExcluder * excl){
     string PREFIX_NTUPLES = PATH_PREFIX + CENTRAL_FOLDER +"/";
-    //double r1, r2, r3, r4;
+    pair<double, double> p1, p2;
     vector<string> VARIATION_SYS_T1 = { "UnclMET", "MER", "JER", "JEC" };
     vector<string> JER_SYS_FOLDERS = { "eta0-193", "eta193-25", "eta25-3_p0-50", "eta25-3_p50-Inf", "eta3-5_p0-50", "eta3-5_p50-Inf" };
     vector<string> JER_SYS_U, JER_SYS_D;
@@ -49,15 +49,15 @@ double get_range(vector<string> FILES,
     vector<double> rmin_v;
     vector<double> rmax_v;
     if(MODE == "FCNC_tug") {
-        auto [r1, r2] = hist_range(PREFIX_NTUPLES, FILES_FCNC_TUG, tree_name, vrule, excl);
-        auto [r3, r4] = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+        p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TUG, tree_name, vrule, excl);
+        p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
     }
     if(MODE == "FCNC_tcg") {
-        auto [r1, r2] = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
-        auto [r3, r4] = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+        p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
+        p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
     }
-    rmin_v.push_back(min(r1,r3));
-    rmax_v.push_back(max(r2,r4));
+    rmin_v.push_back(min(p1.first,p2.first));
+    rmax_v.push_back(max(p1.second,p2.second));
     //DIFFERENT F0LDERS
     for(auto fprefix : VARIATION_SYS_T1){
         if( fprefix == "JER" ){
@@ -71,15 +71,15 @@ double get_range(vector<string> FILES,
                     string sname = jer_bin_name + pstfix;
                     PREFIX_NTUPLES = PATH_PREFIX + jer_bin_files[j] + "/";
                     if(MODE == "FCNC_tug") {
-                        [r1, r2] = hist_range(PREFIX_NTUPLES, FILES_FCNC_TUG, tree_name, vrule, excl);
-                        [r3, r4] = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+                        p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TUG, tree_name, vrule, excl);
+                        p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
                     if(MODE == "FCNC_tcg") {
-                        [r1, r2] = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
-                        [r3, r4] = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+                        p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
+                        p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
-                    rmin_v.push_back(min(r1,r3));
-                    rmax_v.push_back(max(r2,r4));
+                    rmin_v.push_back(min(p1.first,p2.first));
+                    rmax_v.push_back(max(p1.second,p2.second));
                 }
             }
         } else if( fprefix == "JEC" ){
@@ -93,15 +93,15 @@ double get_range(vector<string> FILES,
                     string sname = jec_bin_name + pstfix;
                     PREFIX_NTUPLES = PATH_PREFIX + jec_bin_files[j] + "/";
                     if(MODE == "FCNC_tug") {
-                        [r1, r2] = hist_range(PREFIX_NTUPLES, FILES_FCNC_TUG, tree_name, vrule, excl);
-                        [r3, r4] = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+                        p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TUG, tree_name, vrule, excl);
+                        p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
                     if(MODE == "FCNC_tcg") {
-                        [r1, r2] = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
-                        [r3, r4] = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+                        p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
+                        p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
                     }
-                    rmin_v.push_back(min(r1,r3));
-                    rmax_v.push_back(max(r2,r4));
+                    rmin_v.push_back(min(p1.first,p2.first));
+                    rmax_v.push_back(max(p1.second,p2.second));
                 }
 
                 }
