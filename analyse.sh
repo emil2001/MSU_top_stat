@@ -4,7 +4,7 @@
 
 nbins=20
 niters=500000 #500000
-release="2021_UL18_JetID_super" # "2020_novenber_NoIsoCut"
+release="Test_2021_UL17_summer20_25vars_cos" # "2020_novenber_NoIsoCut"
 burn_in_frac=0.1
 nchains=3
 
@@ -35,9 +35,9 @@ source /cvmfs/sft.cern.ch/lcg/contrib/gcc/4.9/x86_64-slc6-gcc49-opt/setup.sh
 export PATH=/cvmfs/sft.cern.ch/lcg/external/Python/2.7.3/x86_64-slc6-gcc48-opt/bin:$PATH
 export LD_LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/external/Python/2.7.3/x86_64-slc6-gcc48-opt/lib:$LD_LIBRARY_PATH
 
-srcdir=`pwd`/theta_13tev_global
+srcdir=`pwd`/scripts
 cfgdir=$(pwd)
-workdir=$(pwd)/$release
+workdir=$(pwd)/../$release
 
 set +e
 set -o xtrace
