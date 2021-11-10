@@ -3,8 +3,11 @@
 import sys
 import copy
 
-sys.path.append( "/afs/cern.ch/user/a/azaboren/work/public/emil/Stat/MSU_top_stat/scripts/" )
-
+#sys.path.append( "./scripts/" )
+import os
+dirname = os.path.dirname(__file__)
+filename = os.path.join(dirname, 'scripts/')
+sys.path.append(filename)
 import AutoDatacard as atd
 
 
