@@ -4,7 +4,7 @@
 
 nbins=20
 niters=500000 #500000
-release="Test_2021_UL17_summer20_25vars_cos" # "2020_novenber_NoIsoCut"
+release="2021_UL17_summer20_25vars" # "2020_novenber_NoIsoCut"
 burn_in_frac=0.1
 nchains=3
 
@@ -28,12 +28,18 @@ package=$2
 #---------- 1. Setup
 myname=`basename "$0"`
 echo "$myname, setup ... "
+#source /cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_8_1_0/external/slc7_amd64_gcc530/bin/root
 
 source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.06.08/x86_64-slc6-gcc49-opt/root/bin/thisroot.sh
 source /cvmfs/sft.cern.ch/lcg/contrib/gcc/4.9/x86_64-slc6-gcc49-opt/setup.sh
 
-export PATH=/cvmfs/sft.cern.ch/lcg/external/Python/2.7.3/x86_64-slc6-gcc48-opt/bin:$PATH
-export LD_LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/external/Python/2.7.3/x86_64-slc6-gcc48-opt/lib:$LD_LIBRARY_PATH
+#export PATH=/cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_8_1_0/external/slc7_amd64_gcc530/bin:$PATH
+#export LD_LIBRARY_PATH=/cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_8_1_0/external/slc7_amd64_gcc530/lib:$LD_LIBRARY_PATH
+export PATH=/cvmfs/sft.cern.ch/lcg/external/Python/2.7.4/x86_64-slc6-gcc48-opt/bin:$PATH
+export LD_LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/external/Python/2.7.4/x86_64-slc6-gcc48-opt/lib:$LD_LIBRARY_PATH
+#export PYTHONPATH=/cvmfs/sft.cern.ch/lcg/external/Python/2.7.4/x86_64-slc6-gcc48-opt/bin
+which python
+which root
 
 srcdir=`pwd`/scripts
 cfgdir=$(pwd)
@@ -41,7 +47,7 @@ workdir=$(pwd)/../$release
 
 set +e
 set -o xtrace
-
+#echo "$PATH"
 if [ "$mode" = "start" ] || [ "$mode" = "full" ]; then
   echo "$myname, recreate work directory $workdir"
   rm -rf $workdir
@@ -186,9 +192,12 @@ make_analyse_theta(){
   hist_path=$4
   mode=$5 # sm FcncTugModel FcncTcgModel
 
-  python $cfgdir/create_card.py --fname=$mode --nbins=$nbins_ --niters=$niters_ --input=$input_hists --mode="latex theta mRoot" --nchains=$nchains
-  $srcdir/run_theta.sh $mode"_theta.cfg"
-
+  #python $cfgdir/create_card.py --fname=$mode --nbins=$nbins_ --niters=$niters_ --input=$input_hists --mode="latex cl mRoot" --nchains=$nchains
+  #$srcdir/run_theta.sh $mode"_theta.cfg"
+  #$srcdir/run_cl.sh "combine sm_cl.txt -M MarkovChainMC -i 5000000 --tries 3 --saveChain --noSlimChain --burnInSteps 0 --noDefaultPrior=0 --setParameterRanges sigma_t_ch=-0.5,0.5:sigma_s_ch=-2.85,3.0:sigma_tW_ch=-6.0,1.5:sigma_ttbar=-4.0,5.0:sigma_Diboson=-3.0,3.0:sigma_DY=-3.0,3.0:sigma_WQQ=-1.0,4.5:sigma_Wc=-2.5,2.0:sigma_Wb=-2.5,3.5:sigma_Wother=-3.5,1.5:sigma_Wlight=-3.5,1.5:sigma_QCD=-3.0,1.5:lumi=-2.5,2.5 --freezeParameters r --redefineSignalPOIs sigma_t_ch"
+  #$srcdir/run_cl.sh "combine sm_cl.txt -M MarkovChainMC -i 500000 --tries 3 --saveChain --noSlimChain --burnInSteps 0 --noDefaultPrior=0 --freezeParameters r --redefineSignalPOIs sigma_t_ch"
+  #$srcdir/run_cl.sh "combine -M AsymptoticLimits sm_cl.txt --freezeParameters r --redefineSignalPOIs sigma_t_ch"
+  #$srcdir/run_cl.sh "combine --help"
   POI="sigma_t_ch"
   if [ "$mode" = "FcncTugModel" ]; then
     POI="KU"
@@ -197,10 +206,11 @@ make_analyse_theta(){
     POI="KC"
   fi
   
-  root -q -b -l "$srcdir/burnInStudy.cpp(\""$mode"_theta.root\", \"$POI\", \"BurnInStudy"$mode"Theta\")"
-  root -q -b -l "$srcdir/getPostHists.cpp(\"$input_hists\", \""$mode"_mroot.txt\", \""$mode"_theta.root\")"
-  root -q -b -l "$srcdir/histsPlot.cpp(\"SM_after\",\"postfit_hists/posthists.root\")"
-  root -q -b -l "$srcdir/histsChecker.cpp(\"$input_hists\",\"./postfit_hists/posthists.root\", \"SM_comp_\")"
+  #root -q -b -l "$srcdir/CL_workspace_to_tree.cpp(\"higgsCombineTest.MarkovChainMC.mH120.root\", \""$mode"_theta.root\", \"sigma_s_ch:0.1 sigma_tW_ch:0.15 sigma_ttbar:0.15 sigma_Diboson:0.2 sigma_DY:0.2 sigma_WQQ:0.3 sigma_Wc:0.3 sigma_Wb:0.3 sigma_Wother:0.3 sigma_Wlight:0.3 sigma_QCD:1.0 lumi:0.025 sigma_t_ch:unif\")"
+  #root -q -b -l "$srcdir/burnInStudy.cpp(\""$mode"_theta.root\", \"$POI\", \"BurnInStudy"$mode"Theta\")"
+  #root -q -b -l "$srcdir/getPostHists.cpp(\"$input_hists\", \""$mode"_mroot.txt\", \""$mode"_theta.root\")"
+  #root -q -b -l "$srcdir/histsPlot.cpp(\"SM_after\",\"postfit_hists/posthists.root\")"
+  #root -q -b -l "$srcdir/histsChecker.cpp(\"$input_hists\",\"./postfit_hists/posthists.root\", \"SM_comp_\")"
   
   root -q -b -l "$srcdir/getTable.cpp(\""$mode"_theta.root\", \"$mode\", $burn_in_frac, \"$hist_path\")"
   pdflatex -interaction=batchmode getTable_$mode.tex

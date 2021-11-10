@@ -357,6 +357,9 @@ def_mroot_template="""
 
 import os.path
 import copy
+import sys
+
+sys.path.append( "/cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.06.08/x86_64-slc6-gcc49-opt/" )
 
 def tabulate_check_intersection(text, chanal, parameter):
   if parameter.name in chanal.get_mult_params() : return "N"
@@ -559,7 +562,7 @@ class DatacardMaster():
       self.cl_run_command = self.cl_run_command[:-1] + " "
       self.cl_run_command += "--freezeParameters r "
       self.cl_run_command += "--redefineSignalPOIs " + ",".join([par.name for par in self.parameters if par.is_flat()])
-
+      
       # set list of used uncertanties in parameters - only for log-normal at the moment
       self.cl_par_vs_uncert = " ".join([ par.name + ":" + str(par.options["width"]) for par in self.parameters if par.distr == "log_normal"])
       self.cl_par_vs_uncert += " " + " ".join([ par.name + ":unif" for par in self.parameters if par.distr == "flat_distribution"])
@@ -576,6 +579,8 @@ class DatacardMaster():
           print "DatacardMaster(): warning : ", par.name, " have unknow theta type for using in CombinedLimit"
 
     return
+  def print_command(self):
+    print self.cl_run_command
 
   def get_def_dic(self, mode):
     self.init(mode)
@@ -622,21 +627,21 @@ class DatacardMaster():
       dic["CL_PAR_VS_UNCERT"] = self.cl_par_vs_uncert
 
       # rates
-      try:
-        import ROOT as root
-        def get_rates_from_hist(hist_name, file_name):
+     # try:
+        
+      import ROOT as root
+      print "imported"
+      def get_rates_from_hist(hist_name, file_name):
           file = root.TFile(file_name, "READ")
           hist = file.Get(hist_name)
           try    : hist.Integral()
           except : print "DatacardMaster(): warning : can't gate rate for ", "\""+hist_name+"\"", hist, file_name
           return hist.Integral()
-
-        for chanal in self.chanals:
+      for chanal in self.chanals:
           chanal.cl_rate = get_rates_from_hist(chanal.name, self.input_file_mc)
-
-        dic["CL_DATA_RATE"] = get_rates_from_hist(self.data_hist_name, dic["INPUT_FILE_DATA"])
-      except:
-        print "DatacardMaster(): warning : can't process dictionary initialisation for CombinedLimit datacard"
+      dic["CL_DATA_RATE"] = get_rates_from_hist(self.data_hist_name, dic["INPUT_FILE_DATA"])
+      #except:
+        #print "DatacardMaster(): warning : can't process dictionary initialisation for CombinedLimit datacard"
 
       # ids
       for chanal in self.chanals:
@@ -700,7 +705,7 @@ class DatacardMaster():
       f = open(full_name, "w")
       f.write(datacard)
       f.close()
-
+      self.print_command()
     # mRoot ----------------------------
     if "mRoot" in mode:
       datacard = self.parce_template(def_mroot_template, dic)
@@ -708,7 +713,7 @@ class DatacardMaster():
       f = open(full_name, "w")
       f.write(datacard)
       f.close()
-
+  
 import math
 def gauss_to_theta_lognormal(val):
   tval = math.sqrt( math.log(0.5 + 0.5 * math.sqrt(1 + 4 * val*val)) )

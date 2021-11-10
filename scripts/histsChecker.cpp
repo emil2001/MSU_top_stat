@@ -1,9 +1,9 @@
 
 #include <regex>
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/msg.hh"
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRootNiceColors.cpp"
+#include "mroot/msg.hh"
+#include "mroot/mRootNiceColors.cpp"
 
-#include "/afs/cern.ch/user/p/pmandrik/public/PMANDRIK_LIBRARY/pmlib_root_hist_drawer.hh"
+#include "pmlib/pmlib_root_hist_drawer.hh"
 
 using namespace mRoot;
 

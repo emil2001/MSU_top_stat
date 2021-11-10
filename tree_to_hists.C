@@ -1,10 +1,9 @@
 
 
-//#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRoot.cpp"
-#include "theta_13tev_global/mroot/mRoot.cpp"
-#include "/afs/cern.ch/user/p/pmandrik/public/PMANDRIK_LIBRARY/pmlib_tree_to_hist.hh"
-#include "theta_13tev_global/mroot/mRootStackDrawer.cpp"
-#include "/afs/cern.ch/user/p/pmandrik/public/PMANDRIK_LIBRARY/pmlib_other.hh"
+#include "scripts/mroot/mRoot.cpp"
+#include "scripts/pmlib/pmlib_tree_to_hist.hh"
+#include "scripts/mroot/mRootStackDrawer.cpp"
+#include "scripts/pmlib/pmlib_other.hh"
 
 using namespace mRoot;
 
@@ -323,7 +322,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     use_comphep = false;
     NN_MC_tug = "DNN_fcnc_tug_UL17_JetID";
     NN_MC_tcg = "DNN_fcnc_tcg_UL17_JetID";
-    
+    //FILES_DATA = {"t-channel_ch.root", "s-channel.root"};
     FILES_TC     = {"t-channel_ch.root"};
     FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
   }
@@ -425,7 +424,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     string qcd_qut   = "(" + NN_QCD + " > " + std::to_string( QCD_qut ) + ")";
     // if( BACKGROUND_QCD_CUT ) qcd_qut = "(BNN_qcd_tchan_5vars_2 > 0.2) * (BNN_qcd_tchan_5vars_2 < " + std::to_string( QCD_qut ) + ")";
 
-    string data_selection   = qcd_qut + " * (N_BJ==1)";
+    string data_selection   = qcd_qut + "  * (N_BJ==1)";
     string qcd_selection    = qcd_qut + " * weight * " + to_string( QCD_norm );
     string mc_selection     = qcd_qut + " * weight * (N_BJ==1)";
 
@@ -553,8 +552,8 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     }
 
 
-    // FILL SYSTEMATIC WITCH PRESENT IN THE DIFFERENT F0LDERS
-    for(auto fprefix : VARIATION_SYS_T1){
+       // FILL SYSTEMATIC WITCH PRESENT IN THE DIFFERENT F0LDERS
+/*    for(auto fprefix : VARIATION_SYS_T1){
       if( fprefix == "JER" ){
         for(int i = 0; i < JER_SYS_NAMES.size(); i++){
           string jer_bin_name = JER_SYS_NAMES[i];
@@ -643,14 +642,14 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
 
     // tW-chan: hdamp и isr/fsr (в tW нет PS weights, но не знаю, используешь ли ты эти семплы сейчас)
     // ttbar: hdamp, tune, colourFlip, erdOn, qcd_based и отдельные isr/fsr (как альтернатива PSweights).
-    /*
+    
     if( RELEASE=="2021_deep" ){ 
       vrule = "DNN_sm_pow_comph_wjets"; 
       if(MODE == "FCNC_tcg") vrule = NN_MC_tcg;
       if(MODE == "FCNC_tug") vrule = NN_MC_tug;
     }
-    */
-
+    
+    
     if(USE_OTHER_SYS){
       fill_hist("tW_ch_hdampUp",   NBINS, rmin, rmax, out_file, PATH_SUSTEMATIC, {"tW-channel-tbar_hdamp_up.root", "tW-channel-top_hdamp_up.root"},      tree_name, vrule, mc_selection_TW,        excl);
       fill_hist("tW_ch_hdampDown", NBINS, rmin, rmax, out_file, PATH_SUSTEMATIC, {"tW-channel-tbar_hdamp_down.root", "tW-channel-top_hdamp_down.root"},  tree_name, vrule, mc_selection_TW,        excl);
@@ -678,7 +677,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
       fill_hist("ttbar_erdOnUp",       NBINS, rmin, rmax, out_file, PATH_SUSTEMATIC, {"ttbar_erdOn.root"},        tree_name, vrule, mc_selection,        excl);
       fill_hist("ttbar_QCDbasedUp",    NBINS, rmin, rmax, out_file, PATH_SUSTEMATIC, {"ttbar_qcd_based.root"},    tree_name, vrule, mc_selection,        excl);
     }
-
+    */
     out_file->Close();
   }
 

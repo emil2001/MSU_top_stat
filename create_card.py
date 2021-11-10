@@ -3,7 +3,7 @@
 import sys
 import copy
 
-sys.path.append( "/afs/cern.ch/user/p/pmandrik/public/analysis/MSU_statistics_13TEV/20-04-03_tqg/FCNC_tqg_stat/theta_13tev_global/" )
+sys.path.append( "/afs/cern.ch/user/a/azaboren/work/public/emil/Stat/MSU_top_stat/scripts/" )
 
 import AutoDatacard as atd
 
@@ -53,18 +53,19 @@ def sm(args):
 
   mult_pars = [ "lumi" ]
   mult_errs = [ 0.025  ]
-
+  #mult_pars = []
+  #mult_errs = []
   interp_pars  = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2" ]
   interp_pars += ["PileUp", "pdf"]
   #interp_pars += ["UnclMET", "MER"] # PUJetIdTag
- # interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
- # interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
+  #interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
+  #interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
   muRmuF_pars  = ["Fac", "Ren", "RenFac"]
   interp_pars += muRmuF_pars
   xsr_pars     = ["Isr", "Fsr"]
   interp_pars += xsr_pars
- # interp_pars = []
+  #interp_pars = []
 
   has_muRmuF, has_xsr = [], []
   has_muRmuF = ["s_ch", "ttbar", "WQQ", "Wb", "Wc", "Wother", "DY"]

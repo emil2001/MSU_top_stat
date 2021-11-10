@@ -48,12 +48,12 @@ namespace mRoot{
             double par_val = GetParameter(chanal->interp_pars.at(i));
             if(par_val > 0) bin_val = bin_val * pow( up_val   / nom_val, TMath::Abs(par_val));
             else            bin_val = bin_val * pow( down_val / nom_val, TMath::Abs(par_val));
-            if (name == "Wc") {
-                cout << chanal->interp_pars.at(i) << endl;
-        	cout << "up_val " << up_val << endl << "down_val " << down_val << endl;
-        	cout << "bin_val " << bin_val << endl;
+            //if (name == "Wc") {
+            //    cout << chanal->interp_pars.at(i) << endl;
+        //	cout << "up_val " << up_val << endl << "down_val " << down_val << endl;
+        //	cout << "bin_val " << bin_val << endl;
         	
-            }
+        //    }
             if (bin_val != bin_val) bin_val = 0.;
           }
         }

@@ -1,5 +1,5 @@
 
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRoot.cpp"
+#include "mroot/mRoot.cpp"
 using namespace mRoot;
 
 

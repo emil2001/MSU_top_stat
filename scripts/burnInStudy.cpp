@@ -1,6 +1,6 @@
 
 #include "getTable.cpp"
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/msg.hh"
+#include "mroot/msg.hh"
 
 using namespace std;
 using namespace mRoot;

@@ -1,6 +1,6 @@
 
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRoot.cpp"
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/msg.hh"
+#include "mroot/mRoot.cpp"
+#include "mroot/msg.hh"
 
 #include "getQuantiles.cpp"
 
@@ -251,6 +251,26 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
     string cor_hist_out_name = "Cor" + postfix + ".png";
     canv->Print(cor_hist_out_name.c_str());
     out_string += " \\includegraphics[width=0.7\\linewidth]{" + cor_hist_out_name + "} ";
+
+    // MODEL V DATA ===================================================================
+    string postfix1 = "";
+    out_string += "\n \\newpage \n";
+    out_string += "\n \\textbf{Model vs Data} \\\\ \n";
+    
+//    ReplaceStringInPlace(after_name, string("_"), string("X"));
+    if (postfix == "sm") postfix1 = "SM";
+    string after_name =  postfix1 + "Xafter.png";
+    string before_name = postfix1 + "Xbefore.png";
+    
+    cmd = "mv " + postfix1 + "_after.png " + postfix1 + "Xafter.png";   
+    cout << gSystem->Exec(cmd) << endl;
+    cmd = "mv ../../hists/" + postfix1 + "_before.png " + postfix1 + "Xbefore.png";   
+    cout << gSystem->Exec(cmd) << endl;
+    out_string += "\n \\includegraphics[width=0.9\\linewidth]{" + before_name + "} \n";
+    cout << after_name << endl;
+    out_string += "\n \\includegraphics[width=0.9\\linewidth]{" + after_name + "} \n";
+    cout << before_name << endl;
+
 
     // ALL MCMC CHAINS TABLE ===================================================================
     out_string += "\n \\newpage \n";

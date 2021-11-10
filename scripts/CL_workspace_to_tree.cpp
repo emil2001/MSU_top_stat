@@ -73,6 +73,7 @@ double transform_from_cl_to_theta(double val, double unc){
   if(unc < -3) return val; // dont need to recalcullate this parameter
   if(unc <  0) return 1. + val; // it is unifrom
   return pow(1. + unc, val); // its log-normal
+  cout << val << endl;
 }
 
 void CL_workspace_to_tree(const char * filename_in, const char * filename_out, const char * par_vs_uncert){

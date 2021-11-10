@@ -1,6 +1,6 @@
 
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRoot.cpp"
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/msg.hh"
+#include "scripts/mroot/mRoot.cpp"
+#include "scripts/mroot/msg.hh"
 
 double get_qv(TH1D* histe, double qfrac){
   int Nbins = histe->GetXaxis()->GetNbins();

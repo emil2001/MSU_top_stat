@@ -1,7 +1,7 @@
 
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRoot.cpp"
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/msg.hh"
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRootNiceColors.cpp"
+#include "mroot/mRoot.cpp"
+#include "mroot/msg.hh"
+#include "mroot/mRootNiceColors.cpp"
 
 using namespace mRoot;
 

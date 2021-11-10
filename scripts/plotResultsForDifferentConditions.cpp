@@ -2,9 +2,9 @@
 #include "getQuantiles.cpp"
 #include "getTable.cpp"
 
-#include "/afs/cern.ch/user/p/pmandrik/public/PMANDRIK_LIBRARY/pmlib_stat_analyses.hh"
-#include "/afs/cern.ch/user/p/pmandrik/public/PMANDRIK_LIBRARY/pmlib_other.hh"
-#include "/afs/cern.ch/user/p/pmandrik/public/PMANDRIK_LIBRARY/pmlib_root_hist_drawer.hh"
+#include "pmlib/pmlib_stat_analyses.hh"
+#include "pmlib/pmlib_other.hh"
+#include "pmlib/pmlib_root_hist_drawer.hh"
 
 pm::Limits get_result_from_file(string file_name, string par_name, float burn_factor = 0.10){
   TFile file( file_name.c_str() );
