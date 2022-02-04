@@ -258,13 +258,15 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
     out_string += "\n \\textbf{Model vs Data} \\\\ \n";
     
 //    ReplaceStringInPlace(after_name, string("_"), string("X"));
+    
     if (postfix == "sm") postfix1 = "SM";
+    if (postfix == "sm2d") postfix1 = "SM2D";
     string after_name =  postfix1 + "Xafter.png";
     string before_name = postfix1 + "Xbefore.png";
     
     cmd = "mv " + postfix1 + "_after.png " + postfix1 + "Xafter.png";   
     cout << gSystem->Exec(cmd) << endl;
-    cmd = "mv ../../hists/" + postfix1 + "_before.png " + postfix1 + "Xbefore.png";   
+    cmd = "cp ../../hists/" + postfix1 + "_before.png " + postfix1 + "Xbefore.png";   
     cout << gSystem->Exec(cmd) << endl;
     out_string += "\n \\includegraphics[width=0.9\\linewidth]{" + before_name + "} \n";
     cout << after_name << endl;

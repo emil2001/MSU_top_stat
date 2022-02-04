@@ -2,12 +2,12 @@
 
 #---------- 0. Please Set Parameters
 
-nbins=20
+nbins=6
 niters=500000 #500000
-release="2021_UL17_summer20_25vars" # "2020_novenber_NoIsoCut"
+release="2021_UL17_JetVeto" # "2020_novenber_NoIsoCut"
 burn_in_frac=0.1
 nchains=3
-
+QCD_norm=4
 
 mode=$1
 #  possible modes:
@@ -33,9 +33,11 @@ echo "$myname, setup ... "
 
 source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.06.08/x86_64-slc6-gcc49-opt/root/bin/thisroot.sh
 source /cvmfs/sft.cern.ch/lcg/contrib/gcc/4.9/x86_64-slc6-gcc49-opt/setup.sh
+#source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.24.06/x86_64-centos7-gcc48-opt/root/bin/thisroot.sh
+#source /cvmfs/sft.cern.ch/lcg/contrib/gcc/4.9/x86_64-centos7-gcc48-opt/setup.sh
 
-#export PATH=/cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_8_1_0/external/slc7_amd64_gcc530/bin:$PATH
-#export LD_LIBRARY_PATH=/cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_8_1_0/external/slc7_amd64_gcc530/lib:$LD_LIBRARY_PATH
+#export PATH=/cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_10_2_13/external/slc7_amd64_gcc700/bin:$PATH
+#export LD_LIBRARY_PATH=/cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_10_2_13/external/slc7_amd64_gcc700/lib:$LD_LIBRARY_PATH
 export PATH=/cvmfs/sft.cern.ch/lcg/external/Python/2.7.4/x86_64-slc6-gcc48-opt/bin:$PATH
 export LD_LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/external/Python/2.7.4/x86_64-slc6-gcc48-opt/lib:$LD_LIBRARY_PATH
 
@@ -43,7 +45,8 @@ export LD_LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/external/Python/2.7.4/x86_64-slc6-
 
 srcdir=`pwd`/scripts
 cfgdir=$(pwd)
-workdir=$(pwd)/../$release
+workdir=$(pwd)/../$release 
+#workdir=/scratch3/azaboren/eabasov/$release
 
 set +e
 set -o xtrace
@@ -98,7 +101,7 @@ fi
 
 
 #---------- 2. Find QCD normalization
-if [ "$mode" = "qcd" ] || [ "$mode" = "full" ]; then
+if [ "$mode" = "qcd" ] || [ "$mode" = "full" ] || [ "$mode" = "def_run" ]; then
   rm -rf "$workdir/qcd" && mkdir "$_" && cd "$_"
   echo "$myname, find QCD normalization ... "
   root -q -b -l "$cfgdir/tree_to_hists.C(\"QCD\",\""$release" SIG\",\"hists_QCD.root\", $nbins)"
@@ -119,8 +122,8 @@ if [ "$mode" = "qcd" ] || [ "$mode" = "full" ]; then
   root -q -b -l "$srcdir/histsPlot.cpp(\"QCD_after\",\"hists_QCD.root\","$QCD_norm")"
 else echo "$myname, skip qcd normalization calcullations"; fi
 
-IFS=" " read QCD_low QCD_norm QCD_upp <<< "`cat $workdir/qcd/getQuantiles_temp.txt`"
-echo "$myname, QCD norm factors = $QCD_low $QCD_norm $QCD_upp ..."
+#IFS=" " read QCD_low QCD_norm QCD_upp <<< "`cat $workdir/qcd/getQuantiles_temp.txt`"
+#echo "$myname, QCD norm factors = $QCD_low $QCD_norm $QCD_upp ..."
 
 #---------- 3. Create histogramms file
 make_hists(){
@@ -137,7 +140,7 @@ make_hists(){
   return
 }
 
-if [ "$mode" = "hists" ] || [ "$mode" = "full" ]; then
+if [ "$mode" = "hists" ] || [ "$mode" = "full" ] || [ "$mode" = "def_run" ]; then
   echo "$myname, create histogramms file ... "
  
   if [ "$submode" = "sm" ] || [ "$submode" = "sm_all" ] || [ "$submode" = "all" ]; then
@@ -193,7 +196,7 @@ make_analyse_theta(){
   mode=$5 # sm FcncTugModel FcncTcgModel
   module=$6 # theta cl
   
-  python $cfgdir/create_card.py --fname=$mode --nbins=$nbins_ --niters=$niters_ --input=$input_hists --mode="latex cl mRoot" --nchains=$nchains
+  python $cfgdir/create_card.py --fname=$mode --nbins=$nbins_ --niters=$niters_ --input=$input_hists --mode="latex cl mRoot theta" --nchains=$nchains
   if [ "$module" = "cl" ]; then
     FILE="$workdir/$mode/def/sm_cl.txt"
     LINE_SIGMA=4
@@ -205,10 +208,16 @@ make_analyse_theta(){
         case $i in $LINE_SIGMA) opt=${line#"# "}; break;; esac
     done <"$FILE"
     #cmd=${line#"# "}
-
-    $srcdir/run_cl.sh $cmd
-    #$srcdir/run_cl.sh "combine sm_cl.txt -M MarkovChainMC -i 500000 --tries 3 --saveChain --noSlimChain --burnInSteps 0 --noDefaultPrior=0 --freezeParameters r --redefineSignalPOIs sigma_t_ch"
-
+    #text2workspace.py sm_cl.txt -o sm_cl.root
+    #$srcdir/run_cl.sh $cmd
+    $srcdir/run_cl.sh "combine sm_cl.root --freezeParameters r --redefineSignalPOIs sigma_t_ch --setParameters sigma_s_ch=1,sigma_tW_ch=1,sigma_ttbar=1,sigma_Diboson=1,sigma_DY=1,sigma_WQQ=1,sigma_Wc=1,sigma_Wb=1,sigma_Wother=1,sigma_Wlight=1,sigma_QCD=1,lumi=1"
+    #$srcdir/run_cl.sh "combine  sm_cl.txt --freezeParameters r --redefineSignalPOIs sigma_t_ch --plots --saveShapes"
+    #python $srcdir/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py $workdir/$mode/def/fitDiagnosticsTest.root --all --abs --poi sigma_t_ch
+    #combineTool.py -M Impacts -d $workdir/$mode/def/sm_cl.root -m 125 --doInitialFit --robustFit 1 --redefineSignalPOIs sigma_t_ch --freezeParameters r
+    #combineTool.py -M Impacts -d $workdir/$mode/def/sm_cl.root -m 125 --robustFit 1 --doFits --redefineSignalPOIs sigma_t_ch --freezeParameters r 
+    #combineTool.py -M Impacts -d $workdir/$mode/def/sm_cl.root -m 125 -o impacts.json --redefineSignalPOIs sigma_t_ch --freezeParameters r 
+    #plotImpacts.py -i impacts.json -o impacts --POI sigma_t_ch
+    
     root -q -b -l "$srcdir/CL_workspace_to_tree.cpp(\"higgsCombineTest.MarkovChainMC.mH120.root\", \""$mode"_theta.root\", \"$opt\")"
   fi
   if [ "$module" = "theta" ]; then
@@ -234,9 +243,9 @@ make_analyse_theta(){
   pdflatex -interaction=batchmode model_$mode.tex
 }
 
-if [ "$mode" = "sm" ] || [ "$mode" = "full" ]; then
+if [ "$mode" = "sm" ] || [ "$mode" = "full" ] || [ "$mode" = "def_run" -a "$submode" = "sm"]; then
   echo "$myname, SM ... "
-  if [ "$submode" = "def" ] || [ "$submode" = "all" ]; then
+  if [ "$submode" = "def" ] || [ "$submode" = "all" ] || [ "$mode" = "def_run" ]; then
     mkdir -p "$workdir/sm/def" && cd "$_"
     make_analyse_theta "$workdir/hists/hists_SM.root" $nbins $niters "$workdir/hists/" sm "$package"
     mv getTable_SM.pdf table_sm_theta_def.pdf
@@ -277,9 +286,9 @@ else echo "$myname, skip sm analyse"; fi
 
 #---------- 5. Run FCNC analyse
 set -x
-if [ "$mode" = "fcnc" ] || [ "$mode" = "full" ]; then
+if [ "$mode" = "fcnc" ] || [ "$mode" = "full" ] || [ "$mode" = "def_run" -a "$submode" = "fcnc"]; then
   echo "$myname, FCNC ... "
-  if [ "$submode" = "def" ] || [ "$submode" = "all" ]; then
+  if [ "$submode" = "def" ] || [ "$submode" = "all" ] || [ "$mode" = "def_run" ]; then
     mkdir -p "$workdir/fcnc/def" && cd "$_"
     make_analyse_theta "$workdir/hists_fcnc/hists_FCNC_tug.root" $nbins $niters "$workdir/hists_fcnc/" "FcncTugModel" "$package"
     mv getTable_FcncTugModel.pdf table_KU_def.pdf
@@ -356,8 +365,8 @@ if [ "$mode" = "qcd2d" ] || [ "$mode" = "full" ]; then
   root -q -b -l "$srcdir/histsPlot.cpp(\"QCD_after\",\"hists_QCD.root\","$QCD_norm")"
 else echo "$myname, skip qcd normalization calcullations"; fi
 
-IFS=" " read QCD_low QCD_norm QCD_upp <<< "`cat $workdir/qcd/getQuantiles_temp.txt`"
-echo "$myname, QCD norm factors = $QCD_low $QCD_norm $QCD_upp ..."
+#IFS=" " read QCD_low QCD_norm QCD_upp <<< "`cat $workdir/qcd/getQuantiles_temp.txt`"
+#echo "$myname, QCD norm factors = $QCD_low $QCD_norm $QCD_upp ..."
 
 #---------- 6b. Create histogramms file
 make_hists(){
@@ -414,6 +423,9 @@ make_analyse_theta(){
   root -q -b -l "$srcdir/histsPlot.cpp(\"SM_after\",\"postfit_hists/posthists.root\")"
   root -q -b -l "$srcdir/histsChecker.cpp(\"$input_hists\",\"./postfit_hists/posthists.root\", \"SM_comp_\")"
 
+  mkdir -p $workdir/hists
+  mv $workdir/hists2d/SM_before.png $workdir/hists
+  
   root -q -b -l "$srcdir/getTable.cpp(\""$mode"_theta.root\", \"$mode\", $burn_in_frac, \"$hist_path\")"
   pdflatex -interaction=batchmode getTable_$mode.tex
   pdflatex -interaction=batchmode model_$mode.tex

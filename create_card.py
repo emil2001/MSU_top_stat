@@ -68,7 +68,7 @@ def sm(args):
   interp_pars += muRmuF_pars
   xsr_pars     = ["Isr", "Fsr"]
   interp_pars += xsr_pars
-  #interp_pars = []
+  #interp_pars = ["Ren"]
 
   has_muRmuF, has_xsr = [], []
   has_muRmuF = ["s_ch", "ttbar", "WQQ", "Wb", "Wc", "Wother", "DY"]

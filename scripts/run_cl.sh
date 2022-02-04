@@ -2,7 +2,7 @@
 srcdir=$(dirname $0)
 workdir=$(pwd)
 
-cd $srcdir/CMSSW_8_1_0/src
+cd $srcdir/CMSSW_10_2_13/src
 eval `scram runtime -sh`
 cd $workdir
 

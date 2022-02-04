@@ -46,6 +46,7 @@ namespace mRoot {
           if( string(h->GetName()) == string("data")) continue;
 
           cout << "StackDrawer add " << name << endl;
+         // cout << stack_hists.size() << endl;
           stack_hists.push_back(h);
         }
       }
@@ -75,14 +76,17 @@ namespace mRoot {
           hist->SetLineStyle( 7 );
           leg->AddEntry(hist, hist->GetTitle(), "l");
         }
-        for(auto hist : stack_hists){
-          hs->Add(hist);
+        cout << stack_hists.size() << endl;
+        int i = 0;
+        for(auto hist : stack_hists){          
+          hs->Add(hist);          
           hist->SetFillColor( colors.at(color++) );
           hist->SetLineColor( 1 );
-          hist->SetLineWidth( 2 );
+          hist->SetLineWidth( 2 );          
           leg->AddEntry(hist, hist->GetTitle(), "f");
+          cout << hist->GetTitle() << endl;
         }
-
+        cout << "END" << endl;
         TPad *pad_main = new TPad("p1","p1", 0.00, residial_height, 1.-legend_width-0.01, 1.0);
         pad_main->Draw();
         pad_main->cd();

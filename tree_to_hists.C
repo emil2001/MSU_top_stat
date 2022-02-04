@@ -5,6 +5,9 @@
 #include "scripts/mroot/mRootStackDrawer.cpp"
 #include "scripts/pmlib/pmlib_other.hh"
 
+
+#include "../theta_slc6/theta/libconfig/libconfig.h"
+
 using namespace mRoot;
 
 void get_renorm_factor(std::string prefix, vector<string> files, std::string tree_name, string central_weight_rule, string alt_weight_rule_1, string alt_weight_rule_2, string & answer_1, string & answer_2){
@@ -120,14 +123,39 @@ void get_range(vector<string> FILES,
                 }
 
                 }
+        
             }
+        else {
+        vector<string> pstfixs = {"Down", "Up"};
+        for(auto pstfix : pstfixs){
+          string extra_select = "";
+          // if(fprefix == "JEC") extra_select = "* weight_btag_jes" + pstfix + "_norm / weight_norm";
+
+          string sname = fprefix + pstfix;
+          PREFIX_NTUPLES = PATH_PREFIX + fprefix + pstfix+"/";
+          if(MODE == "FCNC_tug") {
+                p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TUG, tree_name, vrule, excl);
+                //p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+            }
+          else if(MODE == "FCNC_tcg") {
+                p1 = hist_range(PREFIX_NTUPLES, FILES_FCNC_TCG, tree_name, vrule, excl);
+                //p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);
+            }
+                
+	  else {
+    		p1 = hist_range(PREFIX_NTUPLES, FILES, tree_name, vrule, excl);
+    		//p2 = hist_range(PREFIX_NTUPLES, FILES_DATA, tree_name, vrule, nullptr);    
+	    }
+            rmin_v.push_back(min(p1.first,p2.first));
+            rmax_v.push_back(max(p1.second,p2.second));
+        }
         }
     rmin = *min_element(rmin_v.begin(), rmin_v.end());
     rmax = *max_element(rmax_v.begin(), rmax_v.end());
     cout << "!!!!!!!!!!!!!RMIN " << rmin << " RMAX " << rmax << endl;
     return;
     }
-
+}
 
 
 int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBINS, double QCD_norm = -1.0, double QCD_qut = -1.0){
@@ -154,6 +182,11 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     cerr << "Bad  QCD normalization, please provide correct value " << QCD_norm << ", exit ..." << endl;
     return 1;
   }
+
+
+
+
+
 
   //---------- 0. PATH -------------------------------------------------------------------------------------------------------------------------
   string CENTRAL_FOLDER        = "Central";
@@ -193,11 +226,11 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
   string SELECTION_Wlight = "*((Wjets_type == 6))";
 
   string PREFIX_NTUPLES, PATH_PREFIX, PATH_EXCLUDE, PATH_SUSTEMATIC;
-  string NN_MC, NN_QCD, NN_train_events, NN_MC_tcg, NN_MC_tug, NN_train_events_tcg, NN_train_events_tug, QCD_train_events;
+  string NN_MC, NN_QCD, NN_train_events, NN_MC_tcg, NN_MC_tug, NN_train_events_tcg, NN_train_events_tug, QCD_train_events, NN_2D_x, NN_2D_y, NN_train_events_2D_x, NN_train_events_2D_y;
   bool use_comphep = false;
 
 
-  vector <string> FILES       = {"QCD_data.root", "DY_10-50.root", "DY_50-Inf.root", "ttbar.root", "WW.root", "WZ.root", "ZZ.root", "s-channel.root", "tW-channel-top.root","tW-channel-tbar.root", "t-channel_ch.root"};
+  vector <string> FILES       = {"QCD_data.root", "DY_10-50.root", "DY_50-Inf.root", "ttbar.root", "WW.root", "WZ.root", "ZZ.root", "s-channel.root", "tW-channel-top.root","tW-channel-tbar.root", "t-channel_ch.root", "Wjets.root"};
   //---------- 1. DATA -------------------------------------------------------------------------------------------------------------------------
   vector <string> FILES_DATA        = {"Data.root"};
 
@@ -328,15 +361,15 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
   }
 
   else if ( RELEASE=="2021_UL17_summer20_5vars"){
-    string ppath = "/scratch3/azaboren/andrew/samples/UL17_Summer20/tuples_merged/" ;
+    string ppath = "/scratch3/azaboren/andrew/samples/UL17_Summer20_Full_Sys/tuples_merged/" ;
     PATH_PREFIX     = ppath + "" ;
     PATH_SUSTEMATIC = ppath + "" ;
     NN_QCD = "qcd_tchan_fcnc_5vars_weighted";
-    NN_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20/bnn_sm_UL17_Summer20_low_level_qcd_25vars_trainEvents.txt";
+    NN_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20_Full_Sys/bnn_sm_UL17_Summer20_low_level_qcd_5vars_trainEvents.txt";
     NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_UL17_JetID_trainEvents.txt";
     NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_UL17_JetID_trainEvents.txt";
-    QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20/qcd_tchah_fcnc_UL17_5vars_weighted_trainEvents.txt";
-    if(MODE == "SM") NN_MC  = "DNN_sm_LL_qcd_25vars";
+    QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20_Full_Sys/qcd_tchah_fcnc_UL17_5vars_weighted_trainEvents.txt";
+    if(MODE == "SM") NN_MC  = "DNN_sm_low_level_qcd_5vars";
     use_comphep = false;
     NN_MC_tug = "DNN_fcnc_tug_UL17_JetID";
     NN_MC_tcg = "DNN_fcnc_tcg_UL17_JetID";
@@ -362,22 +395,28 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     FILES_TC     = {"t-channel_ch.root"};
     FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
   }
-  else if ( RELEASE=="2021_UL17_summer20_25vars_cos"){
-    string ppath = "/scratch3/azaboren/andrew/samples/UL17_Summer20/tuples_merged/" ;
+  else if ( RELEASE=="2021_UL17_JetVeto"){
+    string ppath = "/scratch3/azaboren/andrew/samples/jet_veto/" ;
     PATH_PREFIX     = ppath + "" ;
     PATH_SUSTEMATIC = ppath + "" ;
-    NN_QCD = "qcd_tchan_fcnc_25vars_weighted";
-    NN_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20/bnn_sm_UL17_Summer20_low_level_qcd_25vars_trainEvents.txt";
-    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_UL17_JetID_trainEvents.txt";
-    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_UL17_JetID_trainEvents.txt";
-    QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20/qcd_tchah_fcnc_UL17_25vars_weighted_trainEvents.txt";
-    if(MODE == "SM") NN_MC  = "Cos_LepLJ_BJ1";
+    NN_QCD = "";
+    NN_train_events = "/scratch3/azaboren/andrew/train_events/bnn_sm_jet_veto_low_level_met_mtw_cut_trainEvents.txt";
+    //NN_train_events_tcg = "/scratch3/azaboren/andrew/train_events";
+    //NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_UL17_JetID_trainEvents.txt";
+    //QCD_train_events = "/scratch3/azaboren/andrew/train_events";
+    if(MODE == "SM") NN_MC  = "sm_jet_veto_low_level_met_mtw_cut";
+    NN_2D_x = "sm_jet_veto_ttbar_met_mtw_cut";
+    NN_2D_y = "sm_jet_veto_wjets_met_mtw_cut";
+    NN_train_events_2D_x = "/scratch3/azaboren/andrew/train_events/bnn_sm_jet_veto_ttbar_met_mtw_cut_trainEvents.txt";
+    NN_train_events_2D_y = "/scratch3/azaboren/andrew/train_events/bnn_sm_jet_veto_wjets_met_mtw_cut_trainEvents.txt";
     use_comphep = false;
     NN_MC_tug = "DNN_fcnc_tug_UL17_JetID";
     NN_MC_tcg = "DNN_fcnc_tcg_UL17_JetID";
     
     FILES_TC     = {"t-channel_ch.root"};
     FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
+    FILES_QCD_DATA = {"QCD_data.root"};
+    CENTRAL_FOLDER = "";
   }
     
   else{
@@ -421,11 +460,14 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
   else if(MODE == "SM" or MODE == "FCNC_tug" or MODE == "FCNC_tcg"){
     out_file = new TFile(OUTPUT_FILE_NAME.c_str(), "RECREATE");
 
-    string qcd_qut   = "(" + NN_QCD + " > " + std::to_string( QCD_qut ) + ")";
+    //string qcd_qut   = "(" + NN_QCD + " > " + std::to_string( QCD_qut ) + ")";
+    string qcd_qut = "(MtW > 40) * (MET > 30)";
+    
     // if( BACKGROUND_QCD_CUT ) qcd_qut = "(BNN_qcd_tchan_5vars_2 > 0.2) * (BNN_qcd_tchan_5vars_2 < " + std::to_string( QCD_qut ) + ")";
 
     string data_selection   = qcd_qut + "  * (N_BJ==1)";
     string qcd_selection    = qcd_qut + " * weight * " + to_string( QCD_norm );
+    //string qcd_selection    = qcd_qut + " * weight * 4";
     string mc_selection     = qcd_qut + " * weight * (N_BJ==1)";
 
     string mc_selection_TW  = mc_selection;
@@ -454,7 +496,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     string mc_selection_Wb     = mc_selection+SELECTION_Wb;
     string mc_selection_Wother = mc_selection+SELECTION_Wother;
     string mc_selection_Wlight = mc_selection+SELECTION_Wlight;
-    //get_range(FILES, FILES_FCNC_TUG, FILES_FCNC_TCG, FILES_DATA, MODE, PATH_PREFIX, CENTRAL_FOLDER, tree_name, vrule, excl, rmin, rmax);
+    get_range(FILES, FILES_FCNC_TUG, FILES_FCNC_TCG, FILES_DATA, MODE, PATH_PREFIX, CENTRAL_FOLDER, tree_name, vrule, excl, rmin, rmax);
     PREFIX_NTUPLES = PATH_PREFIX + CENTRAL_FOLDER+"/";
     fill_hist("data",    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_DATA,     tree_name, vrule, data_selection, nullptr);
     fill_hist("QCD",     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_QCD_DATA, tree_name, vrule,  qcd_selection, excl);
@@ -552,8 +594,8 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     }
 
 
-       // FILL SYSTEMATIC WITCH PRESENT IN THE DIFFERENT F0LDERS
-/*    for(auto fprefix : VARIATION_SYS_T1){
+/*       // FILL SYSTEMATIC WITCH PRESENT IN THE DIFFERENT F0LDERS
+    for(auto fprefix : VARIATION_SYS_T1){
       if( fprefix == "JER" ){
         for(int i = 0; i < JER_SYS_NAMES.size(); i++){
           string jer_bin_name = JER_SYS_NAMES[i];
@@ -648,7 +690,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
       if(MODE == "FCNC_tcg") vrule = NN_MC_tcg;
       if(MODE == "FCNC_tug") vrule = NN_MC_tug;
     }
-    
+*/    
     
     if(USE_OTHER_SYS){
       fill_hist("tW_ch_hdampUp",   NBINS, rmin, rmax, out_file, PATH_SUSTEMATIC, {"tW-channel-tbar_hdamp_up.root", "tW-channel-top_hdamp_up.root"},      tree_name, vrule, mc_selection_TW,        excl);
@@ -677,12 +719,13 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
       fill_hist("ttbar_erdOnUp",       NBINS, rmin, rmax, out_file, PATH_SUSTEMATIC, {"ttbar_erdOn.root"},        tree_name, vrule, mc_selection,        excl);
       fill_hist("ttbar_QCDbasedUp",    NBINS, rmin, rmax, out_file, PATH_SUSTEMATIC, {"ttbar_qcd_based.root"},    tree_name, vrule, mc_selection,        excl);
     }
-    */
+    
     out_file->Close();
   }
 
   else if(MODE == "SM2D"){
-      string qcd_qut   = "(" + NN_QCD + " > " + std::to_string( QCD_qut ) + ")";
+      //string qcd_qut   = "(" + NN_QCD + " > " + std::to_string( QCD_qut ) + ")";
+      string qcd_qut = "(MtW > 40) * (MET > 30)";
 //      string mc_selection   = qcd_qut + "* weight";
 //      string qcd_selection  = qcd_qut + "* weight_rescale2";
       string data_selection   = qcd_qut + " * (N_BJ==1)";
@@ -691,7 +734,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
 
       string mc_selection_TW  = mc_selection;
       string mc_selection_sch = mc_selection;
-      EventsExcluder * excl   = new EventsExcluder( NN_train_events );
+      //EventsExcluder * excl   = new EventsExcluder( NN_train_events );
       vrule = NN_MC;
 
       // FCNC <
@@ -705,25 +748,26 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
       string mc_selection_Wb     = mc_selection+SELECTION_Wb;
       string mc_selection_Wother = mc_selection+SELECTION_Wother;
       string mc_selection_Wlight = mc_selection+SELECTION_Wlight;
-      string vrule_x = "DNN_sm_wjets_LL_UL17_JetID";
-      string vrule_y = "DNN_sm_ttbar_LL_UL17_JetID";
-      excl = new EventsExcluder( NN_train_events );
+      string vrule_x = NN_2D_x;
+      string vrule_y = NN_2D_y;
+      EventsExcluder * excl1 = new EventsExcluder( NN_train_events_2D_x );
+      EventsExcluder * excl2 = new EventsExcluder( NN_train_events_2D_y );
       if(excl != nullptr) excl->Print();
 
       PREFIX_NTUPLES = PATH_PREFIX + CENTRAL_FOLDER+"/";
-      fill_hist_2d("data",    NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_DATA,     tree_name, vrule_x, vrule_y, data_selection, nullptr);
-      fill_hist_2d("QCD",     NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_QCD_DATA, tree_name, vrule_x, vrule_y,  qcd_selection, excl);
-      fill_hist_2d("DY",      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_DY,  tree_name, vrule_x, vrule_y, mc_selection,        excl);
-      fill_hist_2d("ttbar",   NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_TT,  tree_name, vrule_x, vrule_y, mc_selection,        excl);
-      fill_hist_2d("Diboson", NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_DB,  tree_name, vrule_x, vrule_y, mc_selection,        excl);
-      fill_hist_2d("s_ch",    NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_SC,  tree_name, vrule_x, vrule_y, mc_selection_sch,    excl);
-      fill_hist_2d("tW_ch",   NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_TW,  tree_name, vrule_x, vrule_y, mc_selection_TW,     excl);
-      fill_hist_2d("WQQ",     NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, mc_selection_WQQ,    excl);
-      fill_hist_2d("Wc",      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, mc_selection_Wc,     excl);
-      fill_hist_2d("Wb",      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, mc_selection_Wb,     excl);
-      fill_hist_2d("Wother",  NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, mc_selection_Wother, excl);
-      fill_hist_2d("Wlight",  NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, mc_selection_Wlight, excl);
-      fill_hist_2d("t_ch",    NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_TC,  tree_name, vrule_x, vrule_y, mc_selection,        excl);
+      fill_hist_2d("data",    NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_DATA,     tree_name, vrule_x, vrule_y, data_selection, nullptr, nullptr);
+      fill_hist_2d("QCD",     NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_QCD_DATA, tree_name, vrule_x, vrule_y,  qcd_selection, excl1, excl2);
+      fill_hist_2d("DY",      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_DY,  tree_name, vrule_x, vrule_y, mc_selection,        excl1, excl2);
+      fill_hist_2d("ttbar",   NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_TT,  tree_name, vrule_x, vrule_y, mc_selection,        excl1, excl2);
+      fill_hist_2d("Diboson", NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_DB,  tree_name, vrule_x, vrule_y, mc_selection,        excl1, excl2);
+      fill_hist_2d("s_ch",    NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_SC,  tree_name, vrule_x, vrule_y, mc_selection_sch,    excl1, excl2);
+      fill_hist_2d("tW_ch",   NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_TW,  tree_name, vrule_x, vrule_y, mc_selection_TW,     excl1, excl2);
+      fill_hist_2d("WQQ",     NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, mc_selection_WQQ,    excl1, excl2);
+      fill_hist_2d("Wc",      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, mc_selection_Wc,     excl1, excl2);
+      fill_hist_2d("Wb",      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, mc_selection_Wb,     excl1, excl2);
+      fill_hist_2d("Wother",  NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, mc_selection_Wother, excl1, excl2);
+      fill_hist_2d("Wlight",  NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, mc_selection_Wlight, excl1, excl2);
+      fill_hist_2d("t_ch",    NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_TC,  tree_name, vrule_x, vrule_y, mc_selection,        excl1, excl2);
 
       // FILL SYSTEMATIC WITCH PRESENT IN THE CENTRAL SAME FILES
       for(auto systematic : VARIATION_SYS_T2){
@@ -796,17 +840,17 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
 //              for(auto systematic : VARIATION_SYS_T2){
 //          string mc_selection_up   = qcd_qut + "* weight_" + systematic + "Up";
 //          string mc_selection_down = qcd_qut + "* weight_" + systematic + "Down";
-          fill_hist_2d_sys("DY_"+systematic_,      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_DY,  tree_name, vrule_x, vrule_y, dy_fact_up + mc_selection_up, dy_fact_dn + mc_selection_down, excl);
-          fill_hist_2d_sys("ttbar_"+systematic_,   NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_TT,  tree_name, vrule_x, vrule_y, tt_fact_up + mc_selection_up, tt_fact_dn + mc_selection_down, excl);
-          fill_hist_2d_sys("Diboson_"+systematic_, NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_DB,  tree_name, vrule_x, vrule_y, db_fact_up + mc_selection_up, db_fact_dn + mc_selection_down, excl);
-          fill_hist_2d_sys("s_ch_"+systematic_,    NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_SC,  tree_name, vrule_x, vrule_y, sc_fact_up + mc_selection_up, sc_fact_dn + mc_selection_down, excl);
-          fill_hist_2d_sys("tW_ch_"+systematic_,   NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_TW,  tree_name, vrule_x, vrule_y, tw_fact_up + mc_selection_up,  tw_fact_dn + mc_selection_down,  excl);
-          fill_hist_2d_sys("WQQ_"+systematic_,     NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wqq_fact_up + mc_selection_up+SELECTION_WQQ, wqq_fact_dn + mc_selection_down+SELECTION_WQQ, excl);
-          fill_hist_2d_sys("Wc_"+systematic_,      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wc_fact_up + mc_selection_up+SELECTION_Wc, wc_fact_dn + mc_selection_down+SELECTION_Wc,   excl);
-          fill_hist_2d_sys("Wb_"+systematic_,      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wb_fact_up + mc_selection_up+SELECTION_Wb, wb_fact_dn + mc_selection_down+SELECTION_Wb,   excl);
-          fill_hist_2d_sys("Wother_"+systematic_,  NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wother_fact_up + mc_selection_up+SELECTION_Wother, wother_fact_dn + mc_selection_down+SELECTION_Wother, excl);
-          fill_hist_2d_sys("Wlight_"+systematic_,  NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wother_fact_up + mc_selection_up+SELECTION_Wlight, wother_fact_dn + mc_selection_down+SELECTION_Wlight, excl);
-          fill_hist_2d_sys("t_ch_"+systematic_,    NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_TC, tree_name, vrule_x, vrule_y, tc_fact_up+mc_selection_up, tc_fact_dn+mc_selection_down, excl);
+          fill_hist_2d_sys("DY_"+systematic_,      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_DY,  tree_name, vrule_x, vrule_y, dy_fact_up + mc_selection_up, dy_fact_dn + mc_selection_down, excl1, excl2);
+          fill_hist_2d_sys("ttbar_"+systematic_,   NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_TT,  tree_name, vrule_x, vrule_y, tt_fact_up + mc_selection_up, tt_fact_dn + mc_selection_down, excl1, excl2);
+          fill_hist_2d_sys("Diboson_"+systematic_, NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_DB,  tree_name, vrule_x, vrule_y, db_fact_up + mc_selection_up, db_fact_dn + mc_selection_down, excl1, excl2);
+          fill_hist_2d_sys("s_ch_"+systematic_,    NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_SC,  tree_name, vrule_x, vrule_y, sc_fact_up + mc_selection_up, sc_fact_dn + mc_selection_down, excl1, excl2);
+          fill_hist_2d_sys("tW_ch_"+systematic_,   NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_TW,  tree_name, vrule_x, vrule_y, tw_fact_up + mc_selection_up,  tw_fact_dn + mc_selection_down,  excl1, excl2);
+          fill_hist_2d_sys("WQQ_"+systematic_,     NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wqq_fact_up + mc_selection_up+SELECTION_WQQ, wqq_fact_dn + mc_selection_down+SELECTION_WQQ, excl1, excl2);
+          fill_hist_2d_sys("Wc_"+systematic_,      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wc_fact_up + mc_selection_up+SELECTION_Wc, wc_fact_dn + mc_selection_down+SELECTION_Wc,   excl1, excl2);
+          fill_hist_2d_sys("Wb_"+systematic_,      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wb_fact_up + mc_selection_up+SELECTION_Wb, wb_fact_dn + mc_selection_down+SELECTION_Wb,   excl1, excl2);
+          fill_hist_2d_sys("Wother_"+systematic_,  NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wother_fact_up + mc_selection_up+SELECTION_Wother, wother_fact_dn + mc_selection_down+SELECTION_Wother, excl1, excl2);
+          fill_hist_2d_sys("Wlight_"+systematic_,  NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wother_fact_up + mc_selection_up+SELECTION_Wlight, wother_fact_dn + mc_selection_down+SELECTION_Wlight, excl1, excl2);
+          fill_hist_2d_sys("t_ch_"+systematic_,    NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_TC, tree_name, vrule_x, vrule_y, tc_fact_up+mc_selection_up, tc_fact_dn+mc_selection_down, excl1, excl2);
 
       }
 

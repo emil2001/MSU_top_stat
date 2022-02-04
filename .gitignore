@@ -1,0 +1,5 @@
+$ cat .gitignore
+*.[oa]
+*.pyc
+*~
+scripts/CMSSW_10_2_13/

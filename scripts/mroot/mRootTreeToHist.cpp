@@ -412,7 +412,8 @@ namespace mRoot{
     string value_rule_x,               // formula of value to evaluate
     string value_rule_y,               // formula of value to evaluate
     string weight_rule,              // formula of weight to evaluate
-    EventsExcluder * event_excluder = nullptr  // contain list of events per file
+    EventsExcluder * event_excluder_x = nullptr,  // contain list of events per file
+    EventsExcluder * event_excluder_y = nullptr
   ){
     cout << " fill_hist(): process " << hist_name << " with value rule = " << "\"" << value_rule_x << ", " << value_rule_y << "\"" << ", weight rule = " << "\"" << weight_rule << "\"" << endl;
     TH2D * hist = new TH2D(hist_name.c_str(), hist_name.c_str(), nbins, rmin, rmax, nbins, rmin, rmax);
@@ -451,7 +452,8 @@ namespace mRoot{
         return;
       }
 
-      if(event_excluder != nullptr) event_excluder->SetExcludedEventsFile( name );
+      if(event_excluder_x != nullptr) event_excluder_x->SetExcludedEventsFile( name );
+      if(event_excluder_y != nullptr) event_excluder_y->SetExcludedEventsFile( name );
       event_index = -1;
       int number_of_skiped_events = 0;
       int number_of_written_events = 0;
@@ -470,7 +472,7 @@ namespace mRoot{
         }
 
         totl_weight += weight;
-        if(event_excluder != nullptr and event_excluder->IsExcludedMod( event_index )){
+        if((event_excluder_x != nullptr and event_excluder_x->IsExcludedMod( event_index )) or (event_excluder_y != nullptr and event_excluder_y->IsExcludedMod( event_index ))){
           excl_weight += weight;
           number_of_skiped_events++;
           continue;
@@ -488,7 +490,8 @@ namespace mRoot{
       prev_integral += (int)hist->Integral();
 
       cout << "exclude " << number_of_skiped_events << " events, save " << number_of_written_events << " events" << endl;
-      if(event_excluder) event_excluder->PrintReport();
+      if(event_excluder_x) event_excluder_x->PrintReport();
+      if(event_excluder_y) event_excluder_y->PrintReport();
     }
 
     // now we need to reweight hists because of excluded events
@@ -516,11 +519,12 @@ namespace mRoot{
     string value_rule_y,               // formula of value to evaluate
     string weight_rule_up,                // formula of weight to evaluate
     string weight_rule_down,              // formula of weight to evaluate
-    EventsExcluder * event_excluder = nullptr  // contain list of events per file
+    EventsExcluder * event_excluder_x = nullptr,  // contain list of events per file
+    EventsExcluder * event_excluder_y = nullptr
   ){
     // cout << weight_rule_up << " " << weight_rule_down << endl;
-    fill_hist_2d(hist_name+"Up",   nbins, rmin, rmax, out_hists, prefix, input_file_names, tree_name, value_rule_x, value_rule_y, weight_rule_up, event_excluder);
-    fill_hist_2d(hist_name+"Down", nbins, rmin, rmax, out_hists, prefix, input_file_names, tree_name, value_rule_x, value_rule_y, weight_rule_down, event_excluder);
+    fill_hist_2d(hist_name+"Up",   nbins, rmin, rmax, out_hists, prefix, input_file_names, tree_name, value_rule_x, value_rule_y, weight_rule_up, event_excluder_x, event_excluder_y);
+    fill_hist_2d(hist_name+"Down", nbins, rmin, rmax, out_hists, prefix, input_file_names, tree_name, value_rule_x, value_rule_y, weight_rule_down, event_excluder_x, event_excluder_y);
   }
 
 

@@ -464,8 +464,9 @@ class Parameter():
     if self.type == "shape" and self.distr == "delta_distribution" : 
       self.theta_distr  = self.distr
       self.theta_other += [[self.name, self.options["mean"]]]
-
-    if self.type == "mult" and self.distr == "log_normal": 
+      self.cl_other += [ ["mean", self.options["mean"]] ]
+    
+    if self.type == "mult" and self.distr == "log_normal" : 
       self.theta_distr = self.distr
       self.theta_other += [ ["mu",    self.options["mean"]] ]
       self.theta_other += [ ["sigma", gauss_to_theta_lognormal(self.options["width"])] ]
@@ -474,6 +475,7 @@ class Parameter():
       self.cl_other += [ ["width", gauss_to_cl_lognormal(self.options["width"])] ]
       self.cl_phys_range = self.options["range"][1:-1]
       self.cl_other += [ ["range", self.cl_phys_range] ]
+      self.cl_other += [ ["mean", self.options["mean"]] ]
 
     if self.type == "mult" and self.distr == "flat_distribution" : 
       self.theta_distr = self.distr
@@ -487,6 +489,7 @@ class Parameter():
     if self.type == "mult" and self.distr == "delta_distribution" : 
       self.theta_distr  = self.distr
       self.theta_other += [[self.name, self.options["mean"]]]
+      self.cl_other += [ ["mean", self.options["mean"]] ]
     #print self.cl_distr
 
 class DatacardMaster():
@@ -561,7 +564,8 @@ class DatacardMaster():
           self.cl_run_command += par.cl_phys_range + ":"
       self.cl_run_command = self.cl_run_command[:-1] + " "
       self.cl_run_command += "--freezeParameters r "
-      self.cl_run_command += "--redefineSignalPOIs " + ",".join([par.name for par in self.parameters if par.is_flat()])
+      self.cl_run_command += "--redefineSignalPOIs " + ",".join([par.name for par in self.parameters if par.is_flat()]) + " "
+      self.cl_run_command += "--setParameters " + ",".join([ par.name + "=1" for par in self.parameters if par.distr == "log_normal"])
       
       # set list of used uncertanties in parameters - only for log-normal at the moment
       self.cl_par_vs_uncert = " ".join([ par.name + ":" + str(par.options["width"]) for par in self.parameters if par.distr == "log_normal"])
