@@ -70,15 +70,24 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
   // for every draw central and shifted hists
   auto hists_central = get_all_from_folder(file, ".+", "(.+Down$)|(.+Up$)|(.+_weight_.+)|(.+_scale_.+)");
   vector <int> indexes = getNiceColors(50);
-
+  float sum1 = 0., sum2 = 0.;
   for(auto hist : *hists_central){
     TCanvas * canv = new TCanvas(hist->GetName(), hist->GetName(), 640 * 4, 640*3);
 
     canv->Divide(4, 3);
   
     TH1* h = (TH1*)hist;
-
-    // cout << " " << h->GetName() << " ... " << endl;
+    if ((std::string(h->GetName()).find("data") == std::string::npos) && (std::string(h->GetName()).find("QCD") == std::string::npos)) {
+          //cout << "found!" << '\n';
+          //cout << " " << h->GetName() << " ... " << endl;
+          //cout << " " << h->Integral() << " ... " << endl;
+          sum1 += h->Integral();
+    }
+    /*  
+    cout << " " << h->GetName() << " ... " << endl;
+    cout << " " << h->Integral() << " ... " << endl;
+    sum1 += h->Integral();
+    */
     check_template(h);
 
     auto shifts = get_all_from_folder(file, string(hist->GetName()) + "_.+", "("+string(hist->GetName()) + "_alt.*)|(.+_weight_.+)");
@@ -102,7 +111,17 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
       hs->SetLineColor( indexes.at(color_i) );
       hs->SetLineWidth( 2 );
       hists_other.push_back( hs );
-
+      if (std::string(hs->GetName()).find("FacDown") != std::string::npos) {
+          //cout << "found!" << '\n';
+          //cout << " " << hs->GetName() << " ... " << endl;
+          //cout << " " << hs->Integral() << " ... " << endl;
+          sum2 += hs->Integral();
+          if (abs(hs->Integral()- h->Integral()) < 0.01){
+            cout << hs->GetName() << " normalized" << endl;
+          }
+          else cout << hs->GetName() << " not normalized, difference: "<< hs->Integral()- h->Integral()  << endl;
+      }
+     
       lname.size() < string(hs->GetTitle()).size() ? lname = string(hs->GetTitle()) : lname;
 
       TH1D* hist_err = (TH1D*)hs->Clone();
@@ -156,6 +175,7 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
 
     canv->Print(postfix + TString(hist->GetTitle()) + TString(".pdf"));
   }
+  cout << sum1 << "......." << sum2 << endl;
 
 }
 

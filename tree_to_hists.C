@@ -546,9 +546,9 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
       }
       
       std::string dy_fact_up, tt_fact_up, db_fact_up, sc_fact_up, tw_fact_up, wqq_fact_up;
-      std::string wc_fact_up, wb_fact_up, wother_fact_up, wj_fact_up, tc_fact_up, tug_fact_up, tcg_fact_up;
+      std::string wc_fact_up, wb_fact_up, wother_fact_up, wj_fact_up, wlight_fact_up, tc_fact_up, tug_fact_up, tcg_fact_up;
       std::string dy_fact_dn, tt_fact_dn, db_fact_dn, sc_fact_dn, tw_fact_dn, wqq_fact_dn;
-      std::string wc_fact_dn, wb_fact_dn, wother_fact_dn, wj_fact_dn, tc_fact_dn, tug_fact_dn, tcg_fact_dn;
+      std::string wc_fact_dn, wb_fact_dn, wother_fact_dn, wj_fact_dn, wlight_fact_dn, tc_fact_dn, tug_fact_dn, tcg_fact_dn;
       if( systematic == "Ren" or systematic == "Fac" or systematic == "RenFac" or systematic == "pdf" ){
         mc_selection_up   = mc_selection + "/ weight * weight_" + systematic + "Up / weight_gen  * weight";
         mc_selection_down = mc_selection + "/ weight * weight_" + systematic + "Down / weight_gen  * weight";
@@ -568,6 +568,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
         get_renorm_factor(PREFIX_NTUPLES, FILES_WJ, tree_name, sel_centr+SELECTION_Wb, mc_selection_up+SELECTION_Wb, mc_selection_down+SELECTION_Wb, wb_fact_up, wb_fact_dn);
         get_renorm_factor(PREFIX_NTUPLES, FILES_WJ, tree_name, sel_centr+SELECTION_Wother, mc_selection_up+SELECTION_Wother, mc_selection_down+SELECTION_Wother, wother_fact_up, wother_fact_dn);
         get_renorm_factor(PREFIX_NTUPLES, FILES_WJ, tree_name, sel_centr+SELECTION_Wc, mc_selection_up+SELECTION_Wc, mc_selection_down+SELECTION_Wc, wc_fact_up, wc_fact_dn);
+        get_renorm_factor(PREFIX_NTUPLES, FILES_WJ, tree_name, sel_centr+SELECTION_Wlight, mc_selection_up+SELECTION_Wlight, mc_selection_down+SELECTION_Wlight, wlight_fact_up, wlight_fact_dn);
         get_renorm_factor(PREFIX_NTUPLES, FILES_TC, tree_name, sel_centr, mc_selection_up, mc_selection_down, tc_fact_up, tc_fact_dn);
 
         // get_renorm_factor(PREFIX_NTUPLES, FILES_TC, tree_name, sel_centr, mc_selection_up, mc_selection_down, tug_fact_up, tug_fact_dn);
@@ -585,7 +586,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
       fill_hist_sys("Wc_"+systematic_,      NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule, wc_fact_up + mc_selection_up+SELECTION_Wc, wc_fact_dn + mc_selection_down+SELECTION_Wc,   excl);
       fill_hist_sys("Wb_"+systematic_,      NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule, wb_fact_up + mc_selection_up+SELECTION_Wb, wb_fact_dn + mc_selection_down+SELECTION_Wb,   excl);
       fill_hist_sys("Wother_"+systematic_,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule, wother_fact_up + mc_selection_up+SELECTION_Wother, wother_fact_dn + mc_selection_down+SELECTION_Wother, excl);
-      fill_hist_sys("Wlight_"+systematic_,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule, wother_fact_up + mc_selection_up+SELECTION_Wlight, wother_fact_dn + mc_selection_down+SELECTION_Wlight, excl);
+      fill_hist_sys("Wlight_"+systematic_,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule, wlight_fact_up + mc_selection_up+SELECTION_Wlight, wlight_fact_dn + mc_selection_down+SELECTION_Wlight, excl);
       // fill_hist_sys("Wjets_"+systematic_,   NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule, wj_fact_up + mc_selection_up, wj_fact_dn + mc_selection_down, excl);
       fill_hist_sys("t_ch_"+systematic_,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_TC, tree_name, vrule, tc_fact_up+mc_selection_up, tc_fact_dn+mc_selection_down, excl);
       //fill_hist_sys("t_alt_"+systematic_, NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_TC, tree_name, vrule, mc_selection_up, mc_selection_down, excl);
@@ -798,9 +799,9 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
           }
 
           std::string dy_fact_up, tt_fact_up, db_fact_up, sc_fact_up, tw_fact_up, wqq_fact_up;
-          std::string wc_fact_up, wb_fact_up, wother_fact_up, wj_fact_up, tc_fact_up, tug_fact_up, tcg_fact_up;
+          std::string wc_fact_up, wb_fact_up, wother_fact_up, wj_fact_up, wlight_fact_up, tc_fact_up, tug_fact_up, tcg_fact_up;
           std::string dy_fact_dn, tt_fact_dn, db_fact_dn, sc_fact_dn, tw_fact_dn, wqq_fact_dn;
-          std::string wc_fact_dn, wb_fact_dn, wother_fact_dn, wj_fact_dn, tc_fact_dn, tug_fact_dn, tcg_fact_dn;
+          std::string wc_fact_dn, wb_fact_dn, wother_fact_dn, wj_fact_dn, wlight_fact_dn, tc_fact_dn, tug_fact_dn, tcg_fact_dn;
           if( systematic == "Ren" or systematic == "Fac" or systematic == "RenFac" or systematic == "pdf" ) {
               mc_selection_up = mc_selection + "/ weight * weight_" + systematic + "Up / weight_gen  * weight";
               mc_selection_down = mc_selection + "/ weight * weight_" + systematic + "Down / weight_gen  * weight";
@@ -836,6 +837,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
                                 wc_fact_dn);
               get_renorm_factor(PREFIX_NTUPLES, FILES_TC, tree_name, sel_centr, mc_selection_up, mc_selection_down,
                                 tc_fact_up, tc_fact_dn);
+              get_renorm_factor(PREFIX_NTUPLES, FILES_WJ, tree_name, sel_centr+SELECTION_Wlight, mc_selection_up+SELECTION_Wlight, mc_selection_down+SELECTION_Wlight, wlight_fact_up, wlight_fact_dn);                
           }
 //              for(auto systematic : VARIATION_SYS_T2){
 //          string mc_selection_up   = qcd_qut + "* weight_" + systematic + "Up";
@@ -849,7 +851,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
           fill_hist_2d_sys("Wc_"+systematic_,      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wc_fact_up + mc_selection_up+SELECTION_Wc, wc_fact_dn + mc_selection_down+SELECTION_Wc,   excl1, excl2);
           fill_hist_2d_sys("Wb_"+systematic_,      NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wb_fact_up + mc_selection_up+SELECTION_Wb, wb_fact_dn + mc_selection_down+SELECTION_Wb,   excl1, excl2);
           fill_hist_2d_sys("Wother_"+systematic_,  NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wother_fact_up + mc_selection_up+SELECTION_Wother, wother_fact_dn + mc_selection_down+SELECTION_Wother, excl1, excl2);
-          fill_hist_2d_sys("Wlight_"+systematic_,  NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wother_fact_up + mc_selection_up+SELECTION_Wlight, wother_fact_dn + mc_selection_down+SELECTION_Wlight, excl1, excl2);
+          fill_hist_2d_sys("Wlight_"+systematic_,  NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, wlight_fact_up + mc_selection_up+SELECTION_Wlight, wlight_fact_dn + mc_selection_down+SELECTION_Wlight, excl1, excl2);
           fill_hist_2d_sys("t_ch_"+systematic_,    NBINS, rmin, rmax, &hists_to_save_2d, PREFIX_NTUPLES, FILES_TC, tree_name, vrule_x, vrule_y, tc_fact_up+mc_selection_up, tc_fact_dn+mc_selection_down, excl1, excl2);
 
       }

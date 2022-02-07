@@ -420,11 +420,11 @@ make_analyse_theta(){
 
   root -q -b -l "$srcdir/burnInStudy.cpp(\""$mode"_theta.root\", \"$POI\", \"BurnInStudy"$mode"Theta\")"
   root -q -b -l "$srcdir/getPostHists.cpp(\"$input_hists\", \""$mode"_mroot.txt\", \""$mode"_theta.root\")"
-  root -q -b -l "$srcdir/histsPlot.cpp(\"SM_after\",\"postfit_hists/posthists.root\")"
+  root -q -b -l "$srcdir/histsPlot.cpp(\"SM2D_after\",\"postfit_hists/posthists.root\")"
   root -q -b -l "$srcdir/histsChecker.cpp(\"$input_hists\",\"./postfit_hists/posthists.root\", \"SM_comp_\")"
 
-  mkdir -p $workdir/hists
-  mv $workdir/hists2d/SM_before.png $workdir/hists
+  #mkdir -p $workdir/hists
+  #mv $workdir/hists2d/SM_before.png $workdir/hists
   
   root -q -b -l "$srcdir/getTable.cpp(\""$mode"_theta.root\", \"$mode\", $burn_in_frac, \"$hist_path\")"
   pdflatex -interaction=batchmode getTable_$mode.tex
@@ -435,7 +435,7 @@ if [ "$mode" = "sm2d" ] || [ "$mode" = "full" ]; then
   echo "$myname, SM2D  ... "
   if [ "$submode" = "def" ] || [ "$submode" = "all" ]; then
     mkdir -p "$workdir/sm2d/def" && cd "$_"
-    make_analyse_theta "$workdir/hists2d/hists_SM2D.root" $((nbins*nbins)) $niters "$workdir/hists2d/" sm
+    make_analyse_theta "$workdir/hists2d/hists_SM2D.root" $((nbins*nbins)) $niters "$workdir/hists2d/" sm2d
     mv getTable_SM.pdf table_sm_theta_def.pdf
   fi
 
