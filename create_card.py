@@ -171,7 +171,7 @@ def sm2d(args):
   interp_pars += muRmuF_pars
   xsr_pars     = ["Isr", "Fsr"]
   interp_pars += xsr_pars
-  #interp_pars = ["Ren"]
+  #interp_pars = ["Ren", "Fac", "RenFac"]
 
   has_muRmuF, has_xsr = [], []
   has_muRmuF = ["s_ch", "ttbar", "WQQ", "Wb", "Wc", "Wother", "DY"]
@@ -257,6 +257,7 @@ def fcnc_1d(args, coupling_hist_name):
     "Wc",      0.30, '(-2.5,2.0)',
     "Wb",      0.30, '(-2.5,3.5)',
     "Wother",  0.30, '(-3.5,1.5)',
+    "Wlight",  0.30, '(-3.5,1.5)',
     #"Wjets",   0.30, '(-3.5,1.5)',
     "QCD",     1.00, '(-3.0,1.5)',
     coupling_hist_name, 0.0, '(-0.5,0.5)', # 0.10
@@ -267,18 +268,18 @@ def fcnc_1d(args, coupling_hist_name):
 
  # interp_pars  = ["TagRate", "MistagRate" ] # "PUJetIdTag" "PUJetIdMistag"
   #interp_pars = ["JEC_eta0_25"]
-  #interp_pars = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2"]
-  #interp_pars += ["PileUp", "pdf"]
+  interp_pars = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2"]
+  interp_pars += ["PileUp", "pdf"]
   #interp_pars += ["UnclMET", "MER"]# "PUJetIdTag"
   #interp_pars += ["JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf" ]
   #interp_pars += ["JER_eta0_193"] #, "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
   #interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
-  #interp_pars += ["LepId", "LepTrig", "LepIso"]
+  interp_pars += ["LepId", "LepTrig", "LepIso"]
   ren_pars     = ["Fac", "Ren", "RenFac"]
-  interp_pars = ren_pars
+  interp_pars += ren_pars
   xsr_pars     = ["Isr", "Fsr"]
-  #interp_pars += xsr_pars
-  test_pars = ["JER_eta0_193"]
+  interp_pars += xsr_pars
+  #test_pars = ["JER_eta0_193"]
   
   pss = ["_G2GG_muR_", "_G2QQ_muR_", "_Q2QG_muR_", "_X2XG_muR_", "_G2GG_cNS_", "_G2QQ_cNS_", "_Q2QG_cNS_", "_X2XG_cNS_"]
   pss = []
@@ -289,10 +290,10 @@ def fcnc_1d(args, coupling_hist_name):
       interp_pars += [ item + ps ]
       pss_names += [ item + ps ]
 
-  has_red = ["s_ch", "t_ch", "ttbar", "WQQ", "Wb", "Wc", "Wother", "DY"]
+  has_red = ["s_ch", "t_ch", "ttbar", "WQQ", "Wb", "Wc", "Wother", "Wlight", "DY"]
   has_xsr = ["s_ch", "t_ch", "ttbar", "tW_ch"]
   
-  has_red = ["s_ch", "ttbar", "WQQ", "Wb", "Wc", "Wother", "DY"]
+  has_red = ["s_ch", "ttbar", "WQQ", "Wb", "Wc", "Wother", "Wlight", "DY"]
   has_xsr = []
   has_jer = ["ttbar", "t_ch", "s_ch"]
   datacard.parameters_order_list  = [ "sigma_" + name for name, err, rang in zip( chanals_names[::3], chanals_names[1::3], chanals_names[2::3] ) ] 
@@ -358,15 +359,15 @@ def fcnc_1d(args, coupling_hist_name):
 
   return datacard
 
-def FcncTugModel(args):
+def FCNCtug(args):
   datacard = fcnc_1d(args, "fcnc_tug")
-  datacard.name = "FcncTugModel"
+  datacard.name = "FCNCtug"
   print(datacard.name)
   return datacard
 
-def FcncTcgModel(args):
+def FCNCtcg(args):
   datacard = fcnc_1d(args, "fcnc_tcg")
-  datacard.name = "FcncTcgModel"
+  datacard.name = "FCNCtcg"
   print(datacard.name)
   return datacard
 

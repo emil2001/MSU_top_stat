@@ -21,9 +21,9 @@ int histsPlot(string mode, TString inputFileName, float scaleFactor=0.){
     for(auto hist : drawer.stack_hists)
       if( string(hist->GetName()) == "QCD" ) hist->Scale( qcd_f );
   }
-  if (mode == "SM2D_before"){
+  if (mode == "SM2DXbefore"){
   TCanvas * canv = drawer.GetCanvas( mode );
-  mode = "SM_before";
+  mode = "SMXbefore";
   canv->Print( (mode + ".png").c_str() );
   }
   else if(mode == "main_before"){}

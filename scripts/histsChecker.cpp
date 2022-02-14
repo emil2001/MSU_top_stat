@@ -113,8 +113,8 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
       hists_other.push_back( hs );
       if (std::string(hs->GetName()).find("FacDown") != std::string::npos) {
           //cout << "found!" << '\n';
-          //cout << " " << hs->GetName() << " ... " << endl;
-          //cout << " " << hs->Integral() << " ... " << endl;
+          cout << " " << hs->GetName() << " ... " << endl;
+          cout << " " << hs->Integral() << " ... " << endl;
           sum2 += hs->Integral();
           if (abs(hs->Integral()- h->Integral()) < 0.01){
             cout << hs->GetName() << " normalized" << endl;

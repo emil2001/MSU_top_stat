@@ -1,4 +1,3 @@
-
 #ifndef mRootAnalyser_hh
 #define mRootAnalyser_hh 1
 

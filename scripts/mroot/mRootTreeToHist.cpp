@@ -526,6 +526,138 @@ namespace mRoot{
     fill_hist_2d(hist_name+"Up",   nbins, rmin, rmax, out_hists, prefix, input_file_names, tree_name, value_rule_x, value_rule_y, weight_rule_up, event_excluder_x, event_excluder_y);
     fill_hist_2d(hist_name+"Down", nbins, rmin, rmax, out_hists, prefix, input_file_names, tree_name, value_rule_x, value_rule_y, weight_rule_down, event_excluder_x, event_excluder_y);
   }
+  
+  void fill_hist_3d(string hist_name, // input TH1D name
+    int nbins,                 // number of bins
+    double rmin,               // x-axis range min
+    double rmax,               // x-axis range max
+    vector<TH3D*> * out_hists,       // output file
+    string prefix,             // path to input files
+    vector<string> input_file_names, // vector of names of input files
+    string tree_name,                // name of tree
+    string value_rule_x,               // formula of value to evaluate
+    string value_rule_y,               // formula of value to evaluate
+    string value_rule_z,
+    string weight_rule,              // formula of weight to evaluate
+    EventsExcluder * event_excluder_x = nullptr,  // contain list of events per file
+    EventsExcluder * event_excluder_y = nullptr,
+    EventsExcluder * event_excluder_z = nullptr
+  ){
+    cout << " fill_hist(): process " << hist_name << " with value rule = " << "\"" << value_rule_x << ", "<< value_rule_y << ", " << value_rule_z << "\"" << ", weight rule = " << "\"" << weight_rule << "\"" << endl;
+    TH3D * hist = new TH3D(hist_name.c_str(), hist_name.c_str(), nbins, rmin, rmax, nbins, rmin, rmax, nbins, rmin, rmax);
+    hist->Sumw2();
+    int prev_integral = 0;
+
+    double totl_weight = 0;
+    double excl_weight = 0;
+    double weight = 0;
+    int event_index = 0;
+    int print_n_entries = 0;
+
+    for(auto name : input_file_names){
+      TFile * file = TFile::Open( (prefix + name).c_str() );
+      if(!file or file->IsZombie()){
+        cerr << __FUNCTION__ << ": can't open file name \"" << name << "\", skip ... " << endl;
+        continue;
+      }
+
+      TTreeReader * reader = new TTreeReader(tree_name.c_str(), file);
+      if(!reader->GetTree()){
+        cerr << __FUNCTION__ << ": can't get ttree \"" << tree_name << "\" in file \"" << file->GetName() << "\", skip ... " << endl;
+        file->Close();
+        continue;
+      }
+
+      // reader->GetTree()->Print();
+
+      TTreeFormula value_x_f(value_rule_x.c_str(), value_rule_x.c_str(), reader->GetTree());
+      TTreeFormula value_y_f(value_rule_y.c_str(), value_rule_y.c_str(), reader->GetTree());
+      TTreeFormula value_z_f(value_rule_z.c_str(), value_rule_z.c_str(), reader->GetTree());
+      TTreeFormula weight_f(weight_rule.c_str(), weight_rule.c_str(), reader->GetTree());
+
+      if( value_x_f.GetNdim()==0 or value_y_f.GetNdim()==0 or value_z_f.GetNdim()==0 or weight_f.GetNdim()==0){
+        reader->GetTree()->Print();
+        file->Close();
+        return;
+      }
+
+      if(event_excluder_x != nullptr) event_excluder_x->SetExcludedEventsFile( name );
+      if(event_excluder_y != nullptr) event_excluder_y->SetExcludedEventsFile( name );
+      if(event_excluder_y != nullptr) event_excluder_z->SetExcludedEventsFile( name );
+      event_index = -1;
+      int number_of_skiped_events = 0;
+      int number_of_written_events = 0;
+
+      while(reader->Next()){
+        event_index++;
+        weight = weight_f.EvalInstance();
+
+        if(print_n_entries > 0 ){ 
+          msg(value_x_f.EvalInstance(), value_y_f.EvalInstance(), weight);
+          print_n_entries--;
+        };
+        if( TMath::IsNaN(weight) ){
+          msg("Event #", event_index, "is nan");
+          continue;
+        }
+
+        totl_weight += weight;
+        if((event_excluder_x != nullptr and event_excluder_x->IsExcludedMod( event_index )) or (event_excluder_z != nullptr and event_excluder_z->IsExcludedMod( event_index )) or (event_excluder_y != nullptr and event_excluder_y->IsExcludedMod( event_index ))){
+          excl_weight += weight;
+          number_of_skiped_events++;
+          continue;
+        }
+        number_of_written_events++;
+        // if(weight < 0.) cout << weight << endl;
+        hist->Fill(value_x_f.EvalInstance(), value_y_f.EvalInstance(), value_z_f.EvalInstance(), weight);
+      }
+
+      file->Close();
+      if((int)hist->Integral() == prev_integral){
+        cerr << __FUNCTION__ << ": fill no events from file " << name << " to hist " << hist_name << ", continue ... " << endl;
+        continue;
+      }
+      prev_integral += (int)hist->Integral();
+
+      cout << "exclude " << number_of_skiped_events << " events, save " << number_of_written_events << " events" << endl;
+      if(event_excluder_x) event_excluder_x->PrintReport();
+      if(event_excluder_y) event_excluder_y->PrintReport();
+    }
+
+    // now we need to reweight hists because of excluded events
+    cout << totl_weight << " " << totl_weight << endl;
+    if( totl_weight <= excl_weight or totl_weight <= 0 ){
+      cerr << __FUNCTION__ << ": something wrong with events weights, can't rescale " << hist_name << " - " << totl_weight << ", " << excl_weight << ", continue ... " << endl;
+    } else {
+      cout << __FUNCTION__ << ": reweight factor for " << hist_name << " = " << totl_weight / (totl_weight - excl_weight) << endl;
+      hist->Scale( totl_weight / (totl_weight - excl_weight) );
+    }
+    
+    // save, exit
+    out_hists->push_back( hist );
+  }
+
+  void fill_hist_3d_sys(string hist_name, // input TH1D name
+    int nbins,                 // number of bins
+    double rmin,               // x-axis range min
+    double rmax,               // x-axis range max
+    vector<TH3D*>*out_hists,       // output file
+    string prefix,             // path to input files
+    vector<string> input_file_names, // vector of names of input files
+    string tree_name,                // name of tree
+    string value_rule_x,               // formula of value to evaluate
+    string value_rule_y,               // formula of value to evaluate
+    string value_rule_z,
+    string weight_rule_up,                // formula of weight to evaluate
+    string weight_rule_down,              // formula of weight to evaluate
+    EventsExcluder * event_excluder_x = nullptr,  // contain list of events per file
+    EventsExcluder * event_excluder_y = nullptr,
+    EventsExcluder * event_excluder_z = nullptr
+  ){
+    // cout << weight_rule_up << " " << weight_rule_down << endl;
+    fill_hist_3d(hist_name+"Up",   nbins, rmin, rmax, out_hists, prefix, input_file_names, tree_name, value_rule_x, value_rule_y, value_rule_z, weight_rule_up, event_excluder_x, event_excluder_y, event_excluder_z);
+    fill_hist_3d(hist_name+"Down", nbins, rmin, rmax, out_hists, prefix, input_file_names, tree_name, value_rule_x, value_rule_y, value_rule_z, weight_rule_down, event_excluder_x, event_excluder_y, event_excluder_z);
+  }
 
 
 
