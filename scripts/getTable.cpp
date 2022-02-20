@@ -259,8 +259,8 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
     
 //    ReplaceStringInPlace(after_name, string("_"), string("X"));
     
-    if (postfix == "sm") {postfix1 = "SM";}
-    else if (postfix == "sm2d") {postfix1 = "SM2D";}
+    //if (postfix == "sm") {postfix1 = "SM";}
+    if (postfix == "sm2d") {postfix1 = "SM2D";}
     else if (postfix == "FCNC_tcg") {postfix1 = "FCNCXtcg";}
     else if (postfix == "FCNC_tug") {postfix1 = "FCNCXtug";}
     else {postfix1 = postfix;}
@@ -269,7 +269,7 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
     
     cmd = "mv " + postfix + "Xafter.png " + postfix1 + "Xafter.png";   
     cout << gSystem->Exec(cmd) << endl;
-    cmd = "cp " + hists_path + "/" + postfix + "Xbefore.png " + postfix1 + "Xbefore.png";   
+    cmd = "cp " + hists_path + postfix + "Xbefore.png " + postfix1 + "Xbefore.png";   
     cout << gSystem->Exec(cmd) << endl;
     out_string += "\n \\includegraphics[width=0.9\\linewidth]{" + before_name + "} \n";
     cout << after_name << endl;

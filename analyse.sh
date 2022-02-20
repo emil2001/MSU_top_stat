@@ -4,10 +4,10 @@
 
 nbins=20
 niters=500000 #500000
-release="2021_UL17_JetVeto" # "2020_novenber_NoIsoCut"
+release="2022_UL18_JetVeto" # "2020_novenber_NoIsoCut"
 burn_in_frac=0.1
 nchains=3
-QCD_norm=0.37
+QCD_norm=0.3
 QCD_cut=0.5
 
 mode=$1
@@ -121,10 +121,14 @@ if [ "$mode" = "qcd" ] || [ "$mode" = "full" ] || [ "$mode" = "def_run" ]; then
   echo "$myname, QCD norm factors = $QCD_low $QCD_norm $QCD_upp ..."
 
   root -q -b -l "$srcdir/histsPlot.cpp(\"QCD_after\",\"hists_QCD.root\","$QCD_norm")"
+  
+  IFS=" " read QCD_low QCD_norm QCD_upp <<< "`cat $workdir/qcd/getQuantiles_temp.txt`"
+  echo "$myname, QCD norm factors = $QCD_low $QCD_norm $QCD_upp ..."
+
 else echo "$myname, skip qcd normalization calcullations"; fi
 
-IFS=" " read QCD_low QCD_norm QCD_upp <<< "`cat $workdir/qcd/getQuantiles_temp.txt`"
-echo "$myname, QCD norm factors = $QCD_low $QCD_norm $QCD_upp ..."
+#IFS=" " read QCD_low QCD_norm QCD_upp <<< "`cat $workdir/qcd/getQuantiles_temp.txt`"
+#echo "$myname, QCD norm factors = $QCD_low $QCD_norm $QCD_upp ..."
 
 #---------- 3. Create histogramms file
 make_hists(){
@@ -248,14 +252,14 @@ if [ "$mode" = "sm" ] || [ "$mode" = "full" ] || [ "$mode" = "def_run" -a "$subm
   echo "$myname, SM ... "
   if [ "$submode" = "def" ] || [ "$submode" = "all" ] || [ "$mode" = "def_run" ]; then
     mkdir -p "$workdir/sm/def" && cd "$_"
-    make_analyse_theta "$workdir/hists/hists_SM.root" $nbins $niters "$workdir/hists/" sm "$package"
+    make_analyse_theta "$workdir/hists/hists_SM.root" $nbins $niters "$workdir/hists/" SM "$package"
     mv getTable_SM.pdf table_sm_theta_def.pdf
   fi
 
   if [ "$submode" = "qcd" ] || [ "$submode" = "all" ]; then
     for QCD_qut in "0.50" "0.55" "0.60" "0.65" "0.70" "0.75" "0.80" "0.85" "0.90" "0.95"; do
       mkdir -p "$workdir/sm/QCD_"$QCD_qut && cd "$_"
-      make_analyse_theta "$workdir/hists/QCD_"$QCD_qut"/hists_SM.root" $nbins $niters "$workdir/hists/" sm "$package"
+      make_analyse_theta "$workdir/hists/QCD_"$QCD_qut"/hists_SM.root" $nbins $niters "$workdir/hists/" SM "$package"
       mv "$workdir/sm/QCD_"$QCD_qut"/sm_theta.root" "$workdir/sm/QCD_"$QCD_qut".root"
     done
     root -q -b -l "$srcdir/plotResultsForDifferentConditions.cpp(\"$workdir/sm/\", \"QCD_.+\.root\", \"sigma_t_ch\", \"t_ch_vs_QCD_cut\")"
@@ -266,7 +270,7 @@ if [ "$mode" = "sm" ] || [ "$mode" = "full" ] || [ "$mode" = "def_run" -a "$subm
     for nbins_alt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do 
     #1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22
       mkdir -p "$workdir/sm/bins_"$nbins_alt && cd "$_"
-      make_analyse_theta "$workdir/hists/bins_"$nbins_alt"/hists_SM.root" $nbins_alt $niters "$workdir/hists/" sm "$package"
+      make_analyse_theta "$workdir/hists/bins_"$nbins_alt"/hists_SM.root" $nbins_alt $niters "$workdir/hists/" SM "$package"
       mv "$workdir/sm/bins_"$nbins_alt"/sm_theta.root" "$workdir/sm/bins_"$nbins_alt".root"
     done
     root -q -b -l "$srcdir/plotResultsForDifferentConditions.cpp(\"$workdir/sm/\", \"bins_.+\.root\", \"sigma_t_ch\", \"t_ch_vs_nbins\")"
@@ -276,7 +280,7 @@ if [ "$mode" = "sm" ] || [ "$mode" = "full" ] || [ "$mode" = "def_run" -a "$subm
   if [ "$submode" = "iters" ] || [ "$submode" = "all" ]; then
     for iters in 50000 100000 200000 300000 400000 500000 750000 1000000 1500000 2000000; do
       mkdir -p "$workdir/sm/iters_"$iters && cd "$_"
-      make_analyse_theta "$workdir/hists/hists_SM.root" $nbins $iters "$workdir/hists/" sm "$package"
+      make_analyse_theta "$workdir/hists/hists_SM.root" $nbins $iters "$workdir/hists/" SM "$package"
       mv "$workdir/sm/iters_"$iters"/sm_theta.root" "$workdir/sm/iters_"$iters".root"
     done
     root -q -b -l "$srcdir/plotResultsForDifferentConditions.cpp(\"$workdir/sm/\", \"iters_.+\.root\", \"sigma_t_ch\", \"t_ch_vs_MCMC_iters\")"
@@ -363,11 +367,13 @@ if [ "$mode" = "qcd2d" ] || [ "$mode" = "full" ]; then
   IFS=" " read QCD_low QCD_norm QCD_upp <<< "`cat getQuantiles_temp.txt`"
   echo "$myname, QCD norm factors = $QCD_low $QCD_norm $QCD_upp ..."
 
+
   root -q -b -l "$srcdir/histsPlot.cpp(\"QCD_after\",\"hists_QCD.root\","$QCD_norm")"
+  IFS=" " read QCD_low QCD_norm QCD_upp <<< "`cat $workdir/qcd/getQuantiles_temp.txt`"
+  echo "$myname, QCD norm factors = $QCD_low $QCD_norm $QCD_upp ..."
+
 else echo "$myname, skip qcd normalization calcullations"; fi
 
-#IFS=" " read QCD_low QCD_norm QCD_upp <<< "`cat $workdir/qcd/getQuantiles_temp.txt`"
-#echo "$myname, QCD norm factors = $QCD_low $QCD_norm $QCD_upp ..."
 
 #---------- 6b. Create histogramms file
 make_hists(){
@@ -377,7 +383,7 @@ make_hists(){
   mode=$4
 
   root -q -b -l "$cfgdir/tree_to_hists.C(\"$mode\", \""$release" SIG\", \"hists_"$mode".root\", $nbins_, $QCD_norm_, $qcd_cut_)"
-  root -q -b -l "$srcdir/histsPlot.cpp(\""$mode"_before\",\"hists_"$mode".root\")"
+  root -q -b -l "$srcdir/histsPlot.cpp(\""$mode"Xbefore\",\"hists_"$mode".root\")"
   root -q -b -l "$srcdir/histsChecker.cpp(\"hists_"$mode".root\",\""$mode"_\", \"\", 1)"
   root -q -b -l "$srcdir/histsChecker.cpp(\"hists_"$mode".root\",\""$mode"DIFF_\", \"diff\", 1)"
   root -q -b -l "$srcdir/histsChecker.cpp(\"hists_"$mode".root\",\""$mode"DIFFPERCENT_\", \"diff percent\", 1)"
@@ -388,7 +394,7 @@ if [ "$mode" = "hists2d" ] || [ "$mode" = "full" ]; then
   echo "$myname, create histogramms file ... "
   if [ "$submode" = "sm" ] || [ "$submode" = "sm_all" ] || [ "$submode" = "all" ]; then
     mkdir -p "$workdir/hists2d" && cd "$_"
-    make_hists $nbins $QCD_norm 0.70 SM2D
+    make_hists $nbins $QCD_norm $QCD_cut SM2D
   fi
   if [ "$submode" = "sm_qcd" ] || [ "$submode" = "sm_all" ]  || [ "$submode" = "all" ]; then
     for QCD_qut in "0.50" "0.55" "0.60" "0.65" "0.70" "0.75" "0.80" "0.85" "0.90" "0.95"; do
@@ -399,7 +405,7 @@ if [ "$mode" = "hists2d" ] || [ "$mode" = "full" ]; then
   if [ "$submode" = "sm_bins" ] || [ "$submode" = "sm_all" ]  || [ "$submode" = "all" ]; then
     for nbins_alt in 1 2 3 4 5 6 7 8 9 10; do
       mkdir -p "$workdir/hists2d/bins_"$nbins_alt && cd "$_"
-      make_hists $nbins_alt $QCD_norm 0.70 SM2D
+      make_hists $nbins_alt $QCD_norm $QCD_cut SM2D
     done
   fi
 
@@ -421,7 +427,7 @@ make_analyse_theta(){
 
   root -q -b -l "$srcdir/burnInStudy.cpp(\""$mode"_theta.root\", \"$POI\", \"BurnInStudy"$mode"Theta\")"
   root -q -b -l "$srcdir/getPostHists.cpp(\"$input_hists\", \""$mode"_mroot.txt\", \""$mode"_theta.root\")"
-  root -q -b -l "$srcdir/histsPlot.cpp(\"SM2D_after\",\"postfit_hists/posthists.root\")"
+  root -q -b -l "$srcdir/histsPlot.cpp(\"SM2DXafter\",\"postfit_hists/posthists.root\")"
   root -q -b -l "$srcdir/histsChecker.cpp(\"$input_hists\",\"./postfit_hists/posthists.root\", \"SM_comp_\")"
 
   #mkdir -p $workdir/hists
@@ -443,7 +449,7 @@ if [ "$mode" = "sm2d" ] || [ "$mode" = "full" ]; then
   if [ "$submode" = "qcd" ] || [ "$submode" = "all" ]; then
     for QCD_qut in "0.50" "0.55" "0.60" "0.65" "0.70" "0.75" "0.80" "0.85" "0.90" "0.95"; do
       mkdir -p "$workdir/sm2d/QCD_"$QCD_qut && cd "$_"
-      make_analyse_theta "$workdir/hists2d/QCD_"$QCD_qut"/hists_SM2D.root" $((nbins*nbins)) $niters "$workdir/hists2d/" sm
+      make_analyse_theta "$workdir/hists2d/QCD_"$QCD_qut"/hists_SM2D.root" $((nbins*nbins)) $niters "$workdir/hists2d/" sm2d
       mv "$workdir/sm2d/QCD_"$QCD_qut"/sm_theta.root" "$workdir/sm2d/QCD_"$QCD_qut".root"
     done
     root -q -b -l "$srcdir/plotResultsForDifferentConditions.cpp(\"$workdir/sm2d/\", \"QCD_.+\.root\", \"sigma_t_ch\", \"t_ch_vs_QCD_cut\")"
@@ -453,7 +459,7 @@ if [ "$mode" = "sm2d" ] || [ "$mode" = "full" ]; then
   if [ "$submode" = "bins" ] || [ "$submode" = "all" ]; then
     for nbins_alt in 1 2 3 4 5 6 7 8 9 10; do
       mkdir -p "$workdir/sm2d/bins_"$nbins_alt && cd "$_"
-      make_analyse_theta "$workdir/hists2d/bins_"$nbins_alt"/hists_SM2D.root" $((nbins_alt*nbins_alt)) $niters "$workdir/hists2d/" sm
+      make_analyse_theta "$workdir/hists2d/bins_"$nbins_alt"/hists_SM2D.root" $((nbins_alt*nbins_alt)) $niters "$workdir/hists2d/" sm2d
       mv "$workdir/sm2d/bins_"$nbins_alt"/sm_theta.root" "$workdir/sm2d/bins_"$nbins_alt".root"
     done
     root -q -b -l "$srcdir/plotResultsForDifferentConditions.cpp(\"$workdir/sm2d/\", \"bins_.+\.root\", \"sigma_t_ch\", \"t_ch_vs_nbins\")"
@@ -463,7 +469,7 @@ if [ "$mode" = "sm2d" ] || [ "$mode" = "full" ]; then
   if [ "$submode" = "iters" ] || [ "$submode" = "all" ]; then
     for iters in 50000 100000 200000 300000 400000 500000 750000 1000000 1500000 2000000; do
       mkdir -p "$workdir/sm2d/iters_"$iters && cd "$_"
-      make_analyse_theta "$workdir/hists2d/hists_SM2D.root" $((nbins*nbins)) $iters "$workdir/hists2d/" sm
+      make_analyse_theta "$workdir/hists2d/hists_SM2D.root" $((nbins*nbins)) $iters "$workdir/hists2d/" sm2d
       mv "$workdir/sm2d/iters_"$iters"/sm_theta.root" "$workdir/sm2d/iters_"$iters".root"
     done
     root -q -b -l "$srcdir/plotResultsForDifferentConditions.cpp(\"$workdir/sm2d/\", \"iters_.+\.root\", \"sigma_t_ch\", \"t_ch_vs_MCMC_iters\")"

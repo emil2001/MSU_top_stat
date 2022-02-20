@@ -272,138 +272,15 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     use_comphep = false;
     USE_OTHER_SYS = true;
   }
-  else if( RELEASE=="2021_UL17_JetID_LL_allchan" ){ 
-    string ppath = " /scratch2/pvolkov/samples/UL17_JetId/" ;
-    PATH_PREFIX     = ppath + "" ;
-    PATH_SUSTEMATIC = ppath + "" ;
-    QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/qcd_tchan_UL18_JetID_trainEvents.txt";
-    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_1d_UL17_JetID_trainEvents.txt";
-    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_1d_UL17_JetID_trainEvents.txt";
-    NN_QCD = "DNN_qcd_allchan";
-    NN_train_events = "/afs/cern.ch/user/a/azaboren/work/public/andrew/Networks/dnn/bnn-hep/test/bnn_sm_UL17_dr08_low_level_trainEvents.txt";
-    if(MODE == "SM") NN_MC  = "DNN_sm_low_level_UL17_JetID";
-    use_comphep = false;
-
-    FILES_TC     = {"t-channel-tbar_4f.root", "t-channel-top_4f.root"};
-    FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
-  }
-  else if ( RELEASE=="2021_UL18_JetID"){
-    string ppath = " /scratch2/azaboren/andrew/UL18_JetID/tuples_merged/" ;
-    PATH_PREFIX     = ppath + "" ;
-    PATH_SUSTEMATIC = ppath + "" ;
-
-    NN_QCD = "DNN_qcd_tchan";
-    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/bnn_tcg_UL18_JetID_trainEvents.txt";
-    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/bnn_tug_UL18_JetID_trainEvents.txt";
-    NN_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/bnn_sm_UL18_low_level_trainEvents.txt";
-    QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/qcd_tchah_UL18_JetID_trainEvents.txt";
-    if(MODE == "SM") NN_MC  = "DNN_sm_low_level";
-    NN_MC_tug = "DNN_fcnc_tug_UL18_JetID";
-    NN_MC_tcg = "DNN_fcnc_tcg_UL18_JetID";
-    use_comphep = false;
-    
-    FILES_TC     = {"t-channel-tbar_4f.root", "t-channel-top_4f.root"};
-    FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
-  }
-  else if ( RELEASE=="2021_UL18_JetID_super"){
-    string ppath = " /scratch2/azaboren/andrew/UL18_JetID/tuples_merged/" ;
-    PATH_PREFIX     = ppath + "" ;
-    PATH_SUSTEMATIC = ppath + "" ;
-
-    NN_QCD = "DNN_qcd_tchan";
-    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/tcg_3D_new_trainEvents.txt";
-    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/tug_3D_new_trainEvents.txt";
-    NN_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/bnn_sm_UL18_super_trainEvents.txt";
-    QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL18_JetID/qcd_tchah_UL18_JetID_trainEvents.txt";
-    if(MODE == "SM") NN_MC  = "DNN_sm_super_UL18_JetID";
-    NN_MC_tug = "DNN_fcnc_tug_new";
-    NN_MC_tcg = "DNN_fcnc_tcg_new";
-    use_comphep = false;
-    
-    FILES_TC     = {"t-channel-tbar_4f.root", "t-channel-top_4f.root"};
-    FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
-  }
-  
-
-  else if ( RELEASE=="2021_UL17_summer20_71vars"){
-    string ppath = "/scratch3/azaboren/andrew/samples/UL17_Summer20/tuples_merged/" ;
-    PATH_PREFIX     = ppath + "" ;
-    PATH_SUSTEMATIC = ppath + "" ;
-    NN_QCD = "qcd_tchan_fcnc_71vars_weighted";
-    NN_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20/bnn_sm_UL17_Summer20_low_level_qcd_71vars_trainEvents.txt";
-    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_UL17_JetID_trainEvents.txt";
-    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_UL17_JetID_trainEvents.txt";
-    QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20/qcd_tchah_fcnc_UL17_71vars_weighted_trainEvents.txt";
-    if(MODE == "SM") NN_MC  = "DNN_sm_LL_qcd_71vars";
-    use_comphep = false;
-    NN_MC_tug = "DNN_fcnc_tug_UL17_JetID";
-    NN_MC_tcg = "DNN_fcnc_tcg_UL17_JetID";
-    
-    FILES_TC     = {"t-channel_ch.root"};
-    FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
-  }
-  else if ( RELEASE=="2021_UL17_summer20_25vars"){
-    string ppath = "/scratch3/azaboren/andrew/samples/UL17_Summer20/tuples_merged/" ;
-    PATH_PREFIX     = ppath + "" ;
-    PATH_SUSTEMATIC = ppath + "" ;
-    NN_QCD = "qcd_tchan_fcnc_25vars_weighted";
-    NN_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20/bnn_sm_UL17_Summer20_low_level_qcd_25vars_trainEvents.txt";
-    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_UL17_JetID_trainEvents.txt";
-    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_UL17_JetID_trainEvents.txt";
-    QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20/qcd_tchah_fcnc_UL17_25vars_weighted_trainEvents.txt";
-    if(MODE == "SM") NN_MC  = "DNN_sm_LL_qcd_25vars";
-    use_comphep = false;
-    NN_MC_tug = "DNN_fcnc_tug_UL17_JetID";
-    NN_MC_tcg = "DNN_fcnc_tcg_UL17_JetID";
-    //FILES_DATA = {"t-channel_ch.root", "s-channel.root"};
-    FILES_TC     = {"t-channel_ch.root"};
-    FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
-  }
-
-  else if ( RELEASE=="2021_UL17_summer20_5vars"){
-    string ppath = "/scratch3/azaboren/andrew/samples/UL17_Summer20_Full_Sys/tuples_merged/" ;
-    PATH_PREFIX     = ppath + "" ;
-    PATH_SUSTEMATIC = ppath + "" ;
-    NN_QCD = "qcd_tchan_fcnc_5vars_weighted";
-    NN_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20_Full_Sys/bnn_sm_UL17_Summer20_low_level_qcd_5vars_trainEvents.txt";
-    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_UL17_JetID_trainEvents.txt";
-    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_UL17_JetID_trainEvents.txt";
-    QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20_Full_Sys/qcd_tchah_fcnc_UL17_5vars_weighted_trainEvents.txt";
-    if(MODE == "SM") NN_MC  = "DNN_sm_low_level_qcd_5vars";
-    use_comphep = false;
-    NN_MC_tug = "DNN_fcnc_tug_UL17_JetID";
-    NN_MC_tcg = "DNN_fcnc_tcg_UL17_JetID";
-    
-    FILES_TC     = {"t-channel_ch.root"};
-    FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
-  }
-  
-  else if ( RELEASE=="2021_UL17_summer20_25vars_MtW"){
-    string ppath = "/scratch3/azaboren/andrew/samples/UL17_Summer20/tuples_merged/" ;
-    PATH_PREFIX     = ppath + "" ;
-    PATH_SUSTEMATIC = ppath + "" ;
-    NN_QCD = "qcd_tchan_fcnc_25vars_weighted";
-    NN_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20/bnn_sm_UL17_Summer20_low_level_qcd_25vars_trainEvents.txt";
-    NN_train_events_tcg = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tcg_UL17_JetID_trainEvents.txt";
-    NN_train_events_tug = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_JetID/bnn_tug_UL17_JetID_trainEvents.txt";
-    QCD_train_events = "/afs/cern.ch/work/a/azaboren/public/andrew/Networks/dnn/bnn-hep/UL17_Summer20/qcd_tchah_fcnc_UL17_25vars_weighted_trainEvents.txt";
-    if(MODE == "SM") NN_MC  = "MtW";
-    use_comphep = false;
-    NN_MC_tug = "DNN_fcnc_tug_UL17_JetID";
-    NN_MC_tcg = "DNN_fcnc_tcg_UL17_JetID";
-    
-    FILES_TC     = {"t-channel_ch.root"};
-    FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
-  }
   else if ( RELEASE=="2021_UL17_JetVeto"){
     string ppath = "/scratch3/azaboren/andrew/samples/jet_veto/" ;
     PATH_PREFIX     = ppath + "" ;
     PATH_SUSTEMATIC = ppath + "" ;
-    NN_QCD = "";
+    NN_QCD = "qcd_allch_jet_veto_13_vars_QCD_MC_wide";
     NN_train_events = "/scratch3/azaboren/andrew/train_events/bnn_sm_jet_veto_low_level_met_mtw_cut_trainEvents.txt";
     NN_train_events_tcg = "/scratch3/azaboren/andrew/train_events/bnn_tcg_jet_veto_trainEvents.txt";
     NN_train_events_tug = "/scratch3/azaboren/andrew/train_events/bnn_tug_jet_veto_trainEvents.txt";
-    //QCD_train_events = "/scratch3/azaboren/andrew/train_events";
+    QCD_train_events = "/scratch3/azaboren/andrew/train_events/qcd_allch_jet_veto_13_vars_QCD_MC_wide_trainEvents.txt";
     if(MODE == "SM") NN_MC  = "sm_jet_veto_low_level_met_mtw_cut";
     NN_2D_x = "sm_jet_veto_ttbar_met_mtw_cut";
     NN_2D_y = "sm_jet_veto_wjets_met_mtw_cut";
@@ -418,6 +295,30 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     FILES_QCD_DATA = {"QCD_MC_wide.root"};
     CENTRAL_FOLDER = "";
   }
+  else if ( RELEASE=="2022_UL18_JetVeto"){
+    string ppath = "/scratch3/azaboren/andrew/samples/UL18_jetveto/" ;
+    PATH_PREFIX     = ppath + "" ;
+    PATH_SUSTEMATIC = ppath + "" ;
+    NN_QCD = "qcd_allch_UL18_jet_veto_13_vars";
+    if(MODE == "SM") NN_MC  = "bnn_sm_super_55vars_UL18_jet_veto";
+    NN_2D_x = "bnn_sm_ttbar_UL18_jet_veto";
+    NN_2D_y = "bnn_sm_wjets_UL18_jet_veto";
+    NN_train_events_2D_x = "/scratch3/azaboren/andrew/train_events/UL18_jetveto" + NN_2D_x + "_trainEvents.txt";
+    NN_train_events_2D_y = "/scratch3/azaboren/andrew/train_events/UL18_jetveto" + NN_2D_y + "_trainEvents.txt";
+    use_comphep = false;
+    NN_MC_tug = "bnn_tug_jet_veto_met_mtw_cut";
+    NN_MC_tcg = "bnn_tcg_jet_veto_met_mtw_cut";
+    NN_train_events = "/scratch3/azaboren/andrew/train_events/UL18_jetveto/" + NN_MC + "_trainEvents.txt";
+    NN_train_events_tcg = "/scratch3/azaboren/andrew/train_events/UL18_jetveto/" + NN_MC_tug + "_trainEvents.txt";
+    NN_train_events_tug = "/scratch3/azaboren/andrew/train_events/UL18_jetveto/" + NN_MC_tcg + "_trainEvents.txt";
+    QCD_train_events = "/scratch3/azaboren/andrew/train_events/UL18_jetveto/" + NN_QCD + "_trainEvents.txt";
+    
+    FILES_TC     = {"t-channel-tbar_4f.root", "t-channel-top_4f.root"};
+    FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
+    FILES_QCD_DATA = {"QCD_MC_wideIso.root"};
+    CENTRAL_FOLDER = "";
+  }
+
     
   else{
     cerr << "Unknown RELEASE, please provide correct value, exit ..." << endl;
@@ -588,7 +489,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
       fill_hist_sys("Wother_"+systematic_,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule, wother_fact_up + mc_selection_up+SELECTION_Wother, wother_fact_dn + mc_selection_down+SELECTION_Wother, excl);
       fill_hist_sys("Wlight_"+systematic_,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule, wlight_fact_up + mc_selection_up+SELECTION_Wlight, wlight_fact_dn + mc_selection_down+SELECTION_Wlight, excl);
       // fill_hist_sys("Wjets_"+systematic_,   NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule, wj_fact_up + mc_selection_up, wj_fact_dn + mc_selection_down, excl);
-      fill_hist_sys("t_ch_"+systematic_,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_TC, tree_name, vrule, tc_fact_up+mc_selection_up, tc_fact_dn+mc_selection_down, excl);
+      fill_hist_sys("t_ch_"+systematic_,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_TC,  tree_name, vrule, tc_fact_up+mc_selection_up, tc_fact_dn+mc_selection_down, excl);
       //fill_hist_sys("t_alt_"+systematic_, NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_TC, tree_name, vrule, mc_selection_up, mc_selection_down, excl);
       if(MODE == "FCNCtug") fill_hist_sys("fcnc_tug_"+systematic_,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule, tug_fact_up + mc_selection_up, tug_fact_dn + mc_selection_down,        excl);
       if(MODE == "FCNCtcg") fill_hist_sys("fcnc_tcg_"+systematic_,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TCG,  tree_name, vrule, tcg_fact_up + mc_selection_up, tcg_fact_dn + mc_selection_down,        excl);
@@ -726,7 +627,8 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
 
   else if(MODE == "SM2D"){
       //string qcd_qut   = "(" + NN_QCD + " > " + std::to_string( QCD_qut ) + ")";
-      string qcd_qut = "(MtW > 40) * (MET > 30)";
+      string qcd_qut   = "(" + NN_QCD + " > " + std::to_string( QCD_qut ) + ") * (MET > 20)";
+      //string qcd_qut = "(MtW > 40) * (MET > 30)";
 //      string mc_selection   = qcd_qut + "* weight";
 //      string qcd_selection  = qcd_qut + "* weight_rescale2";
       string data_selection   = qcd_qut + " * (N_BJ==1)";

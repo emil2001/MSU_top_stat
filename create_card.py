@@ -35,8 +35,8 @@ def qcd(args):
   datacard.mcmc_iters  = args.niters
   return datacard
 
-def sm(args):
-  datacard = atd.DatacardMaster("sm", args.nbins)
+def SM(args):
+  datacard = atd.DatacardMaster("SM", args.nbins)
 
   chanals_names = [
     "t_ch",    31./207., '(-0.5,0.5)', # 0.10
