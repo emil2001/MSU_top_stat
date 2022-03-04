@@ -69,8 +69,8 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
   // draw all hists
   // for every draw central and shifted hists
   auto hists_central = get_all_from_folder(file, ".+", "(.+Down$)|(.+Up$)|(.+_weight_.+)|(.+_scale_.+)");
-  vector <int> indexes = getNiceColors(150);
- // PrintNiceColors(10);  
+  vector <int> indexes = getNiceColors(50);
+  PrintNiceColors(10);  
   float sum1 = 0., sum2 = 0.;
   for(auto hist : *hists_central){
     TCanvas * canv = new TCanvas(hist->GetName(), hist->GetName(), 640 * 4, 640*3);

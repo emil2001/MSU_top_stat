@@ -70,15 +70,13 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
   // for every draw central and shifted hists
   auto hists_central = get_all_from_folder(file, ".+", "(.+Down$)|(.+Up$)|(.+_weight_.+)|(.+_scale_.+)");
   vector <int> indexes = getNiceColors(150);
- // PrintNiceColors(10);  
   float sum1 = 0., sum2 = 0.;
   for(auto hist : *hists_central){
     TCanvas * canv = new TCanvas(hist->GetName(), hist->GetName(), 640 * 4, 640*3);
 
     canv->Divide(4, 3);
-    
+  
     TH1* h = (TH1*)hist;
-    cout << " " << h->GetName() << " ... " << endl;
     if ((std::string(h->GetName()).find("data") == std::string::npos) && (std::string(h->GetName()).find("QCD") == std::string::npos)) {
           //cout << "found!" << '\n';
           //cout << " " << h->GetName() << " ... " << endl;
@@ -109,13 +107,10 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
     vector<TH1*> hists_other;
     for(auto shift : *shifts){
       TH1* hs = (TH1*)shift;
-         
       check_template(hs);
       hs->SetLineColor( indexes.at(color_i) );
-      //cout << color_i << endl;   
       hs->SetLineWidth( 2 );
       hists_other.push_back( hs );
-      
       if (std::string(hs->GetName()).find("FacDown") != std::string::npos) {
           //cout << "found!" << '\n';
           cout << " " << hs->GetName() << " ... " << endl;
@@ -151,7 +146,6 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
       }
       herrs.push_back(hist_err);
       skipp_add: ;
-      //cout << " " << hs->GetName() << " ... " << index << endl;  
     }
 
     // TH1D* central, const std::vector<TH1D*> & others
@@ -224,7 +218,7 @@ void histsChecker(TString inputFileName, TString postfix, int mode){
   // draw all hists
   // for every draw central and shifted hists
   auto hists_central = get_all_from_folder(file, ".+", "(.+Down)|(.+Up)|(.+_weight_.+)");
-  vector <int> indexes = getNiceColors(150);
+  vector <int> indexes = getNiceColors(50);
 
   for(auto hist : *hists_central){
     TCanvas * canv = new TCanvas(hist->GetName(), hist->GetName(), 640, 640);

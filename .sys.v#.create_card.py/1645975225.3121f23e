@@ -62,22 +62,19 @@ def SM(args):
   interp_pars  = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2" ]
   #interp_pars += ["PileUp", "pdf"]
   interp_pars += ["PileUp"]
-  interp_pars += ["pdf_Diboson", "pdf_DY", "pdf_Wjets", "pdf_t_ch", "pdf_s_ch", "pdf_tW_ch", "pdf_ttbar-sl", "pdf_ttbar-dl"]
-  interp_pars += ["UnclMET", "MER"] # PUJetIdTag
-  interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
-  interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
+  interp_pars += ["pdf"]
+  #interp_pars += ["UnclMET", "MER"] # PUJetIdTag
+  #interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
+  #interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
-  #muRmuF_pars  = ["Fac", "Ren", "RenFac"]
-  muRmuF_pars = ["Ren_Diboson", "Ren_DY", "Ren_Wjets", "Ren_t_ch", "Ren_s_ch", "Ren_tW_ch", "Ren_ttbar-sl", "Ren_ttbar-dl"]
-  muRmuF_pars += ["Fac_Diboson", "Fac_DY", "Fac_Wjets", "Fac_t_ch", "Fac_s_ch", "Fac_tW_ch", "Fac_ttbar-sl", "Fac_ttbar-dl"]
-  muRmuF_pars += ["RenFac_Diboson", "RenFac_DY", "RenFac_Wjets", "RenFac_t_ch", "RenFac_s_ch", "RenFac_tW_ch", "RenFac_ttbar-sl", "RenFac_ttbar-dl"]
+  muRmuF_pars  = ["Fac", "Ren", "RenFac"]
   interp_pars += muRmuF_pars
   xsr_pars     = ["Isr", "Fsr"]
   interp_pars += xsr_pars
   #interp_pars = ["Ren"]
 
   has_muRmuF, has_xsr = [], []
-  has_muRmuF = ["s_ch", "ttbar-sl", "ttbar-dl", "WQQ", "Wb", "Wc", "Wother", "Wlight", "DY", "t_ch"]
+  has_muRmuF = ["s_ch", "ttbar-sl", "ttbar-dl", "WQQ", "Wb", "Wc", "Wother", "DY"]
   has_xsr    = ["ttbar", "tW_ch"]
 
   pss = ["_G2GG_muR_", "_G2QQ_muR_", "_Q2QG_muR_", "_X2XG_muR_", "_G2GG_cNS_", "_G2QQ_cNS_", "_Q2QG_cNS_", "_X2XG_cNS_"]

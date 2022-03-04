@@ -22,7 +22,7 @@ namespace mRoot {
   };
 
   vector <int> global_nice_colors;
-  std::vector <int> getNiceColors(int values = 25){
+  std::vector <int> getNiceColors(int values){
     //if( global_nice_colors.size() ) return global_nice_colors;
     
     std::vector <FakeTColor*> colors = { new FakeTColor( 75., 122., 192. ),

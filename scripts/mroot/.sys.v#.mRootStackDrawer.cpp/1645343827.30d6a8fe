@@ -60,7 +60,7 @@ namespace mRoot {
         if(not data_hist) draw_residial = false;
         double residial_height = draw_residial ? 0.33 : 0.0;
 
-        std::vector <int> colors = mRoot::getNiceColors(200);
+        std::vector <int> colors = mRoot::getNiceColors(100);
         int color = 0;
         int signal_color = 2;
         hs = new THStack("stack", name);

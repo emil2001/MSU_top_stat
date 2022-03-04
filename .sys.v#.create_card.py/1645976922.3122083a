@@ -63,9 +63,9 @@ def SM(args):
   #interp_pars += ["PileUp", "pdf"]
   interp_pars += ["PileUp"]
   interp_pars += ["pdf_Diboson", "pdf_DY", "pdf_Wjets", "pdf_t_ch", "pdf_s_ch", "pdf_tW_ch", "pdf_ttbar-sl", "pdf_ttbar-dl"]
-  interp_pars += ["UnclMET", "MER"] # PUJetIdTag
-  interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
-  interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
+  #interp_pars += ["UnclMET", "MER"] # PUJetIdTag
+  #interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
+  #interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
   #muRmuF_pars  = ["Fac", "Ren", "RenFac"]
   muRmuF_pars = ["Ren_Diboson", "Ren_DY", "Ren_Wjets", "Ren_t_ch", "Ren_s_ch", "Ren_tW_ch", "Ren_ttbar-sl", "Ren_ttbar-dl"]

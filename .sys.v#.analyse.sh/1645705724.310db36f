@@ -1,11 +1,12 @@
+%%bash
 
 #!/bin/bash
 
 #---------- 0. Please Set Parameters
 
-nbins=20
-niters=2000000 #500000
-release="2022_UL18" # "2020_novenber_NoIsoCut"
+nbins=6
+niters=500000 #500000
+release="2022_UL18_JetVeto" # "2020_novenber_NoIsoCut"
 burn_in_frac=0.1
 nchains=3
 QCD_norm=0.3
@@ -268,7 +269,7 @@ if [ "$mode" = "sm" ] || [ "$mode" = "full" ] || [ "$mode" = "def_run" -a "$subm
   fi
   
   if [ "$submode" = "bins" ] || [ "$submode" = "all" ]; then
-    for nbins_alt in 20 21 22 23 24 25 26 27 28 29 30; do 
+    for nbins_alt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do 
     #1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22
       mkdir -p "$workdir/sm/bins_"$nbins_alt && cd "$_"
       make_analyse_theta "$workdir/hists/bins_"$nbins_alt"/hists_SM.root" $nbins_alt $niters "$workdir/hists/" SM "$package"

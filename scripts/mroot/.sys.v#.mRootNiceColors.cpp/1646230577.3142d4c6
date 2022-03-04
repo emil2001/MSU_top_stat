@@ -23,7 +23,7 @@ namespace mRoot {
 
   vector <int> global_nice_colors;
   std::vector <int> getNiceColors(int values = 25){
-    //if( global_nice_colors.size() ) return global_nice_colors;
+    if( global_nice_colors.size() ) return global_nice_colors;
     
     std::vector <FakeTColor*> colors = { new FakeTColor( 75., 122., 192. ),
                                          new FakeTColor( 241., 72., 75. ),
@@ -73,7 +73,7 @@ namespace mRoot {
     return colors_ids;
   }
 
-  void PrintNiceColors(int values){
+  void PrintNiceColors(int values = 25){
     std::vector <int> colors = mRoot::getNiceColors(25);
     for(auto color : colors) std::cout << color << std::endl;
   }

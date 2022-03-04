@@ -586,10 +586,10 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
               fill_hist(channel + "_" + sname,      NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection+extra_select, excl);              
               }                       
               for (auto channel:channel_wjets){
-              fill_hist(channel + "_" + sname,     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection+SELECTION_map.at(channel)+extra_select, excl);
+              fill_hist(channel + "_" + sname,     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection_up+SELECTION_map.at(channel)+extra_select, excl);
               }
               if (QCD_type == "MC") {
-              fill_hist("QCD_"+sname,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, qcd_selection+extra_select, excl); 
+              fill_hist("QCD_"+sname,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, qcd_selection_up+extra_select, excl); 
               }
 
             if(MODE == "FCNCtug") fill_hist("fcnc_tug_"+sname,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule, mc_selection + extra_select, excl);
@@ -612,10 +612,10 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
               fill_hist(channel + "_" + sname,      NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection+extra_select, excl);              
               }                       
             for (auto channel:channel_wjets){
-              fill_hist(channel + "_" + sname,     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection+SELECTION_map.at(channel)+extra_select, excl);
+              fill_hist(channel + "_" + sname,     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection_up+SELECTION_map.at(channel)+extra_select, excl);
               }
             if (QCD_type == "MC") {
-              fill_hist("QCD_"+sname,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, qcd_selection+extra_select, excl); 
+              fill_hist("QCD_"+sname,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, qcd_selection_up+extra_select, excl); 
               }
 
             if(MODE == "FCNCtug") fill_hist("fcnc_tug_"+sname,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule, mc_selection + extra_select, excl);
@@ -634,10 +634,10 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
               fill_hist(channel + "_" + sname,      NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection+extra_select, excl);              
               }                       
           for (auto channel:channel_wjets){
-              fill_hist(channel + "_" + sname,     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection+SELECTION_map.at(channel)+extra_select, excl);
+              fill_hist(channel + "_" + sname,     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection_up+SELECTION_map.at(channel)+extra_select, excl);
               }
           if (QCD_type == "MC") {
-              fill_hist("QCD_"+sname,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, qcd_selection+extra_select, excl); 
+              fill_hist("QCD_"+sname,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, qcd_selection_up+extra_select, excl); 
               }
 
           if(MODE == "FCNCtug") fill_hist("fcnc_tug_"+sname,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule, mc_selection + extra_select, excl);

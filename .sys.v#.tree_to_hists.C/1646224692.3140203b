@@ -337,7 +337,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     CENTRAL_FOLDER = "";
   }
   else if ( RELEASE=="2022_UL18"){
-    string ppath = "/eos/user/p/pvolkov/samples/UL18_jetveto_all/tuples_merged/" ;
+    string ppath = "eos/user/p/pvolkov/samples/UL18_jetveto_all/tuples_merged" ;
     PATH_PREFIX     = ppath + "" ;
     PATH_SUSTEMATIC = ppath + "" ;
     NN_QCD = "dnn_qcd_allch_UL18_jet_veto_13_vars_qcd_sep";
@@ -356,7 +356,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     
 
     QCD_type = "MC";
-    CENTRAL_FOLDER = "Central";
+    CENTRAL_FOLDER = "";
   }
 
     
@@ -586,10 +586,10 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
               fill_hist(channel + "_" + sname,      NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection+extra_select, excl);              
               }                       
               for (auto channel:channel_wjets){
-              fill_hist(channel + "_" + sname,     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection+SELECTION_map.at(channel)+extra_select, excl);
+              fill_hist(channel + "_" + sname,     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection_up+SELECTION_map.at(channel)+extra_select, excl);
               }
               if (QCD_type == "MC") {
-              fill_hist("QCD_"+sname,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, qcd_selection+extra_select, excl); 
+              fill_hist("QCD_"+sname,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, qcd_selection_up+extra_select, excl); 
               }
 
             if(MODE == "FCNCtug") fill_hist("fcnc_tug_"+sname,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule, mc_selection + extra_select, excl);
@@ -612,10 +612,10 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
               fill_hist(channel + "_" + sname,      NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection+extra_select, excl);              
               }                       
             for (auto channel:channel_wjets){
-              fill_hist(channel + "_" + sname,     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection+SELECTION_map.at(channel)+extra_select, excl);
+              fill_hist(channel + "_" + sname,     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection_up+SELECTION_map.at(channel)+extra_select, excl);
               }
             if (QCD_type == "MC") {
-              fill_hist("QCD_"+sname,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, qcd_selection+extra_select, excl); 
+              fill_hist("QCD_"+sname,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, qcd_selection_up+extra_select, excl); 
               }
 
             if(MODE == "FCNCtug") fill_hist("fcnc_tug_"+sname,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule, mc_selection + extra_select, excl);
@@ -634,10 +634,10 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
               fill_hist(channel + "_" + sname,      NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection+extra_select, excl);              
               }                       
           for (auto channel:channel_wjets){
-              fill_hist(channel + "_" + sname,     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection+SELECTION_map.at(channel)+extra_select, excl);
+              fill_hist(channel + "_" + sname,     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, mc_selection_up+SELECTION_map.at(channel)+extra_select, excl);
               }
           if (QCD_type == "MC") {
-              fill_hist("QCD_"+sname,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, qcd_selection+extra_select, excl); 
+              fill_hist("QCD_"+sname,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, qcd_selection_up+extra_select, excl); 
               }
 
           if(MODE == "FCNCtug") fill_hist("fcnc_tug_"+sname,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule, mc_selection + extra_select, excl);
