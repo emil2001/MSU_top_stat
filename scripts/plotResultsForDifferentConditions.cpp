@@ -44,6 +44,7 @@ pm::Limits get_result_from_file(string file_name, string par_name, float burn_fa
 void plotResultsForDifferentConditions(std::string input_folder_name, std::string pattern, std::string parameter_name, std::string graph_label){
   
   vector<string> fnames;
+  cout <<"!!!!!!!!!!!!!!!!!!!"<<endl;
   pm::get_all_files_in_folder(input_folder_name, pattern, fnames);
   
   int N_points = fnames.size();

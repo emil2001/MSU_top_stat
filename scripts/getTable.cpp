@@ -269,7 +269,7 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
     
     cmd = "mv " + postfix + "Xafter.png " + postfix1 + "Xafter.png";   
     cout << gSystem->Exec(cmd) << endl;
-    cmd = "cp " + hists_path + postfix + "Xbefore.png " + postfix1 + "Xbefore.png";   
+    cmd = "cp " + hists_path + postfix1 + "Xbefore.png " + postfix1 + "Xbefore.png";   
     cout << gSystem->Exec(cmd) << endl;
     out_string += "\n \\includegraphics[width=0.9\\linewidth]{" + before_name + "} \n";
     cout << after_name << endl;

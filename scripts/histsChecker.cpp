@@ -43,7 +43,7 @@ void check_template(TH1 * hist){
       msg("Wjets_JESUp", nbins, value);
 
     if(value <= 0){
-      msg("WARNING !!! ", hist->GetName(), "bin", nbins, value);
+      //msg("WARNING !!! ", hist->GetName(), "bin", nbins, value);
       hist_is_ok = false;
     }
   }
@@ -116,7 +116,7 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
       hs->SetLineWidth( 2 );
       hists_other.push_back( hs );
       
-      if (std::string(hs->GetName()).find("FacDown") != std::string::npos) {
+      if (std::string(hs->GetName()).find("Ren") != std::string::npos) {
           //cout << "found!" << '\n';
           cout << " " << hs->GetName() << " ... " << endl;
           cout << " " << hs->Integral() << " ... " << endl;

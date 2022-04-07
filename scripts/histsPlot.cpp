@@ -23,7 +23,7 @@ int histsPlot(string mode, TString inputFileName, float scaleFactor=0.){
   }
   if (mode == "SM2DXbefore"){
   TCanvas * canv = drawer.GetCanvas( mode );
-  mode = "SMXbefore";
+  mode = "SM2DXbefore";
   canv->Print( (mode + ".png").c_str() );
   }
   else if(mode == "main_before"){}

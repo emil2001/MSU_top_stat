@@ -237,7 +237,7 @@ void plotSysImpact(string release){
     if(dir == "sigma_t_ch_minus") continue;
     if(dir.find("plus") == string::npos and dir.find("minus") == string::npos)  continue;
 
-    string path = "../"+release+"/sys_check/sm/" + dir + "/expected_sm_"+dir+"_theta.root";
+    string path = "../"+release+"/sys_check/sm/" + dir + "/expected_SM_"+dir+"_theta.root";
     auto qv = getQuantiles(path, "sigma_t_ch", 0.5);
     cout << dir << " " << qv << endl;
     
@@ -260,7 +260,7 @@ void plotSysImpact(string release){
 //    qvs.push_back(qv);
 //  }
   
-  double qv_nominal = getQuantiles("../"+release+"/sys_check/sm/expected/expected_sm_theta.root", "sigma_t_ch", 0.5);
+  double qv_nominal = getQuantiles("../"+release+"/sys_check/sm/expected/expected_SM_theta.root", "sigma_t_ch", 0.5);
   
   save_plot_unc(dirs, qvs, "", qv_nominal, "sys_check");
 }
