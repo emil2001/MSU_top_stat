@@ -14,5 +14,5 @@ export LD_LIBRARY_PATH="/cvmfs/sft.cern.ch/lcg/external/Boost/1.53.0_python2.7/x
 echo $LD_LIBRARY_PATH
 echo "run_theta over "$1" datacard ... "
 #time /afs/cern.ch/user/p/pmandrik/public/global_cfg/theta/theta_slc6/theta/bin/theta $datacard
-time /afs/cern.ch/work/a/azaboren/public/emil/Stat/theta_slc6/theta/bin/theta $datacard
+time /scratch3/eabasov/emil/Stat/theta_slc6/theta/bin/theta $datacard
 # time /afs/cern.ch/work/n/ntsirova/public/theta/theta/bin/theta $datacard

@@ -70,7 +70,7 @@ namespace mRoot{
     int nbins_new = (hist->GetXaxis()->GetXmax() - hist->GetXaxis()->GetXmin()) / bwidth;
 
     for( ;nbins % nbins_new; nbins_new--){}
-
+    cout << left_entry << " " << right_entry << endl;
     hist->Rebin(nbins/nbins_new);
     hist->GetXaxis()->SetRangeUser(left_entry, right_entry);
   }

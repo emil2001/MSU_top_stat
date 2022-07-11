@@ -50,7 +50,7 @@ void check_template(TH1 * hist){
   // if(hist_is_ok) msg("hist is ok ", hist->GetName());
 }
 
-#include "/afs/cern.ch/user/p/pmandrik/public/global_cfg/mRootStackDrawer.cpp"
+#include "mroot/mRootStackDrawer.cpp"
 void histsChecker(TString inputFileName, TString postfix, string diff_mode, int dummy){
   // TString inp_file_name = "hists13Charlie_SM.root";
   // TString inp_file_name = "hist_copy.root";
@@ -115,7 +115,7 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
       //cout << color_i << endl;   
       hs->SetLineWidth( 2 );
       hists_other.push_back( hs );
-      
+     /* 
       if (std::string(hs->GetName()).find("Ren") != std::string::npos) {
           //cout << "found!" << '\n';
           cout << " " << hs->GetName() << " ... " << endl;
@@ -126,7 +126,7 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
           }
           else cout << hs->GetName() << " not normalized, difference: "<< hs->Integral()- h->Integral()  << endl;
       }
-     
+     */
       lname.size() < string(hs->GetTitle()).size() ? lname = string(hs->GetTitle()) : lname;
 
       TH1D* hist_err = (TH1D*)hs->Clone();

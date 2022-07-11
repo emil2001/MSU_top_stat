@@ -123,7 +123,7 @@ namespace mRoot {
           for(int i = 1; i < stack_hists.size(); i++) total_stack_hist.Add(stack_hists.at(i));
 
           rhist->Add(&total_stack_hist, -1.);
-	  rhist->Divide(data_hist);
+	        rhist->Divide(data_hist);
           rhist->Draw("p0e1");
           rhist->SetStats(0);
           rhist->SetTitle("");

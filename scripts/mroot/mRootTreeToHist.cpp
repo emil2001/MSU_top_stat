@@ -179,7 +179,7 @@ namespace mRoot{
     double weight = 0;
     int event_index = 0;
     int print_n_entries = 0;
-
+   //string weight_rule1;
     for(auto name : input_file_names){
       TFile * file = TFile::Open( (prefix + name).c_str() );
       if(!file or file->IsZombie()){
@@ -196,7 +196,13 @@ namespace mRoot{
 
       // reader->GetTree()->Print();
       cout << "process ... " << name << " " << reader->GetTree()->GetEntries() << endl;
-
+      /*
+      if (hist_name == "data" && name == "QCD_MC.root"){
+	weight_rule1 = weight_rule + " * 0.233363";
+      }
+      
+      else weight_rule1 = weight_rule;
+      */
       TTreeFormula value_f(value_rule.c_str(), value_rule.c_str(), reader->GetTree());
       TTreeFormula weight_f(weight_rule.c_str(), weight_rule.c_str(), reader->GetTree());
 

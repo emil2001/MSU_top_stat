@@ -62,9 +62,9 @@ def SM(args):
   interp_pars  = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2" ]
   #interp_pars += ["PileUp", "pdf"]
   interp_pars += ["PileUp"]
-  interp_pars += ["UnclMET", "MER"] # PUJetIdTag
-  interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
-  interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
+  #interp_pars += ["UnclMET", "MER"] # PUJetIdTag
+  #interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_inf"]
+  #interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
   #muRmuF_pars  = ["Fac", "Ren", "RenFac"]
   ttbardl_pars = [ "pdf_ttbar-dl", "Ren_ttbar-dl", "Fac_ttbar-dl", "RenFac_ttbar-dl"]
@@ -329,8 +329,9 @@ def fcnc_1d(args, coupling_hist_name):
   interp_pars  = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2" ]
   #interp_pars += ["PileUp", "pdf"]
   interp_pars += ["PileUp"]
-  interp_pars += ["UnclMET", "MER"] # PUJetIdTag
-  interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
+  #interp_pars += ["UnclMET"]
+  #interp_pars += ["UnclMET", "MER"] # PUJetIdTag
+  #interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
   #interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
   #muRmuF_pars  = ["Fac", "Ren", "RenFac"]

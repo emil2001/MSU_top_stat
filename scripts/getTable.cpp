@@ -97,7 +97,7 @@ class MyParameter {
     vector<double> weights;
 };
 
-double getTable(string filename, string postfix, double def_bfrac, string hists_path){
+double getTable(string filename, string postfix, double def_bfrac, string hists_path, bool draw_combined = false, int nchains = 10){
   gErrorIgnoreLevel = kWarning;
   TFile file( filename.c_str() );
 
@@ -113,16 +113,21 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
     string cname = "chain_" + to_string( chain_index );
     
     TTree *tree = (TTree*)(file.Get( cname.c_str() ));
-    if(not tree) break;
+    if(not tree) {
+        cout << "break at chain no." << chain_index << endl;
+        break;
+    }
 
-    out_string += "\\textbf{ Chain Number = " + to_string(chain_index) + "} \n";
+    if(draw_combined == false) out_string += "\\textbf{ Chain Number = " + to_string(chain_index) + "} \n";
 
     vector <MyParameter*> parameters;
     TObjArray * mycopy = tree->GetListOfBranches();
     TIter iObj(mycopy);
     while (TObject* obj = iObj()) {
+       
       if(obj->GetName() == string("weight")) continue;
       if(obj->GetName() == string("nll_MarkovChain_local_")) continue;
+
       MyParameter * parameter = new MyParameter(tree, obj->GetName(), def_bfrac);
       parameters.push_back( parameter );
     }
@@ -136,65 +141,157 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
     }
 
     // QUANTILES TABLE ===================================================================
-           out_string += "\\begin{center} \n \\begin{tabular}{ | c | c | c | c |} \n";
-           out_string += "\\hline parameter & $-\\sigma$ & central & $+\\sigma$ \\\\ \n \\hline \n";
-
-    for(auto param : parameters){
-      TH1D * hist = param->hist;
-      string hname = param->name;
-      if( hname == "KU" or hname == "KC" or hname == "cta_norm" or hname == "uta_norm") continue;
-
-      double alpha = 0.3173;
-      double l = get_qv(hist, alpha*0.5 );
-      double c = get_qv(hist, 0.5) ;
-      double u = get_qv(hist,  1. - alpha*0.5 );
-
-      cout << hist->GetTitle() << " " << l << " " << c << " " << u << endl;
-      out_string += string(hist->GetTitle()) + " & " + get_string(l, 3) + " & " + get_string(c, 3) + " & " + get_string(u, 3) + " \\\\ \n ";
+    if (draw_combined == true){
+        if(chain_index == nchains){
+            out_string += "\\begin{center} \n \\begin{tabular}{ | c | c | c | c |} \n";
+            out_string += "\\hline parameter & $-\\sigma$ & central & $+\\sigma$ \\\\ \n \\hline \n";
+        }
     }
-    out_string += " \\hline \\end{tabular} \n \\end{center} \n";
+    else{  
+        out_string += "\\begin{center} \n \\begin{tabular}{ | c | c | c | c |} \n";
+        out_string += "\\hline parameter & $-\\sigma$ & central & $+\\sigma$ \\\\ \n \\hline \n";
+    }
+    TH1D * hist_sum;
+    double alpha = 0.3173;
+    double l,c,u;
+    for(auto param : parameters){  
+        if (draw_combined == true and param->name == "sigma_t_ch"){       
+          TH1D * hist = param->hist;
+          if (chain_index == 1) hist_sum = new TH1D(*hist);
+          else hist_sum->Add(hist, 1);
+          string hname = param->name;
+          cout << chain_index << endl; 
+          if (chain_index == nchains){        
+              l = get_qv(hist_sum, alpha*0.5 );
+              c = get_qv(hist_sum, 0.5) ;
+              u = get_qv(hist_sum,  1. - alpha*0.5 );
+
+              cout << hist->GetTitle() << " " << l << " " << c << " " << u << endl;
+              out_string += string(hist_sum->GetTitle()) + " & " + get_string(l, 3) + " & " + get_string(c, 3) + " & " + get_string(u, 3) + " \\\\ \n ";   
+          }
+        }      
+        else{  
+          TH1D * hist = param->hist;
+          string hname = param->name;
+          if( hname == "KU" or hname == "KC" or hname == "cta_norm" or hname == "uta_norm") continue;         
+              l = get_qv(hist, alpha*0.5 );
+              c = get_qv(hist, 0.5) ;
+              u = get_qv(hist,  1. - alpha*0.5 );
+
+          cout << hist->GetTitle() << " " << l << " " << c << " " << u << endl;
+          if (draw_combined == true){
+            if(chain_index == nchains){
+                out_string += string(hist->GetTitle()) + " & " + get_string(l, 3) + " & " + get_string(c, 3) + " & " + get_string(u, 3) + " \\\\ \n ";
+            }
+          }
+          else{  
+            out_string += string(hist->GetTitle()) + " & " + get_string(l, 3) + " & " + get_string(c, 3) + " & " + get_string(u, 3) + " \\\\ \n ";
+          }    
+          
+        }
+    }
+    if (draw_combined == true){
+        if(chain_index == nchains){
+            out_string += " \\hline \\end{tabular} \n \\end{center} \n";
+        }
+    }
+    else{  
+        out_string += " \\hline \\end{tabular} \n \\end{center} \n";
+    }  
+    
   
     // UPPER LIMITS TABLE ===================================================================
-    out_string += "\\begin{center} \n \\begin{tabular}{ | c | c | c |} \n";
-    out_string += " \\hline parameter & 95 \\% UL & 98 \\% UL \\\\ \n \\hline \n";
+    if (draw_combined == true){
+        if(chain_index == nchains){
+            out_string += "\\begin{center} \n \\begin{tabular}{ | c | c |} \n";
+            out_string += " \\hline parameter & 95 \\% UL \\\\ \n \\hline \n";
+        }
+    }
+    else{  
+        out_string += "\\begin{center} \n \\begin{tabular}{ | c | c |} \n";
+        out_string += " \\hline parameter & 95 \\% UL \\\\ \n \\hline \n";
+    }  
+      
+
     for(auto param : parameters){
       TH1D * hist = param->hist;
+      TH1D * hist_sum_fcnc;  
       string hname = param->name;
       if( hname != "KU" and hname != "KC" and hname != "cta_norm" and hname != "uta_norm") continue;
+      if (draw_combined == true){
+          if (chain_index == 1) hist_sum_fcnc = new TH1D(*hist);
+          else hist_sum_fcnc->Add(hist, 1);
+          if (chain_index == nchains){
+              double up = get_qv(hist, 0.95);
+              cout << hist->GetTitle() << " " << up << endl;
+              out_string += string(hist->GetTitle()) + " process coupling & " + get_string(sqrt(up), 3) + " \\\\ \n";
 
-     // double up = pow(get_qv(hist, 0.95 ), 2);
-     // double up2 = pow(get_qv(hist, 0.98 ), 2);
-      double up = get_qv(hist, 0.95);
-      cout << hist->GetTitle() << " " << up << endl;
-      //cout << hist->GetTitle() << " " << up1 << " " << up2 << endl;
-      out_string += string(hist->GetTitle()) + " process normalisation & " + get_string(sqrt(up), 3) + " \\\\ \n";
-       //" & " + get_string(up2, 3) + " \\\\ \n ";
+              // https://arxiv.org/pdf/0810.3889.pdf
+              double Cq = 1.1964;
+              double Kappa_q = 0.03;
+              double Br_1 = Cq * up * Kappa_q * Kappa_q;
 
-      // https://arxiv.org/pdf/0810.3889.pdf
-      double Cq = 1.1964;
-      double Kappa_q = 0.03;
-      double Br_1 = Cq * up * Kappa_q * Kappa_q;
-      //double Br_2 = Cq * up2 * Kappa_q * Kappa_q;
-      out_string += string(hist->GetTitle()) + " branching" + " & " + get_string(Br_1, 3) + " \\\\ \n";
-      // + " & " + get_string(Br_2, 3) + " \\\\ \n ";
+              out_string += string(hist->GetTitle()) + " branching" + " & " + get_string(Br_1, 3) + " \\\\ \n";
+          }
+
+      }
+      else{
+          double up = get_qv(hist, 0.95);
+          cout << hist->GetTitle() << " " << up << endl;
+          out_string += string(hist->GetTitle()) + " process coupling & " + get_string(sqrt(up), 3) + " \\\\ \n";
+
+          // https://arxiv.org/pdf/0810.3889.pdf
+          double Cq = 1.1964;
+          double Kappa_q = 0.03;
+          double Br_1 = Cq * up * Kappa_q * Kappa_q;
+
+          out_string += string(hist->GetTitle()) + " branching" + " & " + get_string(Br_1, 3) + " \\\\ \n";
+      }
+
     }
-    out_string += " 7+8 TeV branching KU obs (exp) & 2.0 (2.8) \\times 10^{-5} & \\\\ \n";
-    out_string += " 7+8 TeV branching KC obs (exp) & 4.1 (2.8) \\times 10^{-4} & \\\\ \n";
-    out_string += " \\hline \\end{tabular} \n \\end{center} \n";
+    if (draw_combined == true){
+        if(chain_index == nchains){
+            out_string += " 7+8 TeV branching KU obs (exp) & 2.0 (2.8) \\times 10^{-5} & \\\\ \n";
+            out_string += " 7+8 TeV branching KC obs (exp) & 4.1 (2.8) \\times 10^{-4} & \\\\ \n";
+            out_string += " \\hline \\end{tabular} \n \\end{center} \n";
+        }
+    }
+    else{  
+        out_string += " 7+8 TeV branching KU obs (exp) & 2.0 (2.8) \\times 10^{-5} & \\\\ \n";
+        out_string += " 7+8 TeV branching KC obs (exp) & 4.1 (2.8) \\times 10^{-4} & \\\\ \n";
+        out_string += " \\hline \\end{tabular} \n \\end{center} \n";
+    }  
+      
+
 
     // INCLUDE BURN IN STUDY IMAGE ===================================================================
-    out_string += "\n \\newpage \n";
-    out_string += "\n \\textbf{BURN IN STUDY} \\\\ \n";
-    string burninstudy_name = "BurnInStudy" + postfix + "Theta_" + cname + ".png";
-    ReplaceStringInPlace(burninstudy_name, string("_"), string("X"));
-    
-    TString cmd = "mv BurnInStudy" + postfix + "Theta_" + cname + ".png BurnInStudy" + postfix + "ThetaXchainX" + cname.back() + ".png";
-    
-    cout << gSystem->Exec(cmd) << endl;
-    out_string += " \\includegraphics[width=0.9\\linewidth]{" + burninstudy_name + "}";
-    cout << burninstudy_name << endl;
+
+    TString cmd;
+    string burninstudy_name;
+    if (draw_combined == true and chain_index == nchains) {
+        out_string += "\n \\newpage \n";
+        out_string += "\n \\textbf{BURN IN STUDY} \\\\ \n";
+        burninstudy_name = "BurnInStudy" + postfix + "Theta_all.png";      
+        ReplaceStringInPlace(burninstudy_name, string("_"), string("X"));  
+        cmd = "mv BurnInStudy" + postfix + "Theta_all.png BurnInStudy" + postfix + "ThetaXall.png";
+        cout << gSystem->Exec(cmd) << endl;
+        out_string += " \\includegraphics[width=0.9\\linewidth]{" + burninstudy_name + "}";
+        cout << burninstudy_name << endl;
+         }                                  
+    else if(draw_combined == false){
+        out_string += "\n \\newpage \n";
+        out_string += "\n \\textbf{BURN IN STUDY} \\\\ \n";
+        burninstudy_name = "BurnInStudy" + postfix + "Theta_" + cname + ".png";
+        ReplaceStringInPlace(burninstudy_name, string("_"), string("X"));  
+        cmd = "mv BurnInStudy" + postfix + "Theta_" + cname + ".png BurnInStudy" + postfix + "ThetaXchainX" + cname.back() + ".png";
+        cout << gSystem->Exec(cmd) << endl;
+        out_string += " \\includegraphics[width=0.9\\linewidth]{" + burninstudy_name + "}";
+        cout << burninstudy_name << endl;
+         }
+
 
     // COVARIANCE TABLE =================================================================== 
+    if (draw_combined == false or chain_index == nchains){
     out_string += "\n \\newpage \n"; 
     mRoot::msg("add COVARIANCE TABLE ...");
     out_string += "\n \\textbf{COVARIANCE TABLE} \\\\ \n";
@@ -251,7 +348,7 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
     string cor_hist_out_name = "Cor" + postfix + ".png";
     canv->Print(cor_hist_out_name.c_str());
     out_string += " \\includegraphics[width=0.7\\linewidth]{" + cor_hist_out_name + "} ";
-
+    
     // MODEL V DATA ===================================================================
     string postfix1 = "";
     out_string += "\n \\newpage \n";
@@ -302,8 +399,9 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
     }
 
     out_string += "\n \\newpage \n";
+    }    
   }
-
+  
   // ALL HISTOGRAMMS =================================================================== 
   out_string += "\n \\newpage \n";
   out_string += "\n \\textbf{INPUT HISTOGRAMMS} \\\\ \n";
@@ -342,6 +440,7 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
   ReplaceStringInPlace( out_string, string("@@@@@@@@"), string("_"));
 
   ofstream out( ("getTable_" + postfix + ".tex").c_str() );
+  cout << "getTable_" + postfix + ".tex" << endl;  
   out << out_string << endl;
   out.close();
 

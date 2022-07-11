@@ -207,13 +207,13 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
 
   // SYSTEMATIC IN THE DIFFERENT FILES
   vector<string> VARIATION_SYS_T1 = { "UnclMET", "MER", "JER", "JEC" };
-  vector<string> JER_SYS_FOLDERS = { "eta0-193", "eta193-25", "eta25-3_p0-50", "eta25-3_p50-Inf", "eta3-5_p0-50", "eta3-5_p50-Inf" };
+  vector<string> JER_SYS_FOLDERS = { "eta0-193", "eta193-25", "eta25-3_p0-50", "eta25-3_p50-inf", "eta3-5_p0-50", "eta3-5_p50-inf" };
   vector<string> JER_SYS_U, JER_SYS_D   ;
   for(auto it : JER_SYS_FOLDERS){
     JER_SYS_U.push_back( "JERUp_" + it );
     JER_SYS_D.push_back( "JERDown_" + it );
   }
-  vector<string> JER_SYS_NAMES = {"JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"};
+  vector<string> JER_SYS_NAMES = {"JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_inf"};
 
   vector<string> JEC_SYS_FOLDERS = {"eta0-25", "eta25-5"};
   vector<string> JEC_SYS_U, JEC_SYS_D;
@@ -238,16 +238,17 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
   };  
   string PREFIX_NTUPLES, PATH_PREFIX, PATH_EXCLUDE, PATH_SUSTEMATIC;
   string NN_MC, NN_QCD, NN_train_events, NN_MC_tcg, NN_MC_tug, NN_train_events_tcg, NN_train_events_tug, QCD_train_events, NN_2D_x, NN_2D_y, NN_2D_z, NN_train_events_2D_x, NN_train_events_2D_y, NN_train_events_2D_z;
+  string NN_3D_x, NN_3D_y, NN_3D_z, NN_train_events_3D_x, NN_train_events_3D_y, NN_train_events_3D_z;
   bool use_comphep = false;
 
 
-  vector <string> FILES       = {"QCD_MC_wideIso.root", "DY_10-50.root", "DY_50-Inf.root", "ttbar-sl.root","ttbar-dl.root", "WW.root", "WZ.root", "ZZ.root", "s-channel.root", "tW-channel-top.root","tW-channel-tbar.root", "t-channel_ch.root", "Wjets.root"};
+  vector <string> FILES       = {"QCD_MC.root", "DY_10-50.root", "DY_50-Inf.root", "ttbar-sl.root","ttbar-dl.root", "WW.root", "WZ.root", "ZZ.root", "s-channel.root", "tW-channel-top.root","tW-channel-tbar.root", "t-channel-top_4f.root", "t-channel-tbar_4f.root", "Wjets.root"};
   //---------- 1. DATA -------------------------------------------------------------------------------------------------------------------------
-  vector <string> FILES_DATA        = {"Data.root"};
+  vector <string> FILES_DATA        = {"Data.root"}; 
 
   //---------- 2. QCD -------------------------------------------------------------------------------------------------------------------------
   vector <string> FILES_QCD_DATA    = {"QCD_data.root"}; // QCD_data.root, QCD_IsoVVL
-  vector <string> FILES_QCD_MC      = {"QCD_MC_wideIso.root"};  
+  vector <string> FILES_QCD_MC      = {"QCD_MC.root"};  
   string QCD_type = "data"; // data, MC
   //---------- 3. OTHER -------------------------------------------------------------------------------------------------------------------------
   vector <string> FILES_DY     = {"DY_10-50.root", "DY_50-Inf.root"};
@@ -265,7 +266,9 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
   //---------- 4. ANOMAL -------------------------------------------------------------------------------------------------------------------------
   vector <string> FILES_FCNC_TUG    = {"FCNC_tug.root"};
   vector <string> FILES_FCNC_TCG    = {"FCNC_tcg.root"};
+ 
 
+  //vector <string> FILES_DATA   =   FILES;
   std::map<string, vector <string>> FILES_map = {
     { "DY", FILES_DY },
     { "ttbar", FILES_TT },
@@ -313,28 +316,44 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     use_comphep = false;
     USE_OTHER_SYS = true;
   }
-  else if ( RELEASE=="2021_UL17_JetVeto"){
-    string ppath = "/scratch3/azaboren/andrew/samples/jet_veto/" ;
+  else if ( RELEASE=="2022_UL18PU"){
+    string ppath = "/eos/user/a/azaboren/SWAN_projects/Datasets/Samples/2018UL_PUJetIdSF/tuples_merged/" ;
     PATH_PREFIX     = ppath + "" ;
     PATH_SUSTEMATIC = ppath + "" ;
-    NN_QCD = "qcd_allch_jet_veto_13_vars_QCD_MC_wide";
-    NN_train_events = "/scratch3/azaboren/andrew/train_events/bnn_sm_jet_veto_low_level_met_mtw_cut_trainEvents.txt";
-    NN_train_events_tcg = "/scratch3/azaboren/andrew/train_events/bnn_tcg_jet_veto_trainEvents.txt";
-    NN_train_events_tug = "/scratch3/azaboren/andrew/train_events/bnn_tug_jet_veto_trainEvents.txt";
-    QCD_train_events = "/scratch3/azaboren/andrew/train_events/qcd_allch_jet_veto_13_vars_QCD_MC_wide_trainEvents.txt";
-    if(MODE == "SM") NN_MC  = "sm_jet_veto_low_level_met_mtw_cut";
-    NN_2D_x = "sm_jet_veto_ttbar_met_mtw_cut";
-    NN_2D_y = "sm_jet_veto_wjets_met_mtw_cut";
-    NN_train_events_2D_x = "/scratch3/azaboren/andrew/train_events/bnn_sm_jet_veto_ttbar_met_mtw_cut_trainEvents.txt";
-    NN_train_events_2D_y = "/scratch3/azaboren/andrew/train_events/bnn_sm_jet_veto_wjets_met_mtw_cut_trainEvents.txt";
+    NN_QCD = "qcd_dnn_all_ch";
+    if(MODE == "SM") NN_MC  = "dnn_sm_super_all_vars_1_layer";
+    NN_2D_x = "dnn_sm_ttbar";
+    NN_2D_y = "dnn_sm_wjets";
+    NN_train_events_2D_x = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_sm_ttbar_UL18_trainEvents.txt";
+    NN_train_events_2D_y = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_sm_ttbar_UL18_trainEvents.txt";
+    if (MODE == "FCNCtcg3d"){
+      NN_3D_x = "dnn_tcg_wjets";
+      NN_3D_y = "dnn_tcg_ttbar";
+      NN_3D_z = "dnn_tcg_tchan";
+      NN_train_events_3D_x = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_tcg_wjets_UL18_trainEvents.txt";
+      NN_train_events_3D_y = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_tcg_ttbar_UL18_trainEvents.txt";
+      NN_train_events_3D_z = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_tcg_tchan_UL18_trainEvents.txt";
+    }
+    if (MODE == "FCNCtug3d"){
+      NN_3D_x = "dnn_tug_wjets";
+      NN_3D_y = "dnn_tug_ttbar";
+      NN_3D_z = "dnn_tug_tchan";
+      NN_train_events_3D_x = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_tug_wjets_UL18_trainEvents.txt";
+      NN_train_events_3D_y = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_tug_ttbar_UL18_trainEvents.txt";
+      NN_train_events_3D_z = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_tug_tchan_UL18_trainEvents.txt";
+    }
     use_comphep = false;
-    NN_MC_tug = "bnn_tug_jet_veto_met_mtw_cut";
-    NN_MC_tcg = "bnn_tcg_jet_veto_met_mtw_cut";
-    
-    FILES_TC     = {"t-channel_ch.root"};
-    FILES_TT     = {"ttbar-dl.root", "ttbar-sl.root"};
-    FILES_QCD_DATA = {"QCD_MC_wide.root"};
-    CENTRAL_FOLDER = "";
+    NN_MC_tug = "dnn_tug_super_3vars";
+    NN_MC_tcg = "dnn_tcg_super_3vars";
+    NN_train_events = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_sm_super_all_vars_trainEvents.txt";
+    NN_train_events_tcg = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_tcg_super_3vars_UL18_trainEvents.txt";
+    NN_train_events_tug = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_tug_super_3vars_UL18_trainEvents.txt";
+    QCD_train_events = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/qcd_allch_UL18_pujetid_loose_13_vars_trainEvents.txt";
+    //NN_train_events_2D_x = NN_train_events;
+    //NN_train_events_2D_y = NN_train_events;
+
+    QCD_type = "MC";
+    CENTRAL_FOLDER = "Central";
   }
   else if ( RELEASE=="2022_UL18"){
     string ppath = "/scratch3/pvolkov/samples/UL18_jetveto_all/tuples_merged/" ;
@@ -347,11 +366,11 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
     //NN_train_events_2D_x = "/scratch3/azaboren/andrew/train_events/UL18_jetveto" + NN_2D_x + "_trainEvents.txt";
     //NN_train_events_2D_y = "/scratch3/azaboren/andrew/train_events/UL18_jetveto" + NN_2D_y + "_trainEvents.txt";
     use_comphep = false;
-    NN_MC_tug = "dnn_tug_qcd_sep";
-    NN_MC_tcg = "dnn_tcg_qcd_sep";
+    NN_MC_tug = "dnn_fcnc_tug";
+    NN_MC_tcg = "dnn_fcnc_tcg";
     NN_train_events = "../2022_UL18/bnn_tug_super_trainEvents.txt";
-    NN_train_events_tcg = "/afs/cern.ch/user/e/eabasov/public/emil/Stat/2022_UL18/bnn_tcg_super_trainEvents.txt";
-    NN_train_events_tug = "/afs/cern.ch/user/e/eabasov/public/emil/Stat/2022_UL18/bnn_tug_super_trainEvents.txt";
+    NN_train_events_tcg = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_fcnc_tcg_UL18_trainEvents.txt";
+    NN_train_events_tug = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_fcnc_tug_UL18_trainEvents.txt";
     QCD_train_events = "../2022_UL18/qcd_allch_UL18_jet_veto_13_vars_qcd_sep_trainEvents.txt";
     NN_train_events_2D_x = NN_train_events;
     NN_train_events_2D_y = NN_train_events;
@@ -528,8 +547,8 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
               if (QCD_type == "MC") {
               fill_hist_sys("QCD_" + systematic + "_" + sys,    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, map_fact_up.at("QCD") + qcd_selection_up, map_fact_dn.at("QCD")+qcd_selection_down, excl); 
               }
-              if(MODE == "FCNCtug") fill_hist_sys("fcnc_tug_"+systematic+"_"+sys,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule, map_fact_up.at("FCNCtug") + mc_selection_up, map_fact_dn.at("FCNCtug") + mc_selection_down,        excl);
-              if(MODE == "FCNCtcg") fill_hist_sys("fcnc_tcg_"+systematic+"_"+sys,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TCG,  tree_name, vrule, map_fact_up.at("FCNCtcg") + mc_selection_up, map_fact_dn.at("FCNCtcg") + mc_selection_down,        excl);
+              if(MODE == "FCNCtug") fill_hist_sys("fcnc_tug_"+systematic+"_"+sys,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule, mc_selection_up, mc_selection_down,        excl);
+              if(MODE == "FCNCtcg") fill_hist_sys("fcnc_tcg_"+systematic+"_"+sys,  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TCG,  tree_name, vrule, mc_selection_up, mc_selection_down,        excl);
           }
           for (auto channel:channel_wjets){ // Ren/Fac/pdf split for wjets
               fill_hist_sys(channel + "_" + systematic + "_Wjets",     NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule, map_fact_up.at(channel) + mc_selection_up+SELECTION_map.at(channel), map_fact_dn.at(channel) + mc_selection_down+SELECTION_map.at(channel), excl);
@@ -540,8 +559,8 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
           if (QCD_type == "MC") {
               fill_hist_sys("QCD_"+systematic + "_Wjets",    NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule, qcd_selection, qcd_selection, excl); 
           }
-          if(MODE == "FCNCtug") fill_hist_sys("fcnc_tug_"+systematic+"_Wjets",  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule, map_fact_up.at("FCNCtug") + mc_selection_up, map_fact_dn.at("FCNCtug") + mc_selection_down,        excl);
-          if(MODE == "FCNCtcg") fill_hist_sys("fcnc_tcg_"+systematic+"_Wjets",  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TCG,  tree_name, vrule, map_fact_up.at("FCNCtcg") + mc_selection_up, map_fact_dn.at("FCNCtcg") + mc_selection_down,        excl);
+          if(MODE == "FCNCtug") fill_hist_sys("fcnc_tug_"+systematic+"_Wjets",  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule, mc_selection_up, mc_selection_down,        excl);
+          if(MODE == "FCNCtcg") fill_hist_sys("fcnc_tcg_"+systematic+"_Wjets",  NBINS, rmin, rmax, out_file, PREFIX_NTUPLES, FILES_FCNC_TCG,  tree_name, vrule, mc_selection_up, mc_selection_down,        excl);
       }
       else{   //other systematics
       for (auto channel:channel_other){
@@ -960,155 +979,249 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
   }
   
 
-/*
-  else if(MODE == "SM3D"){
-      //string qcd_qut   = "(" + NN_QCD + " > " + std::to_string( QCD_qut ) + ")";
-      string qcd_qut = "(MtW > 40) * (MET > 30)";
-//      string mc_selection   = qcd_qut + "* weight";
-//      string qcd_selection  = qcd_qut + "* weight_rescale2";
+
+  else if(MODE == "SM3D" || MODE == "FCNCtug3d" || MODE == "FCNCtcg3d"){
+      string qcd_qut   = "(" + NN_QCD + " > " + std::to_string( QCD_qut ) + ") * (MET > 20)";
+      //string qcd_qut = "(MtW > 40) * (MET > 30)";
       string data_selection   = qcd_qut + " * (N_BJ==1)";
       string qcd_selection    = qcd_qut + " * weight * " + to_string( QCD_norm );
       string mc_selection     = qcd_qut + " * weight * (N_BJ==1)";
-
       string mc_selection_TW  = mc_selection;
       string mc_selection_sch = mc_selection;
-      //EventsExcluder * excl   = new EventsExcluder( NN_train_events );
-      vrule = NN_MC;
-
-      // FCNC <
-      if(MODE == "FCNC_tcg") vrule = NN_MC_tcg;
-      if(MODE == "FCNC_tug") vrule = NN_MC_tug;
-      // >
-      if(excl != nullptr) excl->Print();
-
       string mc_selection_WQQ    = mc_selection+SELECTION_WQQ;
       string mc_selection_Wc     = mc_selection+SELECTION_Wc;
       string mc_selection_Wb     = mc_selection+SELECTION_Wb;
       string mc_selection_Wother = mc_selection+SELECTION_Wother;
       string mc_selection_Wlight = mc_selection+SELECTION_Wlight;
-      string vrule_x = NN_2D_x;
-      string vrule_y = NN_2D_y;
-      string vrule_z = NN_2D_z;
-      EventsExcluder * excl1 = new EventsExcluder( NN_train_events_2D_x );
-      EventsExcluder * excl2 = new EventsExcluder( NN_train_events_2D_y );
-      EventsExcluder * excl3 = new EventsExcluder( NN_train_events_2D_z );
-      if(excl != nullptr) excl->Print();
+      string vrule_x = NN_3D_x;
+      string vrule_y = NN_3D_y;
+      string vrule_z = NN_3D_z;
+      EventsExcluder * excl1 = new EventsExcluder( NN_train_events_3D_x );
+      EventsExcluder * excl2 = new EventsExcluder( NN_train_events_3D_y );
+      EventsExcluder * excl3 = new EventsExcluder( NN_train_events_3D_z );
+      if(excl1 != nullptr) excl1->Print();
+      if(excl2 != nullptr) excl2->Print();
+      if(excl3 != nullptr) excl3->Print();
 
       PREFIX_NTUPLES = PATH_PREFIX + CENTRAL_FOLDER+"/";
       fill_hist_3d("data",    NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_DATA,     tree_name, vrule_x, vrule_y, vrule_z, data_selection, nullptr, nullptr, nullptr);
-      fill_hist_3d("QCD",     NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_QCD_DATA, tree_name, vrule_x, vrule_y, vrule_z, qcd_selection, excl1, excl2, excl3);
-      fill_hist_3d("DY",      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_DY,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection,        excl1, excl2, excl3);
-      fill_hist_3d("ttbar",   NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_TT,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection,        excl1, excl2, excl3);
-      fill_hist_3d("Diboson", NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_DB,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection,        excl1, excl2, excl3);
-      fill_hist_3d("s_ch",    NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_SC,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_sch,    excl1, excl2, excl3);
-      fill_hist_3d("tW_ch",   NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_TW,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_TW,     excl1, excl2, excl3);
-      fill_hist_3d("WQQ",     NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_WQQ,    excl1, excl2, excl3);
-      fill_hist_3d("Wc",      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_Wc,     excl1, excl2, excl3);
-      fill_hist_3d("Wb",      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_Wb,     excl1, excl2, excl3);
-      fill_hist_3d("Wother",  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_Wother, excl1, excl2, excl3);
-      fill_hist_3d("Wlight",  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_Wlight, excl1, excl2, excl3);
-      fill_hist_3d("t_ch",    NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_TC,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection,        excl1, excl2, excl3);
-
+      if (QCD_type == "data") {fill_hist_3d("QCD",     NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_QCD_DATA, tree_name, vrule_x, vrule_y, vrule_z, qcd_selection, excl1, excl2, excl3);} 
+      else {fill_hist_3d("QCD",     NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_QCD_MC, tree_name, vrule_x, vrule_y, vrule_z, qcd_selection, excl1, excl2, excl3);} 
+      for (auto channel:channel_other){
+          fill_hist_3d(channel,      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, mc_selection, excl1, excl2, excl3);
+      }                       
+      for (auto channel:channel_wjets){
+          fill_hist_3d(channel,     NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, mc_selection+SELECTION_map.at(channel), excl1, excl2, excl3);
+      }
+      if(MODE == "FCNCtug3d") fill_hist_3d("fcnc_tug",  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection, excl1, excl2, excl3);
+      if(MODE == "FCNCtcg3d") fill_hist_3d("fcnc_tcg",  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TCG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection, excl1, excl2, excl3);
+          
+      
       // FILL SYSTEMATIC WITCH PRESENT IN THE CENTRAL SAME FILES
       for(auto systematic : VARIATION_SYS_T2){
           string mc_selection_up   = mc_selection + "/ weight * weight_" + systematic + "Up";
           string mc_selection_down = mc_selection + "/ weight * weight_" + systematic + "Down";
+          string qcd_selection_up   = qcd_selection + "/ weight * weight_" + systematic + "Up";
+          string qcd_selection_down = qcd_selection + "/ weight * weight_" + systematic + "Down";
           string systematic_ = systematic;
 
           // {"Isr", "Fsr"}
           if( std::find(VARIATION_SYS_T2_extra1.begin(), VARIATION_SYS_T2_extra1.end(), systematic) != VARIATION_SYS_T2_extra1.end() ){
               mc_selection_up   = mc_selection + "* weight_" + systematic + "Up / weight_gen";
               mc_selection_down = mc_selection + "* weight_" + systematic + "Down / weight_gen";
+              qcd_selection_up   = qcd_selection + "* weight_" + systematic + "Up / weight_gen";
+              qcd_selection_down = qcd_selection + "* weight_" + systematic + "Down / weight_gen";
               systematic_ = systematic;
           }
           // {"_G2GG_muR_", "_G2QQ_muR_", "_Q2QG_muR_", "_X2XG_muR_", "_G2GG_cNS_", "_G2QQ_cNS_", "_Q2QG_cNS_", "_X2XG_cNS_"};
           if( std::find(VARIATION_SYS_T2_extra2.begin(), VARIATION_SYS_T2_extra2.end(), systematic) != VARIATION_SYS_T2_extra2.end() ){
               mc_selection_up   = mc_selection + "/ weight * isr" + systematic + "dn / weight_gen * weight";
               mc_selection_down = mc_selection + "/ weight * isr" + systematic + "up / weight_gen * weight";
+              qcd_selection_up   = qcd_selection + "/ weight * isr" + systematic + "dn / weight_gen * weight";
+              qcd_selection_down = qcd_selection + "/ weight * isr" + systematic + "up / weight_gen * weight";
               systematic_ = "isr" + systematic;
           }
           // {"fsr_G2GG_muR_", "fsr_G2QQ_muR_", "fsr_Q2QG_muR_", "fsr_X2XG_muR_", "fsr_G2GG_cNS_", "fsr_G2QQ_cNS_", "fsr_Q2QG_cNS_", "fsr_X2XG_cNS_"};
           if( std::find(VARIATION_SYS_T2_extra3.begin(), VARIATION_SYS_T2_extra3.end(), systematic) != VARIATION_SYS_T2_extra3.end() ){
               mc_selection_up   = mc_selection + "/ weight * " + systematic + "up / weight_gen * weight";
               mc_selection_down = mc_selection + "/ weight * " + systematic + "dn / weight_gen * weight";
+              qcd_selection_up   = qcd_selection + "/ weight * " + systematic + "up / weight_gen * weight";
+              qcd_selection_down = qcd_selection + "/ weight * " + systematic + "dn / weight_gen * weight";
           }
           if( std::find(VARIATION_SYS_btag.begin(), VARIATION_SYS_btag.end(), systematic) != VARIATION_SYS_btag.end() ){
               mc_selection_up   = mc_selection + "/ weight * weight_btag_up_" + systematic;
               mc_selection_down = mc_selection + "/ weight * weight_btag_down_" + systematic;
+              qcd_selection_up   = qcd_selection + "/ weight * weight_btag_up_" + systematic;
+              qcd_selection_down = qcd_selection + "/ weight * weight_btag_down_" + systematic;
           }
 
-          std::string dy_fact_up, tt_fact_up, db_fact_up, sc_fact_up, tw_fact_up, wqq_fact_up;
-          std::string wc_fact_up, wb_fact_up, wother_fact_up, wj_fact_up, wlight_fact_up, tc_fact_up, tug_fact_up, tcg_fact_up;
-          std::string dy_fact_dn, tt_fact_dn, db_fact_dn, sc_fact_dn, tw_fact_dn, wqq_fact_dn;
-          std::string wc_fact_dn, wb_fact_dn, wother_fact_dn, wj_fact_dn, wlight_fact_dn, tc_fact_dn, tug_fact_dn, tcg_fact_dn;
           if( systematic == "Ren" or systematic == "Fac" or systematic == "RenFac" or systematic == "pdf" ) {
               mc_selection_up = mc_selection + "/ weight * weight_" + systematic + "Up / weight_gen  * weight";
               mc_selection_down = mc_selection + "/ weight * weight_" + systematic + "Down / weight_gen  * weight";
+              qcd_selection_up = qcd_selection + "/ weight * weight_" + systematic + "Up / weight_gen  * weight";
+              qcd_selection_down = qcd_selection + "/ weight * weight_" + systematic + "Down / weight_gen  * weight";
               string sel_centr = mc_selection;
+              string sel_centr_qcd = qcd_selection;
               if (systematic == "pdf") {
                   mc_selection_up = mc_selection + "/ weight * weight_" + systematic + "Up";
                   mc_selection_down = mc_selection + "/ weight * weight_" + systematic + "Down";
+                  qcd_selection_up = qcd_selection + "/ weight * weight_" + systematic + "Up";
+                  qcd_selection_down = qcd_selection + "/ weight * weight_" + systematic + "Down";
               }
-
-              get_renorm_factor(PREFIX_NTUPLES, FILES_DY, tree_name, sel_centr, mc_selection_up, mc_selection_down,
-                                dy_fact_up, dy_fact_dn);
-              get_renorm_factor(PREFIX_NTUPLES, FILES_TT, tree_name, sel_centr, mc_selection_up, mc_selection_down,
-                                tt_fact_up, tt_fact_dn);
-              get_renorm_factor(PREFIX_NTUPLES, FILES_DB, tree_name, sel_centr, mc_selection_up, mc_selection_down,
-                                db_fact_up, db_fact_dn);
-              get_renorm_factor(PREFIX_NTUPLES, FILES_SC, tree_name, sel_centr, mc_selection_up, mc_selection_down,
-                                sc_fact_up, sc_fact_dn);
-              get_renorm_factor(PREFIX_NTUPLES, FILES_TW, tree_name, sel_centr, mc_selection_up, mc_selection_down,
-                                tw_fact_up, tw_fact_dn);
-              get_renorm_factor(PREFIX_NTUPLES, FILES_WJ, tree_name, sel_centr, mc_selection_up, mc_selection_down,
-                                wj_fact_up, wj_fact_dn);
-              get_renorm_factor(PREFIX_NTUPLES, FILES_WJ, tree_name, sel_centr + SELECTION_WQQ,
-                                mc_selection_up + SELECTION_WQQ, mc_selection_down + SELECTION_WQQ, wqq_fact_up,
-                                wqq_fact_dn);
-              get_renorm_factor(PREFIX_NTUPLES, FILES_WJ, tree_name, sel_centr + SELECTION_Wb,
-                                mc_selection_up + SELECTION_Wb, mc_selection_down + SELECTION_Wb, wb_fact_up,
-                                wb_fact_dn);
-              get_renorm_factor(PREFIX_NTUPLES, FILES_WJ, tree_name, sel_centr + SELECTION_Wother,
-                                mc_selection_up + SELECTION_Wother, mc_selection_down + SELECTION_Wother,
-                                wother_fact_up, wother_fact_dn);
-              get_renorm_factor(PREFIX_NTUPLES, FILES_WJ, tree_name, sel_centr + SELECTION_Wc,
-                                mc_selection_up + SELECTION_Wc, mc_selection_down + SELECTION_Wc, wc_fact_up,
-                                wc_fact_dn);
-              get_renorm_factor(PREFIX_NTUPLES, FILES_TC, tree_name, sel_centr, mc_selection_up, mc_selection_down,
-                                tc_fact_up, tc_fact_dn);
-              get_renorm_factor(PREFIX_NTUPLES, FILES_WJ, tree_name, sel_centr+SELECTION_Wlight, mc_selection_up+SELECTION_Wlight, mc_selection_down+SELECTION_Wlight, wlight_fact_up, wlight_fact_dn);                
+              for(auto channel:channel_other) {
+                  get_renorm_factor(PREFIX_NTUPLES, FILES_map.at(channel), tree_name, sel_centr, mc_selection_up, mc_selection_down, map_fact_up, map_fact_dn, channel);
+              }
+              for (auto channel:channel_wjets)
+              {
+                  get_renorm_factor(PREFIX_NTUPLES, FILES_map.at(channel), tree_name, sel_centr+SELECTION_map.at(channel), mc_selection_up+SELECTION_map.at(channel), mc_selection_down+SELECTION_map.at(channel), map_fact_up, map_fact_dn, channel);          
+              }
+              if (QCD_type == "MC") {
+                  get_renorm_factor(PREFIX_NTUPLES, FILES_QCD_MC, tree_name, sel_centr_qcd, qcd_selection_up, qcd_selection_down, map_fact_up, map_fact_dn, "QCD");
+              }              
           }
 //              for(auto systematic : VARIATION_SYS_T2){
 //          string mc_selection_up   = qcd_qut + "* weight_" + systematic + "Up";
 //          string mc_selection_down = qcd_qut + "* weight_" + systematic + "Down";
-          fill_hist_3d_sys("DY_"+systematic_,      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_DY,  tree_name, vrule_x, vrule_y, vrule_z, dy_fact_up + mc_selection_up, dy_fact_dn + mc_selection_down, excl1, excl2, excl3);
-          fill_hist_3d_sys("ttbar_"+systematic_,   NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_TT,  tree_name, vrule_x, vrule_y, vrule_z, tt_fact_up + mc_selection_up, tt_fact_dn + mc_selection_down, excl1, excl2, excl3);
-          fill_hist_3d_sys("Diboson_"+systematic_, NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_DB,  tree_name, vrule_x, vrule_y, vrule_z, db_fact_up + mc_selection_up, db_fact_dn + mc_selection_down, excl1, excl2, excl3);
-          fill_hist_3d_sys("s_ch_"+systematic_,    NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_SC,  tree_name, vrule_x, vrule_y, vrule_z, sc_fact_up + mc_selection_up, sc_fact_dn + mc_selection_down, excl1, excl2, excl3);
-          fill_hist_3d_sys("tW_ch_"+systematic_,   NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_TW,  tree_name, vrule_x, vrule_y, vrule_z, tw_fact_up + mc_selection_up,  tw_fact_dn + mc_selection_down,  excl1, excl2, excl3);
-          fill_hist_3d_sys("WQQ_"+systematic_,     NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, vrule_z, wqq_fact_up + mc_selection_up+SELECTION_WQQ, wqq_fact_dn + mc_selection_down+SELECTION_WQQ, excl1, excl2, excl3);
-          fill_hist_3d_sys("Wc_"+systematic_,      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, vrule_z, wc_fact_up + mc_selection_up+SELECTION_Wc, wc_fact_dn + mc_selection_down+SELECTION_Wc,   excl1, excl2, excl3);
-          fill_hist_3d_sys("Wb_"+systematic_,      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, vrule_z, wb_fact_up + mc_selection_up+SELECTION_Wb, wb_fact_dn + mc_selection_down+SELECTION_Wb,   excl1, excl2, excl3);
-          fill_hist_3d_sys("Wother_"+systematic_,  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, vrule_z, wother_fact_up + mc_selection_up+SELECTION_Wother, wother_fact_dn + mc_selection_down+SELECTION_Wother, excl1, excl2, excl3);
-          fill_hist_3d_sys("Wlight_"+systematic_,  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_WJ,  tree_name, vrule_x, vrule_y, vrule_z, wlight_fact_up + mc_selection_up+SELECTION_Wlight, wlight_fact_dn + mc_selection_down+SELECTION_Wlight, excl1, excl2, excl3);
-          fill_hist_3d_sys("t_ch_"+systematic_,    NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_TC, tree_name, vrule_x, vrule_y, vrule_z, tc_fact_up+mc_selection_up, tc_fact_dn+mc_selection_down, excl1, excl2, excl3);
-
-      }
-
-      for(auto hist_2d : hists_to_save_2d){
-          TH1D * hist = new TH1D(hist_2d->GetName(), hist_2d->GetTitle(), NBINS*NBINS, rmin, rmax);
-          auto canv = new TCanvas( (hist_2d->GetName() + string("_2d")).c_str(), (hist_2d->GetName() + string("_2d")).c_str(), 640, 640);
-          hist_2d->Draw();
-          canv->Print( (hist_2d->GetName() + string("_2d") + ".png").c_str() );
-          for(int i = 1; i <= NBINS; i++){
-              for(int j = 1; j <= NBINS; j++){
-                  float value = hist_2d->GetBinContent(i, j);
-                  hist->SetBinContent((i-1)*NBINS + j, value);
+      if( systematic == "Ren" or systematic == "Fac" or systematic == "RenFac" or systematic == "pdf" ){//Ren, Fac, pdf (split by channels)
+          for (auto sys:channel_sys) {  // Ren/Fac/pdf split for tW, DY, DB, s_ch, t_ch, ttbar
+              for (auto channel:channel_other){  
+              if (channel == sys) {    
+                fill_hist_3d_sys(channel + "_" + systematic + "_" + sys,      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, map_fact_up.at(channel) + mc_selection_up, map_fact_dn.at(channel) + mc_selection_down, excl1, excl2, excl3);
               }
+              else fill_hist_3d_sys(channel + "_" + systematic + "_" + sys,      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, mc_selection, mc_selection, excl1, excl2, excl3); 
+              }                       
+              for (auto channel:channel_wjets){
+                fill_hist_3d_sys(channel + "_" + systematic + "_" + sys,     NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, map_fact_up.at(channel) + mc_selection_up+SELECTION_map.at(channel), map_fact_dn.at(channel) + mc_selection_down+SELECTION_map.at(channel), excl1, excl2, excl3);
+              }
+              if (QCD_type == "MC") {
+                fill_hist_3d_sys("QCD_" + systematic + "_" + sys,    NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule_x, vrule_y, vrule_z, map_fact_up.at("QCD") + qcd_selection_up, map_fact_dn.at("QCD")+qcd_selection_down, excl1, excl2, excl3); 
+              }
+              if(MODE == "FCNCtug3d") fill_hist_3d_sys("fcnc_tug_" + systematic + "_" + sys,  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_up, mc_selection_down, excl1, excl2, excl3);
+              if(MODE == "FCNCtcg3d") fill_hist_3d_sys("fcnc_tcg_" + systematic + "_" + sys,  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TCG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_up, mc_selection_down, excl1, excl2, excl3);
+          } 
+          for (auto channel:channel_wjets){ // Ren/Fac/pdf split for wjets
+            fill_hist_3d_sys(channel + "_" + systematic + "_Wjets",     NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, map_fact_up.at(channel) + mc_selection_up+SELECTION_map.at(channel), map_fact_dn.at(channel) + mc_selection_down+SELECTION_map.at(channel), excl1, excl2, excl3);
+          }
+          for (auto channel:channel_other){
+            fill_hist_3d_sys(channel + "_" + systematic + "_Wjets",      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, mc_selection, mc_selection, excl1, excl2, excl3);              
+          }
+          if (QCD_type == "MC") {
+            fill_hist_3d_sys("QCD_"+systematic + "_Wjets",    NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule_x, vrule_y, vrule_z, qcd_selection, qcd_selection, excl1, excl2, excl3); 
+          }
+          if(MODE == "FCNCtug3d") fill_hist_3d_sys("fcnc_tug_"+systematic+"_Wjets",  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_up,  mc_selection_down, excl1, excl2, excl3);
+          if(MODE == "FCNCtcg3d") fill_hist_3d_sys("fcnc_tcg_"+systematic+"_Wjets",  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TCG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_up,  mc_selection_down, excl1, excl2, excl3);
+      }      
+      else{   
+          for (auto channel:channel_other){
+            fill_hist_3d_sys(channel + "_" + systematic,      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_up, mc_selection_down,  excl1, excl2, excl3);              
+          }                       
+          for (auto channel:channel_wjets){
+            fill_hist_3d_sys(channel + "_" + systematic,     NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_up+SELECTION_map.at(channel), mc_selection_down+SELECTION_map.at(channel),  excl1, excl2, excl3);
+          }
+          if (QCD_type == "MC") {
+            fill_hist_3d_sys("QCD_"+systematic_,    NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule_x, vrule_y, vrule_z, qcd_selection_up, qcd_selection_down,  excl1, excl2, excl3); 
+          }
+          if(MODE == "FCNCtug3d"){
+            fill_hist_3d_sys("fcnc_tug_"+systematic,  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_up, mc_selection_down, excl1, excl2, excl3);
+          }   
+          if(MODE == "FCNCtcg3d"){
+            fill_hist_3d_sys("fcnc_tcg_"+systematic,  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TCG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection_up, mc_selection_down, excl1, excl2, excl3);
+          } 
+      }
+    }
+       // FILL SYSTEMATIC WITCH PRESENT IN THE DIFFERENT F0LDERS
+    for(auto fprefix : VARIATION_SYS_T1){
+      if( fprefix == "JER" ){
+        for(int i = 0; i < JER_SYS_NAMES.size(); i++){
+          string jer_bin_name = JER_SYS_NAMES[i];
+          vector<string> jer_bin_files = { JER_SYS_D[i], JER_SYS_U[i] };
+          vector<string> jer_bin_file_pstfixs = {"Down", "Up"};
+          for(int j = 0; j < 2; j++){
+            string extra_select = "";
+            string pstfix = jer_bin_file_pstfixs[j];
+            string sname = jer_bin_name + pstfix;
+            PREFIX_NTUPLES = PATH_PREFIX + jer_bin_files[j] + "/";
+            
+            cout << "process folder ... " << PREFIX_NTUPLES << endl;
+            for (auto channel:channel_other){
+              fill_hist_3d(channel + "_" + sname,      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, mc_selection+extra_select, excl1, excl2, excl3);              
+            }                       
+            for (auto channel:channel_wjets){
+              fill_hist_3d(channel + "_" + sname,     NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, mc_selection+SELECTION_map.at(channel)+extra_select, excl1, excl2, excl3);
+            }
+            if (QCD_type == "MC") {
+              fill_hist_3d("QCD_"+sname,    NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule_x, vrule_y, vrule_z, qcd_selection+extra_select, excl1, excl2, excl3); 
+            }
+
+            if(MODE == "FCNCtug3d") fill_hist_3d("fcnc_tug_"+sname,  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection + extra_select, excl1, excl2, excl3);
+            if(MODE == "FCNCtcg3d") fill_hist_3d("fcnc_tcg_"+sname,  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TCG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection + extra_select, excl1, excl2, excl3);
+          }
+        }
+      } else if( fprefix == "JEC" ){
+        for(int i = 0; i < JEC_SYS_NAMES.size(); i++){
+          string jec_bin_name = JEC_SYS_NAMES[i];
+          vector<string> jec_bin_files = { JEC_SYS_D[i], JEC_SYS_U[i] };
+          vector<string> jec_bin_file_pstfixs = {"Down", "Up"};
+          for(int j = 0; j < 2; j++){
+            string extra_select = "";
+            string pstfix = jec_bin_file_pstfixs[j];
+            string sname = jec_bin_name + pstfix;
+            PREFIX_NTUPLES = PATH_PREFIX + jec_bin_files[j] + "/";
+
+            cout << "process folder ... " << PREFIX_NTUPLES << endl;
+            for (auto channel:channel_other){
+              fill_hist_3d(channel + "_" + sname,      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, mc_selection+extra_select, excl1, excl2, excl3);              
+              }                       
+              for (auto channel:channel_wjets){
+              fill_hist_3d(channel + "_" + sname,     NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, mc_selection+SELECTION_map.at(channel)+extra_select, excl1, excl2, excl3);
+              }
+              if (QCD_type == "MC") {
+              fill_hist_3d("QCD_"+sname,    NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule_x, vrule_y, vrule_z, qcd_selection+extra_select, excl1, excl2, excl3); 
+              }
+
+            if(MODE == "FCNCtug3d") fill_hist_3d("fcnc_tug_"+sname,  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection + extra_select, excl1, excl2, excl3);
+            if(MODE == "FCNCtcg3d") fill_hist_3d("fcnc_tcg_"+sname,  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TCG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection + extra_select, excl1, excl2, excl3);
+          }
+        }
+      } else {
+        vector<string> pstfixs = {"Down", "Up"};
+        for(auto pstfix : pstfixs){
+          string extra_select = "";
+          // if(fprefix == "JEC") extra_select = "* weight_btag_jes" + pstfix + "_norm / weight_norm";
+
+          string sname = fprefix + pstfix;
+          PREFIX_NTUPLES = PATH_PREFIX + fprefix + pstfix+"/";
+          for (auto channel:channel_other){
+              fill_hist_3d(channel + "_" + sname,      NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, mc_selection+extra_select, excl1, excl2, excl3);              
+              }                       
+              for (auto channel:channel_wjets){
+              fill_hist_3d(channel + "_" + sname,     NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at(channel),  tree_name, vrule_x, vrule_y, vrule_z, mc_selection+SELECTION_map.at(channel)+extra_select, excl1, excl2, excl3);
+              }
+              if (QCD_type == "MC") {
+              fill_hist_3d("QCD_"+sname,    NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_map.at("QCD_MC"),  tree_name, vrule_x, vrule_y, vrule_z, qcd_selection+extra_select, excl1, excl2, excl3); 
+              }
+
+          if(MODE == "FCNCtug3d") fill_hist_3d("fcnc_tug_"+sname,  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TUG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection + extra_select, excl1, excl2, excl3);
+          if(MODE == "FCNCtcg3d") fill_hist_3d("fcnc_tcg_"+sname,  NBINS, rmin, rmax, &hists_to_save_3d, PREFIX_NTUPLES, FILES_FCNC_TCG,  tree_name, vrule_x, vrule_y, vrule_z, mc_selection + extra_select, excl1, excl2, excl3);
+          }
+      }
+    }
+
+      for(auto hist_3d : hists_to_save_3d){
+          TH1D * hist = new TH1D(hist_3d->GetName(), hist_3d->GetTitle(), NBINS*NBINS*NBINS, rmin, rmax);
+          auto canv = new TCanvas( (hist_3d->GetName() + string("_3d")).c_str(), (hist_3d->GetName() + string("_3d")).c_str(), 640, 640);
+          hist_3d->Draw();
+          canv->Print( (hist_3d->GetName() + string("_3d") + ".png").c_str() );
+          for(int i = 1; i <= NBINS; i++){
+            for(int j = 1; j <= NBINS; j++){
+              for(int k = 1; k <= NBINS; k++){
+                  float value = hist_3d->GetBinContent(i, j, k);
+                  hist->SetBinContent((i-1)*NBINS*NBINS + (j-1)*NBINS + k, value);
+              }
+            }
           }
           hists_to_save.push_back( hist );
       }
-
       TFile * outfile = new TFile((OUTPUT_FILE_NAME).c_str(), "RECREATE");
       for(auto hist : hists_to_save){
           auto hscale = (TH1D*)hist->Clone();
@@ -1133,8 +1246,9 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
       }
       auto canv = drawer->GetCanvas(TEST_VAR_NAME, 640, 640);
       canv->Print( (RELEASE + "_" + MODE + ".png").c_str() );
-
-  }*/
+  }
+  
+  
  
   else cout << __FILE__ " : unknow mode " << MODE << endl;
   
