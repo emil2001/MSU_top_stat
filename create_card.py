@@ -42,8 +42,8 @@ def SM(args):
     "t_ch",    31./207., '(-0.5,0.5)', # 0.10
     "s_ch",    0.10, '(-2.85,3.0)',
     "tW_ch",   0.15, '(-6.0,1.5)',
-    "ttbar-sl",   0.15, '(-4.0,5.0)',
-    "ttbar-dl",   0.15, '(-4.0,5.0)',
+    "ttbar_sl",   0.15, '(-4.0,5.0)',
+    "ttbar_dl",   0.15, '(-4.0,5.0)',
     "Diboson", 0.20, '(-3.0,3.0)',
     "DY",      0.20, '(-3.0,3.0)',
     "WQQ",     0.30, '(-1.0,4.5)',
@@ -59,22 +59,28 @@ def SM(args):
   mult_errs = [ 0.025  ]
   #mult_pars = []
   #mult_errs = []
+  interp_pars = []
   interp_pars  = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2" ]
   #interp_pars += ["PileUp", "pdf"]
   interp_pars += ["PileUp"]
-  #interp_pars += ["UnclMET", "MER"] # PUJetIdTag
-  #interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_inf"]
-  #interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
+  interp_pars += ["UnclMET", "MER"] # PUJetIdTag
+  interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_inf"]
+  interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
   #muRmuF_pars  = ["Fac", "Ren", "RenFac"]
-  ttbardl_pars = [ "pdf_ttbar-dl", "Ren_ttbar-dl", "Fac_ttbar-dl", "RenFac_ttbar-dl"]
-  ttbarsl_pars = ["pdf_ttbar-sl", "Ren_ttbar-sl", "Fac_ttbar-sl", "RenFac_ttbar-sl"]
+  ttbardl_pars = [ "pdf_ttbar_dl", "Ren_ttbar_dl", "Fac_ttbar_dl", "RenFac_ttbar_dl"]
+  #ttbardl_pars += ["UETune_ttbar_dl", "hdamp_ttbar_dl"]
+  ttbarsl_pars = ["pdf_ttbar_sl", "Ren_ttbar_sl", "Fac_ttbar_sl", "RenFac_ttbar_sl"]
+  #ttbarsl_pars += ["UETune_ttbar_sl", "hdamp_ttbar_sl"]
   DY_pars = ["pdf_DY", "Ren_DY", "Fac_DY", "RenFac_DY"]
-  Diboson_pars = ["pdf_Diboson", "Ren_Diboson", "Fac_Diboson", "RenFac_Diboson"]
+  Diboson_pars = ["pdf_Diboson"]#, "Ren_Diboson", "Fac_Diboson", "RenFac_Diboson"]
   s_ch_pars = ["pdf_s_ch", "Ren_s_ch", "Fac_s_ch", "RenFac_s_ch"]
   Wjets_pars = ["pdf_Wjets", "Ren_Wjets", "Fac_Wjets", "RenFac_Wjets"]
   t_ch_pars = ["pdf_t_ch", "Ren_t_ch", "Fac_t_ch", "RenFac_t_ch"]
-  tW_ch_pars = ["pdf_tW_ch", "Ren_tW_ch", "Fac_tW_ch", "RenFac_tW_ch"] 
+  #t_ch_pars += ["UETune_t_ch", "hdamp_t_ch"]
+  tW_ch_pars = ["pdf_tW_ch", "Ren_tW_ch", "Fac_tW_ch", "RenFac_tW_ch"]
+  #tW_ch_pars += ["UETune_tW_ch", "hdamp_tW_ch"] 
+  #interp_pars = []
   interp_pars += ttbardl_pars
   interp_pars += ttbarsl_pars
   interp_pars += DY_pars
@@ -83,16 +89,17 @@ def SM(args):
   interp_pars += t_ch_pars
   interp_pars += tW_ch_pars  
   interp_pars += Wjets_pars 
-
+  
   #interp_pars += muRmuF_pars
   xsr_pars     = ["Isr", "Fsr"]
   interp_pars += xsr_pars
   #interp_pars = ["Ren"]
 
   has_muRmuF, has_xsr = [], []
-  has_muRmuF = ["s_ch", "ttbar-sl", "ttbar-dl", "WQQ", "Wb", "Wc", "Wother", "Wlight", "DY", "t_ch"]
-  has_xsr    = ["ttbar-sl", "ttbar-dl", "tW_ch"]
-  Wjets = ["Wlight", "Wother", "WQQ", "Wc", "Wb"]  
+  has_muRmuF = ["s_ch", "ttbar_sl", "ttbar_dl", "WQQ", "Wb", "Wc", "Wother", "Wlight", "DY", "t_ch"]
+  has_xsr    = ["ttbar_sl", "ttbar_dl", "tW_ch"]
+  Wjets = ["Wlight", "Wother", "WQQ", "Wc", "Wb"]
+  Wjets_tmp = ["Wlight", "Wother", "WQQ", "Wc"]   
   pss = ["_G2GG_muR_", "_G2QQ_muR_", "_Q2QG_muR_", "_X2XG_muR_", "_G2GG_cNS_", "_G2QQ_cNS_", "_Q2QG_cNS_", "_X2XG_cNS_"]
   pss = []
   pss_names = []
@@ -122,8 +129,8 @@ def SM(args):
   hdamp_par  = atd.Parameter( "hdamp", "gauss", "shape")
   UETune_par = atd.Parameter( "UETune", "gauss", "shape")
   with_hdamp, with_UETune  = [], []
-  # with_hdamp  = ["ttbar", "tW_ch"]
-  # with_UETune = ["ttbar", "tW_ch"]
+  #with_hdamp  = ["ttbar_dl", "ttbar_sl", "tW_ch", "t_ch"]
+  #with_UETune = ["ttbar_dl", "ttbar_sl", "tW_ch", "t_ch"]
 
   # define chanals
   for name, err, rang in zip( chanals_names[::3], chanals_names[1::3], chanals_names[2::3] ):
@@ -139,9 +146,9 @@ def SM(args):
       if param.name in xsr_pars     and name not in has_xsr    : continue
       if param.name in DY_pars           and name != "DY"    : continue
       if param.name in Diboson_pars      and name != "Diboson"    : continue
-      if param.name in Wjets_pars    and name not in Wjets    : continue
-      if param.name in ttbarsl_pars    and name != "ttbar-sl"    : continue
-      if param.name in ttbardl_pars    and name != "ttbar-dl"    : continue  
+      if param.name in Wjets_pars    and name not in Wjets_tmp    : continue
+      if param.name in ttbarsl_pars    and name != "ttbar_sl"    : continue
+      if param.name in ttbardl_pars    and name != "ttbar_dl"    : continue  
       if param.name in s_ch_pars    and name != "s_ch"    : continue
       if param.name in t_ch_pars    and name != "t_ch"    : continue
       if param.name in tW_ch_pars    and name != "tW_ch"    : continue
@@ -179,8 +186,8 @@ def sm2d(args):
     "t_ch",    31./207., '(-0.5,0.5)', # 0.10
     "s_ch",    0.10, '(-2.85,3.0)',
     "tW_ch",   0.15, '(-6.0,1.5)',
-    "ttbar-sl",   0.15, '(-4.0,5.0)',
-    "ttbar-dl",   0.15, '(-4.0,5.0)',
+    "ttbar_sl",   0.15, '(-4.0,5.0)',
+    "ttbar_dl",   0.15, '(-4.0,5.0)',
     "Diboson", 0.20, '(-3.0,3.0)',
     "DY",      0.20, '(-3.0,3.0)',
     "WQQ",     0.30, '(-1.0,4.5)',
@@ -195,16 +202,16 @@ def sm2d(args):
   mult_errs = [ 0.025  ]
   #mult_pars = []
   #mult_errs = []
-  interp_pars  = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2" ]
+  #interp_pars  = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2" ]
   #interp_pars += ["PileUp", "pdf"]
   interp_pars += ["PileUp"]
-  interp_pars += ["UnclMET", "MER"] # PUJetIdTag
-  interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
-  interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
+  #interp_pars += ["UnclMET", "MER"] # PUJetIdTag
+  #interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_inf"]
+  #interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
   #muRmuF_pars  = ["Fac", "Ren", "RenFac"]
-  ttbardl_pars = [ "pdf_ttbar-dl", "Ren_ttbar-dl", "Fac_ttbar-dl", "RenFac_ttbar-dl"]
-  ttbarsl_pars = ["pdf_ttbar-sl", "Ren_ttbar-sl", "Fac_ttbar-sl", "RenFac_ttbar-sl"]
+  ttbardl_pars = [ "pdf_ttbar_dl", "Ren_ttbar_dl", "Fac_ttbar_dl", "RenFac_ttbar_dl"]
+  ttbarsl_pars = ["pdf_ttbar_sl", "Ren_ttbar_sl", "Fac_ttbar_sl", "RenFac_ttbar_sl"]
   DY_pars = ["pdf_DY", "Ren_DY", "Fac_DY", "RenFac_DY"]
   Diboson_pars = ["pdf_Diboson", "Ren_Diboson", "Fac_Diboson", "RenFac_Diboson"]
   s_ch_pars = ["pdf_s_ch", "Ren_s_ch", "Fac_s_ch", "RenFac_s_ch"]
@@ -223,8 +230,8 @@ def sm2d(args):
   interp_pars += xsr_pars
     
   has_muRmuF, has_xsr = [], []
-  has_muRmuF = ["s_ch", "ttbar-sl", "ttbar-dl", "WQQ", "Wb", "Wc", "Wother", "Wlight", "DY", "t_ch"]
-  has_xsr    = ["ttbar-sl", "ttbar-dl", "tW_ch"]
+  has_muRmuF = ["s_ch", "ttbar_sl", "ttbar_dl", "WQQ", "Wb", "Wc", "Wother", "Wlight", "DY", "t_ch"]
+  has_xsr    = ["ttbar_sl", "ttbar_dl", "tW_ch"]
   Wjets = ["Wlight", "Wother", "WQQ", "Wc", "Wb"]  
 
   pss = ["_G2GG_muR_", "_G2QQ_muR_", "_Q2QG_muR_", "_X2XG_muR_", "_G2GG_cNS_", "_G2QQ_cNS_", "_Q2QG_cNS_", "_X2XG_cNS_"]
@@ -256,8 +263,8 @@ def sm2d(args):
   hdamp_par  = atd.Parameter( "hdamp", "gauss", "shape")
   UETune_par = atd.Parameter( "UETune", "gauss", "shape")
   with_hdamp, with_UETune  = [], []
-  # with_hdamp  = ["ttbar", "tW_ch"]
-  # with_UETune = ["ttbar", "tW_ch"]
+  #with_hdamp  = ["ttbar_dl", "ttbar_sl", "tW_ch", "t_ch"]
+  #with_UETune = ["ttbar_dl", "ttbar_sl", "tW_ch", "t_ch"]
 
   # define chanals
   for name, err, rang in zip( chanals_names[::3], chanals_names[1::3], chanals_names[2::3] ):
@@ -274,8 +281,8 @@ def sm2d(args):
       if param.name in DY_pars           and name != "DY"    : continue
       if param.name in Diboson_pars      and name != "Diboson"    : continue
       if param.name in Wjets_pars    and name not in Wjets    : continue
-      if param.name in ttbarsl_pars    and name != "ttbar-sl"    : continue
-      if param.name in ttbardl_pars    and name != "ttbar-dl"    : continue  
+      if param.name in ttbarsl_pars    and name != "ttbar_sl"    : continue
+      if param.name in ttbardl_pars    and name != "ttbar_dl"    : continue  
       if param.name in s_ch_pars    and name != "s_ch"    : continue
       if param.name in t_ch_pars    and name != "t_ch"    : continue
       if param.name in tW_ch_pars    and name != "tW_ch"    : continue
@@ -309,8 +316,8 @@ def fcnc_1d(args, coupling_hist_name):
     "t_ch",    31./207., '(-0.5,0.5)', # 0.10
     "s_ch",    0.10, '(-2.85,3.0)',
     "tW_ch",   0.15, '(-6.0,1.5)',
-    "ttbar-dl",   0.15, '(-4.0,5.0)',
-    "ttbar-sl",   0.15, '(-4.0,5.0)',
+    "ttbar_dl",   0.15, '(-4.0,5.0)',
+    "ttbar_sl",   0.15, '(-4.0,5.0)',
     "Diboson", 0.20, '(-3.0,3.0)',
     "DY",      0.20, '(-3.0,3.0)',
     "WQQ",     0.30, '(-1.0,4.5)',
@@ -330,15 +337,15 @@ def fcnc_1d(args, coupling_hist_name):
   #interp_pars += ["PileUp", "pdf"]
   interp_pars += ["PileUp"]
   #interp_pars += ["UnclMET"]
-  #interp_pars += ["UnclMET", "MER"] # PUJetIdTag
-  #interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_Inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_Inf"]
-  #interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
+  interp_pars += ["UnclMET", "MER"] # PUJetIdTag
+  interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_inf"]
+  interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
   #muRmuF_pars  = ["Fac", "Ren", "RenFac"]
-  ttbardl_pars = [ "pdf_ttbar-dl", "Ren_ttbar-dl", "Fac_ttbar-dl", "RenFac_ttbar-dl"]
-  ttbarsl_pars = ["pdf_ttbar-sl", "Ren_ttbar-sl", "Fac_ttbar-sl", "RenFac_ttbar-sl"]
+  ttbardl_pars = ["pdf_ttbar_dl", "Ren_ttbar_dl", "Fac_ttbar_dl", "RenFac_ttbar_dl"]
+  ttbarsl_pars = ["pdf_ttbar_sl", "Ren_ttbar_sl", "Fac_ttbar_sl", "RenFac_ttbar_sl"]
   DY_pars = ["pdf_DY", "Ren_DY", "Fac_DY", "RenFac_DY"]
-  Diboson_pars = ["pdf_Diboson", "Ren_Diboson", "Fac_Diboson", "RenFac_Diboson"]
+  Diboson_pars = ["pdf_Diboson"]#, "Ren_Diboson", "Fac_Diboson", "RenFac_Diboson"]
   s_ch_pars = ["pdf_s_ch", "Ren_s_ch", "Fac_s_ch", "RenFac_s_ch"]
   Wjets_pars = ["pdf_Wjets", "Ren_Wjets", "Fac_Wjets", "RenFac_Wjets"]
   t_ch_pars = ["pdf_t_ch", "Ren_t_ch", "Fac_t_ch", "RenFac_t_ch"]
@@ -364,9 +371,10 @@ def fcnc_1d(args, coupling_hist_name):
       pss_names += [ item + ps ]
 
 
-  has_muRmuF = ["s_ch", "ttbar-sl", "ttbar-dl", "WQQ", "Wb", "Wc", "Wother", "Wlight", "DY", "t_ch"]
-  has_xsr    = ["ttbar-sl", "ttbar-dl", "tW_ch", "t_ch"]
+  has_muRmuF = ["s_ch", "ttbar_sl", "ttbar_dl", "WQQ", "Wb", "Wc", "Wother", "Wlight", "DY", "t_ch"]
+  has_xsr    = ["ttbar_sl", "ttbar_dl", "tW_ch", "t_ch"]
   Wjets = ["Wlight", "Wother", "WQQ", "Wc", "Wb"] 
+  Wjets_tmp = ["Wlight", "Wother", "WQQ", "Wc"]
 
   has_jer = ["ttbar", "t_ch", "s_ch"]
   datacard.parameters_order_list  = [ "sigma_" + name for name, err, rang in zip( chanals_names[::3], chanals_names[1::3], chanals_names[2::3] ) ] 
@@ -402,19 +410,20 @@ def fcnc_1d(args, coupling_hist_name):
     if name in with_UETune : interp_pars += [ UETune_par ]
 
     for param in common_interp_pars:
+      #if param.name in muRmuF_pars  and name not in has_muRmuF : continue
       if param.name in xsr_pars     and name not in has_xsr    : continue
       if param.name in DY_pars           and name != "DY"    : continue
       if param.name in Diboson_pars      and name != "Diboson"    : continue
-      if param.name in Wjets_pars    and name not in Wjets    : continue
-      if param.name in ttbarsl_pars    and name != "ttbar-sl"    : continue
-      if param.name in ttbardl_pars    and name != "ttbar-dl"    : continue  
+      if param.name in Wjets_pars    and name not in Wjets_tmp    : continue
+      if param.name in ttbarsl_pars    and name != "ttbar_sl"    : continue
+      if param.name in ttbardl_pars    and name != "ttbar_dl"    : continue  
       if param.name in s_ch_pars    and name != "s_ch"    : continue
       if param.name in t_ch_pars    and name != "t_ch"    : continue
       if param.name in tW_ch_pars    and name != "tW_ch"    : continue
-     # if param.name in test_pars  and name not in has_jer : continue
-      if param.name in pss_names : continue
-      interp_pars += [ param ]
+      #if param.name in pss_names : continue
       print(param.name, name)
+      interp_pars += [ param ]
+      
     if name == "fcnc_tcg" :
       norm_parameter = atd.Parameter("KC", "flat_distribution", "mult")
       norm_parameter.options["mean"]  = 0.0
@@ -434,7 +443,7 @@ def fcnc_1d(args, coupling_hist_name):
       norm_parameter.options["range"] = '(-5.0,5.0)'
       chanal.parameters += [ norm_parameter ]
 
-    if name != "QCD" : chanal.parameters += common_interp_pars
+    if name != "QCD" : chanal.parameters += interp_pars
     datacard.chanals += [ chanal ]
 
   return datacard
@@ -473,7 +482,7 @@ def expected_sm(args):
 def sys_impact(args):
   ### PARCE RESULTS
   dic = {}
-  file = open("../../sm/def/getTable_SM.tex")
+  file = open("../../sm_exp-low_level/def/getTable_SM.tex")
   data = file.read()
   print(data)
   for line in data.split("\n"):
@@ -549,7 +558,7 @@ def sys_impact(args):
 
 
       for chanal in dcard.chanals: 
-        for i in xrange(len(chanal.parameters)):
+        for i in range(len(chanal.parameters)):
           if chanal.parameters[i].name == par.name : 
             chanal.parameters[i] = par
       
@@ -653,7 +662,7 @@ def sys_impact2d(args):
 
 
       for chanal in dcard.chanals: 
-        for i in xrange(len(chanal.parameters)):
+        for i in range(len(chanal.parameters)):
           if chanal.parameters[i].name == par.name : 
             chanal.parameters[i] = par
       

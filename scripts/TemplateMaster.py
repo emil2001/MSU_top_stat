@@ -121,11 +121,11 @@ def is_var(match):
   return None
 
 def print_mathcs(matchs_list):
-  print [m.groups()[0] for m in matchs_list]
+  print([m.groups()[0] for m in matchs_list])
 
 def get_subtext(subtemplates, matchs_list, start, end, skip_last = False):
   subtext = ""
-  for i in xrange(start, end):
+  for i in range(start, end):
     subtext += subtemplates[i]
     if skip_last and i == end - 1 : continue
     else : subtext += "{% " + matchs_list[i].groups()[0] + " %}"
@@ -139,7 +139,7 @@ def remove_newline(sub_text):
   return sub_text
 
 def remove_spaces_before(string):
-  for i in reversed(xrange(len(string))):
+  for i in reversed(range(len(string))):
     char = string[i]
     if char not in "\n " : break
     if char == "\n": return string[:i+1]
@@ -163,7 +163,7 @@ def find_pairs(f_start, f_end, matchs_list):
           i_end = i
           break
     if not i_end : 
-      print "WARNING : find_pairs() : no end for this start : ", match_start.groups()[0]
+      print("WARNING : find_pairs() : no end for this start : ", match_start.groups()[0])
       continue
 
     match_end = matchs_list[i_end]
@@ -188,7 +188,7 @@ def find_triples(f_start, f_middle, f_end, matchs_list):
           i_end      = i
           break
     if not i_end : 
-      print "WARNING : find_pairs() : no end for this start : ", match_start.groups()[0]
+      print("WARNING : find_pairs() : no end for this start : ", match_start.groups()[0])
       continue
     match_end = matchs_list[i_end]
 
@@ -227,7 +227,7 @@ def expand_key(key, dic, call = True):
 
   for method_key in method_keys:
     if not hasattr(var, method_key) : 
-      print "WARNING : parce_template() : class " + var_key + " hasn't attribute with name " + method_key
+      print("WARNING : parce_template() : class " + var_key + " hasn't attribute with name " + method_key)
       return NO_KEY_CODE
 
     attr = getattr(var, method_key)
@@ -364,7 +364,7 @@ def parce_template(template, dic):
 
   """
   # work with variables method cals
-  for i, match in zip(reversed(xrange(len(matchs_list))), reversed(matchs_list)):
+  for i, match in zip(reversed(range(len(matchs_list))), reversed(matchs_list)):
     groups = is_attr( match )
     if not groups : continue
 
@@ -419,7 +419,7 @@ def parce_template(template, dic):
     if func == NO_KEY_CODE : continue
 
     if not callable(func) :
-      print "WARNING: parce_template() : func '" + func_key + "' should be callable"
+      print("WARNING: parce_template() : func '" + func_key + "' should be callable")
       continue
 
     params = []
@@ -444,7 +444,7 @@ def parce_template(template, dic):
     matchs_list   = matchs_list[:start_index] + matchs_list[end_index+1:]
     
   # work with variables
-  for i, match in zip(reversed(xrange(len(matchs_list))), reversed(matchs_list)):
+  for i, match in zip(reversed(range(len(matchs_list))), reversed(matchs_list)):
     var_key = is_var( match )
     if not var_key : continue
 
@@ -469,7 +469,7 @@ def tabulate(text, split_symbol=None, n_spaces=3):
     else : lines[i] = line.split()
   
   colums_N = len(max(lines, key=len))
-  colums_width = [ 0 for i in xrange(colums_N)]
+  colums_width = [ 0 for i in range(colums_N)]
   for line in lines:
     for i, column in enumerate(line):
       colums_width[i] = max(colums_width[i], len(column))
@@ -517,9 +517,9 @@ def examples():
 
 """
 
-  dic = {"var_1" : 0, "var_2" : "hello_worlds", "list_A" : ["Var_A", "Var_B"], "list_B" : [i for i in xrange(10, 15)]}
+  dic = {"var_1" : 0, "var_2" : "hello_worlds", "list_A" : ["Var_A", "Var_B"], "list_B" : [i for i in range(10, 15)]}
   answer = parce_template(template_A, dic)
-  print template_A, " -> ", answer, "answer_A == answer : ", answer_A == answer
+  print(template_A, " -> ", answer, "answer_A == answer : ", answer_A == answer)
 
   #######################################  example # 1 ###################
   class A:
@@ -542,7 +542,7 @@ def examples():
 
   dic = {"var" : A() }
   answer = parce_template(template_B, dic)
-  print template_B, " -> ", answer, "answer_B == answer : ", answer_B == answer
+  print(template_B, " -> ", answer, "answer_B == answer : ", answer_B == answer)
 
   #######################################  example # 2 ###################
   template_C = """
@@ -561,7 +561,7 @@ def examples():
       return text.upper()
 
     def my_func_2(self, text, start, end):
-      print text, start, end
+      print(text, start, end)
       return text[start : end].upper()
 
     def get_params_start(self):
@@ -574,7 +574,7 @@ def examples():
   texts = ["qwerty", "asdfgh", "zxcvbv"]
   dic = {"texts" : texts, "B" : my_class()}
   answer = parce_template(template_C, dic)
-  print template_C, " -> ", answer
+  print(template_C, " -> ", answer)
   
 if __name__ == "__main__": examples()
 

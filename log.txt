@@ -1,0 +1,71 @@
+analyse.sh, setup ... 
+++ '[' sm = start ']'
+++ '[' sm = full ']'
+++ echo 'analyse.sh, skip recreating work directory /scratch/eabasov/Stat/MSU_top_stat/../2022_UL18'
+analyse.sh, skip recreating work directory /scratch/eabasov/Stat/MSU_top_stat/../2022_UL18
+++ cd /scratch/eabasov/Stat/MSU_top_stat/../2022_UL18
+++ '[' sm = sys_impact ']'
+++ '[' sm = full ']'
+++ '[' sm = plot_sys ']'
+++ '[' sm = qcd ']'
+++ '[' sm = full ']'
+++ '[' sm = def_run ']'
+++ echo 'analyse.sh, skip qcd normalization calcullations'
+analyse.sh, skip qcd normalization calcullations
+++ '[' sm = hists ']'
+++ '[' sm = full ']'
+++ '[' sm = def_run ']'
+++ echo 'analyse.sh, skip recreating histogramms files'
+analyse.sh, skip recreating histogramms files
+++ '[' sm = sm ']'
+++ echo 'analyse.sh, SM ... '
+analyse.sh, SM ... 
+++ mkdir -p /scratch/eabasov/Stat/MSU_top_stat/../2022_UL18/results
+++ '[' def = def ']'
+++ mkdir -p /scratch/eabasov/Stat/MSU_top_stat/../2022_UL18/sm_exp-low_level/def
+++ cd /scratch/eabasov/Stat/MSU_top_stat/../2022_UL18/sm_exp-low_level/def
+++ make_analyse_theta /scratch/eabasov/Stat/MSU_top_stat/../2022_UL18/hists_exp-low_level/hists_SM.root 20 10000000 /scratch/eabasov/Stat/MSU_top_stat/../2022_UL18/hists_exp-low_level/ SM none
+++ input_hists=/scratch/eabasov/Stat/MSU_top_stat/../2022_UL18/hists_exp-low_level/hists_SM.root
+++ nbins_=20
+++ niters_=10000000
+++ hist_path=/scratch/eabasov/Stat/MSU_top_stat/../2022_UL18/hists_exp-low_level/
+++ mode=SM
+++ module=none
+++ python /scratch/eabasov/Stat/MSU_top_stat/create_card.py --fname=SM --nbins=20 --niters=10000000 --input=/scratch/eabasov/Stat/MSU_top_stat/../2022_UL18/hists_exp-low_level/hists_SM.root '--mode=latex cl mRoot theta' --nchains=20
+create_card.py call ...
+create_card.py will use  SM  ->  [<function SM at 0x7f7a79d97f40>] with parameters  /scratch/eabasov/Stat/MSU_top_stat/../2022_UL18/hists_exp-low_level/hists_SM.root Namespace(fcnc_fix='', fname='SM', nbins=20, niters=10000000, input='/scratch/eabasov/Stat/MSU_top_stat/../2022_UL18/hists_exp-low_level/hists_SM.root', input_data='', input_unmarg='', mode='latex cl mRoot theta', signal_norm=1.0, nchains=20)
+imported
+combine SM_cl.txt -M MarkovChainMC -i 10000000 --tries 1 --saveChain --noSlimChain --burnInSteps 0 --noDefaultPrior=0 --setParameterRanges sigma_t_ch=-0.5,0.5:sigma_s_ch=-2.85,3.0:sigma_tW_ch=-6.0,1.5:sigma_ttbar_sl=-4.0,5.0:sigma_ttbar_dl=-4.0,5.0:sigma_Diboson=-3.0,3.0:sigma_DY=-3.0,3.0:sigma_WQQ=-1.0,4.5:sigma_Wc=-2.5,2.0:sigma_Wb=-2.5,3.5:sigma_Wother=-3.5,1.5:sigma_Wlight=-3.5,1.5:sigma_QCD=-3.0,1.5:lumi=-2.5,2.5 --freezeParameters r --redefineSignalPOIs sigma_t_ch --setParameters sigma_s_ch=1,sigma_tW_ch=1,sigma_ttbar_sl=1,sigma_ttbar_dl=1,sigma_Diboson=1,sigma_DY=1,sigma_WQQ=1,sigma_Wc=1,sigma_Wb=1,sigma_Wother=1,sigma_Wlight=1,sigma_QCD=1,lumi=1
+++ '[' none = cl ']'
+++ '[' none = theta ']'
+++ POI=sigma_t_ch
+++ '[' SM = FCNCtug ']'
+++ '[' SM = FCNCtcg ']'
+++ root -q -b -l '/scratch/eabasov/Stat/MSU_top_stat/scripts/getTable.cpp("SM_theta.root", "SM", 0.25, "/scratch/eabasov/Stat/MSU_top_stat/../2022_UL18/hists_exp-low_level/", true, 20)'
+
+Processing /scratch/eabasov/Stat/MSU_top_stat/scripts/getTable.cpp("SM_theta.root", "SM", 0.25, "/scratch/eabasov/Stat/MSU_top_stat/../2022_UL18/hists_exp-low_level/", true, 20)...
+In file included from input_line_8:1:
+In file included from /scratch/eabasov/Stat/MSU_top_stat/scripts/getTable.cpp:2:
+In file included from /scratch/eabasov/Stat/MSU_top_stat/scripts/mroot/mRoot.cpp:346:
+/scratch/eabasov/Stat/MSU_top_stat/scripts/mroot/mRootTreeToHist.cpp:63:30: warning: unknown escape sequence '\.' [-Wunknown-escape-sequence]
+      regex name_pattern( ".+\.root" );
+                             ^~
+In file included from input_line_8:1:
+/scratch/eabasov/Stat/MSU_top_stat/scripts/getTable.cpp:373:22: error: use of undeclared identifier 'parameters'
+    for(auto param : parameters){
+                     ^
+++ pdflatex -interaction=batchmode getTable_SM.tex
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+++ pdflatex -interaction=batchmode model_SM.tex
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+++ mv getTable_SM.pdf /scratch/eabasov/Stat/MSU_top_stat/../2022_UL18/results/2022_UL18-SM-low_level-expected.pdf
+mv: не удалось выполнить stat для 'getTable_SM.pdf': Нет такого файла или каталога
+++ '[' def = qcd ']'
+++ '[' def = all ']'
+++ '[' def = bins ']'
+++ '[' def = all ']'
+++ exit

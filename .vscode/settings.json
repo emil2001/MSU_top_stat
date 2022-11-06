@@ -56,6 +56,22 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "valarray": "cpp",
-        "*.icc": "cpp"
+        "*.icc": "cpp",
+        "plotSysImpact.C": "cpp",
+        "tree_to_hists_obs.C": "cpp",
+        "random": "cpp",
+        "string_view": "cpp",
+        "span": "cpp",
+        "bit": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "map": "cpp",
+        "algorithm": "cpp",
+        "iterator": "cpp",
+        "memory": "cpp",
+        "memory_resource": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp"
     }
 }

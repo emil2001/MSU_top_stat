@@ -1,10 +1,11 @@
 
-#ifndef mRootStackDrawer_
-#define mRootStackDrawer_ 1
+#ifndef mRootStackDrawer2D_
+#define mRootStackDrawer2D_ 1
 
 #include <TFile.h>
 #include <TTree.h>
 #include <TH1.h>
+#include <TH2.h>
 #include <TROOT.h>
 #include <TCanvas.h>
 #include <TLine.h>
@@ -28,24 +29,27 @@ namespace mRoot {
 
       void AddHistsFromFile(TFile * file, TString incl_wildcard=".*", TString excl_wildcard="QWERTZXZCAD"){
         data_hist = nullptr;
-        data_hist = (TH1D*)file->Get("data");
+        data_hist = (TH2D*)file->Get("data");
+        
         TIter next(file->GetListOfKeys());
         TKey *key;
 
         std::regex re_incl(incl_wildcard);
         std::regex re_excl(excl_wildcard);
         bool if_fcnc = 0;
-        TH1D *hf; 
+        TH2D *hf; 
+        
         while ((key = (TKey*)next())) {
           string name = key->GetName();
           if( not std::regex_match(name, re_incl) ) continue;
           if( std::regex_match(name, re_excl) ) continue;
-
-          TClass *cl = gROOT->GetClass(key->GetClassName());
-          if (!cl->InheritsFrom("TH1")) continue;
-          TH1D *h = (TH1D*)key->ReadObj();
-          if( string(h->GetName()) == string("data")) continue;
-          if( string(h->GetName()) == string("fcnc_tug") or string(h->GetName()) == string("fcnc_tcg")) 
+          //TClass *cl = gROOT->GetClass(key->GetClassName());
+          //if (!cl->InheritsFrom("TH2")) continue;
+          
+          TH2D *h = (TH2D*)key->ReadObj();
+          
+          if( string(h->GetName()) == "data") continue;
+          if( string(h->GetName()) == "fcnc_tug" or string(h->GetName()) == "fcnc_tcg") 
           {
             if_fcnc = 1;
             hf = h;
@@ -61,12 +65,13 @@ namespace mRoot {
       }
 
       TCanvas * GetCanvas(const char * name, int width = 640 * 2, int height = 480 * 2){
+        cout << "START" << endl;
         TCanvas * canv = new TCanvas(name, "", width, height);
 
         int textFont = 63;
         double axisFontSize = 20;
 
-        if(not data_hist) draw_residial = false;
+        draw_residial = false;
         double residial_height = draw_residial ? 0.33 : 0.0;
 
         std::vector <int> colors = mRoot::getNiceColors(200);
@@ -85,10 +90,9 @@ namespace mRoot {
           hist->SetLineStyle( 7 );
           leg->AddEntry(hist, hist->GetTitle(), "l");
         }
-        cout << stack_hists.size() << endl;
         int i = 0;
         for(auto hist : stack_hists){          
-          hs->Add(hist);          
+          hs->Add(hist);       
           hist->SetFillColor( colors.at(color++) );
           hist->SetLineColor( 1 );
           hist->SetLineWidth( 2 );          
@@ -99,11 +103,11 @@ namespace mRoot {
         TPad *pad_main = new TPad("p1","p1", 0.00, residial_height, 1.-legend_width-0.01, 1.0);
         pad_main->Draw();
         pad_main->cd();
-        hs->Draw("hist");
+        hs->Draw("hist lego4");
         for(auto hist : signal_hists) hist->Draw("same hist");
         if(data_hist) {
           data_hist->SetMarkerStyle(20);
-          data_hist->Draw("p0e1 same");
+          //data_hist->Draw("p0e1 same");
         }
 
         hs->GetYaxis()->SetLabelFont(textFont);
@@ -118,16 +122,16 @@ namespace mRoot {
         leg->Draw();
         pad_leg->SetLeftMargin(0.00001);
         pad_main->SetRightMargin(0.00001);
-
+/*
         if(draw_residial and data_hist){
           canv->cd();
           TPad *pad_res = new TPad("p3","p3", 0.0, 0.0, 1.-legend_width-0.01, residial_height);
           pad_res->Draw();
           pad_res->cd();
-          TH1D * rhist = new TH1D(*data_hist);
+          TH2D * rhist = new TH2D(*data_hist);
           rhist->Sumw2();
 
-          TH1D total_stack_hist(*(stack_hists.at(0)));
+          TH2D total_stack_hist(*(stack_hists.at(0)));
           total_stack_hist.Sumw2();
           for(int i = 1; i < stack_hists.size(); i++) total_stack_hist.Add(stack_hists.at(i));
 
@@ -152,10 +156,12 @@ namespace mRoot {
           l->SetLineColor( 2 );
           l->SetLineWidth( 2 );
           l->Draw();
-
+          
           canv->cd();
+          
           pad_main->Draw();
-        }
+
+        }*/
 
         return canv;
       }
@@ -164,9 +170,9 @@ namespace mRoot {
         return GetCanvas(name.c_str(), width, height);
       }
 
-      vector<TH1D*> stack_hists;
-      vector<TH1D*> signal_hists;
-      TH1D* data_hist;
+      vector<TH2D*> stack_hists;
+      vector<TH2D*> signal_hists;
+      TH2D* data_hist;
       THStack *hs;
       bool draw_residial;
       double legend_width;

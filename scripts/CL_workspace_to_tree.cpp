@@ -35,13 +35,15 @@ void CL_workspace_to_tree(const char * filename_in, const char * filename_out){
     vector<double*> vals;
     int chain_size = chain->Size();
 
-    // add brunch for every variable in chain
+    // add branch for every variable in chain
     auto iter = argset->createIterator();
     auto var = iter->Next();
+    auto var_name = var->GetName();
     while( var ){
-      cout << "add branch " << var->GetName() << endl;
+      if (var_name == "r") var_name = "sigma_t_ch";
+      cout << "add branch " << var_name << endl;
       vals.push_back(new double);
-      chain_tree->Branch( var->GetName(), vals.at(vals.size() - 1) );
+      chain_tree->Branch( var_name, vals.at(vals.size() - 1) );
       var = iter->Next();
     }
 
@@ -132,10 +134,14 @@ void CL_workspace_to_tree(const char * filename_in, const char * filename_out, c
     // add brunch for every variable in chain
     auto iter = argset->createIterator();
     auto var = iter->Next();
+    const char * var_name = var->GetName();
+    std::string a = "r";
     while( var ){
-      cout << "add branch " << var->GetName() << endl;
+      var_name = var->GetName();
+      if (var_name == a) var_name = "sigma_t_ch";
+      cout << "add branch " << var_name << endl;
       vals.push_back(new double);
-      chain_tree->Branch( var->GetName(), vals.at(vals.size() - 1) );
+      chain_tree->Branch( var_name, vals.at(vals.size() - 1) );
 
       auto find = uncertanties_map.find( string(var->GetName()) );
       auto find2 = unif_map.find( string(var->GetName()) );

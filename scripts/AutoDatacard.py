@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""
+'''
 /////////////////////////////////////////////////////////////////////////////
   Author      :     P.Mandrik, IHEP
   Date        :     12/07/17
@@ -21,12 +21,12 @@
 
     12/07/17 v0.5.5
     add support for CombinedLimit
-"""
+'''
 
 import TemplateMaster
 
 #====================================================================== TEMPLATE FOR THETA
-def_theta_template = """
+def_theta_template = '''
 // generated with AutoDatacart.py and TemplateMaster.py at {% DATE %}
 
 observables = {
@@ -256,15 +256,15 @@ hypotest = {
     plugin_files = ("$THETA_DIR/lib/root.so", "$THETA_DIR/lib/core-plugins.so" );
   };
 
-"""
+'''
 
-#====================================================================== TEMPLATE FOR CFG TABLE
-def_theta_table="""
-  % generated with AutoDatacart.py and TemplateMaster.py at {% DATE %}
-\documentclass{article} 
-\usepackage{graphicx} 
-\usepackage{xcolor}
-\usepackage{multirow}
+#====================================================================== TEMPLATE FOR CFG TABLE 
+def_theta_table='''
+% generated with AutoDatacart.py and TemplateMaster.py at {% DATE %}
+\\documentclass{article} 
+\\usepackage{graphicx} 
+\\usepackage{xcolor}
+\\usepackage{multirow}
 
 \\begin{document} 
   \\begin{center} 
@@ -314,10 +314,11 @@ def_theta_table="""
 
   \end{center} 
 \end{document} 
-"""
+'''
+
 
 #====================================================================== TEMPLATE FOR COMBINEDLIMIT
-def_combinedlimit_template="""
+def_combinedlimit_template='''
 # generated with AutoDatacart.py and TemplateMaster.py at {% DATE %}, to run type:
 # {% CL_RUN_COMMAND %}
 # {% CL_PAR_VS_UNCERT %}
@@ -348,12 +349,12 @@ rate    |{% for CHANAL in CHANALS %}|{% CHANAL.cl_rate %}{% endfor %}
 {% for PARAMETER in PARAMETERS %}
 {% PARAMETER.name %} | {% PARAMETER.cl_distr %}{% for CL_WEIGHT in PARAMETER.cl_weights %}|{% CL_WEIGHT %} {% endfor %}
 {% endfor %}{% endfunc %}
-"""
+'''
 
-def_mroot_template="""
+def_mroot_template='''
 {% for CHANAL in CHANALS %}{% CHANAL.name %} |{% for PARAMETER in CHANAL.get_shape_params %}{% PARAMETER %} {% endfor %} |{% for PARAMETER in CHANAL.get_mult_params %}{% PARAMETER %} {% endfor %}
 {% endfor %}
-"""
+'''
 
 import os.path
 import copy
@@ -574,17 +575,17 @@ class DatacardMaster():
     # check if datacard configuration is not wrong
     # 1. all chanals probably has parameters
     for chanal in self.chanals:
-      if not len(chanal.parameters): print "DatacardMaster(): warning : ", chanal.name, " do not affected by any parameters"
+      if not len(chanal.parameters): print("DatacardMaster(): warning : ", chanal.name, " do not affected by any parameters")
 
     # 2. all distributions has known type
     if "cl" in mode:
       for par in self.parameters:
         if par.cl_distr == "unknow":
-          print "DatacardMaster(): warning : ", par.name, " have unknow theta type for using in CombinedLimit"
+          print("DatacardMaster(): warning : ", par.name, " have unknow theta type for using in CombinedLimit")
 
     return
   def print_command(self):
-    print self.cl_run_command
+    print(self.cl_run_command)
 
   def get_def_dic(self, mode):
     self.init(mode)
@@ -634,12 +635,12 @@ class DatacardMaster():
      # try:
         
       import ROOT as root
-      print "imported"
+      print("imported")
       def get_rates_from_hist(hist_name, file_name):
           file = root.TFile(file_name, "READ")
           hist = file.Get(hist_name)
           try    : hist.Integral()
-          except : print "DatacardMaster(): warning : can't gate rate for ", "\""+hist_name+"\"", hist, file_name
+          except : print("DatacardMaster(): warning : can't gate rate for ", "\""+hist_name+"\"", hist, file_name)
           return hist.Integral()
       for chanal in self.chanals:
           chanal.cl_rate = get_rates_from_hist(chanal.name, self.input_file_mc)
@@ -798,7 +799,7 @@ def test():
   datacard.save()
 
 if __name__ == "__main__": 
-  print "AutoDatacard.py test run ..."
+  print("AutoDatacard.py test run ...")
   test()
 
 

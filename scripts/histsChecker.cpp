@@ -71,7 +71,7 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
   auto hists_central = get_all_from_folder(file, ".+", "(.+Down$)|(.+Up$)|(.+_weight_.+)|(.+_scale_.+)");
   vector <int> indexes = getNiceColors(150);
  // PrintNiceColors(10);  
-  float sum1 = 0., sum2 = 0.;
+
   for(auto hist : *hists_central){
     TCanvas * canv = new TCanvas(hist->GetName(), hist->GetName(), 640 * 4, 640*3);
 
@@ -79,28 +79,17 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
     
     TH1* h = (TH1*)hist;
     cout << " " << h->GetName() << " ... " << endl;
-    if ((std::string(h->GetName()).find("data") == std::string::npos) && (std::string(h->GetName()).find("QCD") == std::string::npos)) {
-          //cout << "found!" << '\n';
-          //cout << " " << h->GetName() << " ... " << endl;
-          //cout << " " << h->Integral() << " ... " << endl;
-          sum1 += h->Integral();
-    }
-    /*  
-    cout << " " << h->GetName() << " ... " << endl;
-    cout << " " << h->Integral() << " ... " << endl;
-    sum1 += h->Integral();
-    */
+
     check_template(h);
 
     auto shifts = get_all_from_folder(file, string(hist->GetName()) + "_.+", "("+string(hist->GetName()) + "_alt.*)|(.+_weight_.+)");
     int color_i = 0;
     h->SetLineColor( 1 );
-    h->SetLineWidth( 3 );
+    h->SetLineWidth( 1 );
 
     TLegend * legend = new TLegend(0.05,0.05,0.95,0.95);
     legend->AddEntry(h,  h->GetName(), "l");
    
-
     list<TH1D*> herrs;
     string lname = "";
     int index = 0;
@@ -113,20 +102,9 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
       check_template(hs);
       hs->SetLineColor( indexes.at(color_i) );
       //cout << color_i << endl;   
-      hs->SetLineWidth( 2 );
+      hs->SetLineWidth( 1 );
+      //cout << " " << hs->GetName() << " ... " << hs->Integral() << endl;
       hists_other.push_back( hs );
-     /* 
-      if (std::string(hs->GetName()).find("Ren") != std::string::npos) {
-          //cout << "found!" << '\n';
-          cout << " " << hs->GetName() << " ... " << endl;
-          cout << " " << hs->Integral() << " ... " << endl;
-          sum2 += hs->Integral();
-          if (abs(hs->Integral()- h->Integral()) < 0.1){
-            cout << hs->GetName() << " normalized" << endl;
-          }
-          else cout << hs->GetName() << " not normalized, difference: "<< hs->Integral()- h->Integral()  << endl;
-      }
-     */
       lname.size() < string(hs->GetTitle()).size() ? lname = string(hs->GetTitle()) : lname;
 
       TH1D* hist_err = (TH1D*)hs->Clone();
@@ -155,17 +133,32 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
     }
 
     // TH1D* central, const std::vector<TH1D*> & others
-    for(int i = 1; i <= 10; i ++){
+    
+    bool if_odd = (hists_other.size() / 11) % 2;
+    int size = hists_other.size() / 11;
+    for(int i = 1; i <= 11; i ++){
+      if (size == 0) break;
       canv->cd( i );
-      vector<TH1*> hists_other_i;
-      for(int j = (i-1) * hists_other.size() / 10; j < i * hists_other.size() / 10 ; j++ )
+      vector<TH1*> hists_other_i; 
+      //cout << (i-1) * size << endl;
+      for(int j = (i-1) * size; j < i * size - 1 ; j+=2 )
+      {
         hists_other_i.push_back( hists_other.at(j) );
+        hists_other_i.push_back( hists_other.at(j+1) );
+        //cout << j << " " << hists_other.at(j)->GetName() << " " << hists_other.at(j+1)->GetName() << endl;
+      }
+      if (if_odd && i % 2 == 0) {
+        hists_other_i.push_back( hists_other.at(i * size - 1) );
+        hists_other_i.push_back( hists_other.at((i-1) * size - 1) );
+        //cout << "odd    " << hists_other.at(i * size - 1)->GetName() << " " << hists_other.at((i-1) * size - 1)->GetName() << endl;
+      }
+
       pm::draw_hists_difference( h, hists_other_i, diff_mode );
     }
 
-    THStack * stack = new THStack(TString(h->GetName()) + "_stack", TString(h->GetName()) + "_stack");
+    //THStack * stack = new THStack(TString(h->GetName()) + "_stack", TString(h->GetName()) + "_stack");
     for(auto it = herrs.begin(); it!=herrs.end(); ++it){
-      stack->Add( (*it) );
+      //stack->Add( (*it) );
       
       string title = string((*it)->GetTitle());
       for(int i = (lname.size() - title.size())*1.3; i>=0; i--) title += " ";
@@ -173,91 +166,11 @@ void histsChecker(TString inputFileName, TString postfix, string diff_mode, int 
       legend->AddEntry(*it,  title.c_str(), "lf");
     }
 
-    canv->cd(11);
+    canv->cd(12);
     legend->Draw();
 
-    canv->cd(12);
-    stack->Draw("hist f");
-
-    canv->Print(postfix + TString(hist->GetTitle()) + TString(".pdf"));
-  }
-  cout << sum1 << "......." << sum2 << endl;
-
-}
-
-void histsChecker(TString inputFileName_A, TString inputFileName_B, TString postfix){
-  TFile * file_a = TFile::Open(inputFileName_A);
-  auto hists_central_a = get_all_from_folder(file_a, ".+", "(.+Down)|(.+Up)|(.+_weight_.+)");
-
-  TFile * file_b = TFile::Open(inputFileName_B);
-  auto hists_central_b = get_all_from_folder(file_b, ".+", "(.+Down)|(.+Up)|(.+_weight_.+)");
-
-  for(auto hist : *hists_central_a){
-    TH1* hist_a = (TH1*)hist;
-    TCanvas * canv = new TCanvas(hist_a->GetName(), hist_a->GetName(), 640, 640);
-  
-    string name = hist_a->GetName();
-    auto hist_f = find_if(hists_central_b->begin(), hists_central_b->end(), [name] (const TObject* h) { return string( h->GetName() ) == name; } );
-    if(hist_f == hists_central_b->end()) continue;
-    cout << "THIS!!!" << endl;
-    TH1* hist_b = (TH1*)(*hist_f);
-    hist_b->Print();
-    cout << "THIaS!!!" << hist_b << endl;
-
-    hist_a->Draw("HIST");
-    hist_a->SetLineColor(2);
-    hist_a->SetLineWidth(3);
-
-    hist_b->Draw("HIST same");
-    hist_b->SetLineWidth(2);
-
-    hist_a->SetMaximum( std::max( hist_b->GetMaximum(), hist_a->GetMaximum()) * 1.01 );
-
-    canv->Print(postfix + TString(hist_a->GetTitle()) + TString(".pdf"));
-  }
-
-}
-
-void histsChecker(TString inputFileName, TString postfix, int mode){
-  TFile * file = TFile::Open(inputFileName);
-
-  // draw all hists
-  // for every draw central and shifted hists
-  auto hists_central = get_all_from_folder(file, ".+", "(.+Down)|(.+Up)|(.+_weight_.+)");
-  vector <int> indexes = getNiceColors(150);
-
-  for(auto hist : *hists_central){
-    TCanvas * canv = new TCanvas(hist->GetName(), hist->GetName(), 640, 640);
-  
-    TH1* h = (TH1*)hist;
-
-    cout << h->GetName() << endl;
-    double max = h->GetMaximum();
-    auto shifts = get_all_from_folder(file, string(hist->GetName()) + ".+JER.+");
-    int color_i = 0;
-    h->SetLineColor( 1 );
-    h->SetLineWidth( 3 );
-
-    h->Draw("hist");
-
-    for(auto shift : *shifts){
-      TH1* hs = (TH1*)shift;
-      hs->Draw("hist same");
-      if(max < hs->GetMaximum()) max = hs->GetMaximum();
-      hs->SetLineColor( indexes.at(color_i++) );
-      hs->SetLineWidth( 2 );
-    }
-
-    h->GetYaxis()->SetRangeUser(0, max+max*0.1);
-    h->Draw("hist same");
-
-    if(shifts->size() == 2) {;
-      int nbins =     h->GetXaxis()->GetNbins();
-      cout << h->GetName() << " "<< shifts->at(0)->GetName() << " " << shifts->at(1)->GetName() << endl;
-      for(int n = 1; n <= nbins; n++) {
-        cout << h->GetBinContent(n) << " "<< ((TH1*)shifts->at(0))->GetBinContent(n) << " " << ((TH1*)shifts->at(1))->GetBinContent(n) << endl;
-      }
-    }
+    //canv->cd(12);
+    //stack->Draw("hist f");
 
     canv->Print(postfix + TString(hist->GetTitle()) + TString(".pdf"));
   }

@@ -42,10 +42,14 @@ class MyParameter {
       else 
         hist = new TH1D((n + " bf= "+ to_string(bfrac) + postfix).c_str(), (n + postfix).c_str(), 100000, -10, 10.); // FIXME
       mean = -1999, rms = -1999;
-
       burn_frac   = bfrac;
       burn_events = burn_frac * tree->GetEntriesFast();
     };
+
+    void ResetTree(TTree *tree, string n){
+      tree->SetBranchAddress(n.c_str(), &val);
+      burn_events += burn_frac * tree->GetEntriesFast();
+    }
 
     void ReadEntrie(double weight){
       if(burn_events >= 0) {burn_events -= 1; return;}
@@ -100,6 +104,11 @@ class MyParameter {
 double getTable(string filename, string postfix, double def_bfrac, string hists_path, bool draw_combined = false, int nchains = 10){
   gErrorIgnoreLevel = kWarning;
   TFile file( filename.c_str() );
+ // ofstream fout;
+ // fout.open("quantiles.txt");
+
+
+    
 
   string out_string = "\\documentclass{article} \n \\usepackage{graphicx}";
          //out_string += "\\usepackage[paperheight=16.75in,paperwidth=27.25in]{geometry}";
@@ -117,9 +126,9 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
         cout << "break at chain no." << chain_index << endl;
         break;
     }
-
+    
     if(draw_combined == false) out_string += "\\textbf{ Chain Number = " + to_string(chain_index) + "} \n";
-
+    
     vector <MyParameter*> parameters;
     TObjArray * mycopy = tree->GetListOfBranches();
     TIter iObj(mycopy);
@@ -139,23 +148,42 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
       tree->GetEntry(l);
       for(auto param : parameters) param->ReadEntrie( weight );
     }
-
+   
     // QUANTILES TABLE ===================================================================
+    double alpha = 0.3173;
+    double l,c,u;
+
+    std::ifstream quant("quantiles.txt");
+    std::string            q_name;
+    std::string line;
     if (draw_combined == true){
-        if(chain_index == nchains){
-            out_string += "\\begin{center} \n \\begin{tabular}{ | c | c | c | c |} \n";
-            out_string += "\\hline parameter & $-\\sigma$ & central & $+\\sigma$ \\\\ \n \\hline \n";
-        }
+      if(chain_index == nchains){
+        out_string += "\\begin{center} \n \\begin{tabular}{ | c | c | c | c |} \n";
+        out_string += "\\hline parameter & $-\\sigma$ & central & $+\\sigma$ \\\\ \n \\hline \n";
+        while (std::getline(quant, q_name, ' '))
+        {
+          std::getline(quant, line, ' ');
+          l = (float)atof(line.c_str());
+          std::getline(quant, line, ' ');
+          c = (float)atof(line.c_str());
+          std::getline(quant, line, '\n');
+          u = (float)atof(line.c_str());
+          out_string += q_name + " & " + get_string(l) + " & " + get_string(c) + " & " + get_string(u) + " \\\\ \n ";
+          cout <<q_name << " "<< l << " " << c << " " << u << endl;
+        } 
+      }
     }
     else{  
         out_string += "\\begin{center} \n \\begin{tabular}{ | c | c | c | c |} \n";
         out_string += "\\hline parameter & $-\\sigma$ & central & $+\\sigma$ \\\\ \n \\hline \n";
     }
-    TH1D * hist_sum;
-    double alpha = 0.3173;
-    double l,c,u;
+
+    
+    
+    quant.close();
+    /*
     for(auto param : parameters){  
-        if (draw_combined == true and param->name == "sigma_t_ch"){       
+        if (draw_combined == true and (param->name == "sigma_t_ch")){       
           TH1D * hist = param->hist;
           if (chain_index == 1) hist_sum = new TH1D(*hist);
           else hist_sum->Add(hist, 1);
@@ -166,30 +194,38 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
               c = get_qv(hist_sum, 0.5) ;
               u = get_qv(hist_sum,  1. - alpha*0.5 );
 
-              cout << hist->GetTitle() << " " << l << " " << c << " " << u << endl;
+              //fout << hist->GetTitle() << " " << get_string(l, 3) << " " << get_string(c, 3) << " " << get_string(u, 3) << endl;  
               out_string += string(hist_sum->GetTitle()) + " & " + get_string(l, 3) + " & " + get_string(c, 3) + " & " + get_string(u, 3) + " \\\\ \n ";   
           }
+          //if (draw_combined == true and chain_index != nchains) delete hist;
         }      
         else{  
           TH1D * hist = param->hist;
           string hname = param->name;
-          if( hname == "KU" or hname == "KC" or hname == "cta_norm" or hname == "uta_norm") continue;         
+          cout << hist->GetTitle() << endl;
+          if (draw_combined == true){
+            if(chain_index == nchains){
+              if( hname == "KU" or hname == "KC" or hname == "cta_norm" or hname == "uta_norm") continue;         
               l = get_qv(hist, alpha*0.5 );
               c = get_qv(hist, 0.5) ;
               u = get_qv(hist,  1. - alpha*0.5 );
-
-          cout << hist->GetTitle() << " " << l << " " << c << " " << u << endl;
-          if (draw_combined == true){
-            if(chain_index == nchains){
-                out_string += string(hist->GetTitle()) + " & " + get_string(l, 3) + " & " + get_string(c, 3) + " & " + get_string(u, 3) + " \\\\ \n ";
+              //fout << hist->GetTitle() << " " << get_string(l, 3) << " " << get_string(c, 3) << " " << get_string(u, 3) << endl;  
+              out_string += string(hist->GetTitle()) + " & " + get_string(l, 3) + " & " + get_string(c, 3) + " & " + get_string(u, 3) + " \\\\ \n ";
             }
           }
-          else{  
+          else{         
+            if( hname == "KU" or hname == "KC" or hname == "cta_norm" or hname == "uta_norm") continue;         
+            l = get_qv(hist, alpha*0.5 );
+            c = get_qv(hist, 0.5) ;
+            u = get_qv(hist,  1. - alpha*0.5 );
+            //fout << hist->GetTitle() << " " << get_string(l, 3) << " " << get_string(c, 3) << " " << get_string(u, 3) << endl;  
             out_string += string(hist->GetTitle()) + " & " + get_string(l, 3) + " & " + get_string(c, 3) + " & " + get_string(u, 3) + " \\\\ \n ";
-          }    
+          }
           
+         // if (draw_combined == true and chain_index != nchains) delete hist;           
         }
-    }
+        
+    }*/
     if (draw_combined == true){
         if(chain_index == nchains){
             out_string += " \\hline \\end{tabular} \n \\end{center} \n";
@@ -212,7 +248,7 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
         out_string += " \\hline parameter & 95 \\% UL \\\\ \n \\hline \n";
     }  
       
-
+    /*
     for(auto param : parameters){
       TH1D * hist = param->hist;
       TH1D * hist_sum_fcnc;  
@@ -247,23 +283,24 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
 
           out_string += string(hist->GetTitle()) + " branching" + " & " + get_string(Br_1, 3) + " \\\\ \n";
       }
-
-    }
-    if (draw_combined == true){
-        if(chain_index == nchains){
-            out_string += " 7+8 TeV branching KU obs (exp) & 2.0 (2.8) \\times 10^{-5} & \\\\ \n";
-            out_string += " 7+8 TeV branching KC obs (exp) & 4.1 (2.8) \\times 10^{-4} & \\\\ \n";
-            out_string += " \\hline \\end{tabular} \n \\end{center} \n";
-        }
-    }
-    else{  
+      if (draw_combined == true and chain_index != nchains) delete hist;
+    }*/
+    if (!draw_combined || (draw_combined && chain_index == nchains)) //{
+    //     if(chain_index == nchains){
+    //         out_string += " 7+8 TeV branching KU obs (exp) & 2.0 (2.8) \\times 10^{-5} & \\\\ \n";
+    //         out_string += " 7+8 TeV branching KC obs (exp) & 4.1 (2.8) \\times 10^{-4} & \\\\ \n";
+    //         out_string += " \\hline \\end{tabular} \n \\end{center} \n";
+    //     }
+    // }
+    // else
+    {  
         out_string += " 7+8 TeV branching KU obs (exp) & 2.0 (2.8) \\times 10^{-5} & \\\\ \n";
         out_string += " 7+8 TeV branching KC obs (exp) & 4.1 (2.8) \\times 10^{-4} & \\\\ \n";
         out_string += " \\hline \\end{tabular} \n \\end{center} \n";
     }  
       
 
-
+    
     // INCLUDE BURN IN STUDY IMAGE ===================================================================
 
     TString cmd;
@@ -277,7 +314,7 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
         cout << gSystem->Exec(cmd) << endl;
         out_string += " \\includegraphics[width=0.9\\linewidth]{" + burninstudy_name + "}";
         cout << burninstudy_name << endl;
-         }                                  
+    }                                  
     else if(draw_combined == false){
         out_string += "\n \\newpage \n";
         out_string += "\n \\textbf{BURN IN STUDY} \\\\ \n";
@@ -289,37 +326,29 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
         cout << burninstudy_name << endl;
          }
 
-
+  
     // COVARIANCE TABLE =================================================================== 
+    
     if (draw_combined == false or chain_index == nchains){
     out_string += "\n \\newpage \n"; 
     mRoot::msg("add COVARIANCE TABLE ...");
     out_string += "\n \\textbf{COVARIANCE TABLE} \\\\ \n";
-    /*
-    out_string += "\\begin{center} \n \\begin{tabular}{|c|";
-    for(auto par : parameters) out_string += " c |";
-    out_string += "} \\hline \n - ";
-    for(auto par : parameters) out_string += "  & " + par->name;
-    out_string += " \\\\ \n \\hline \n ";
-    for(auto par_y : parameters){
-      out_string += par_y->name;
-      for(auto par_x : parameters){
-        double variance = par_y->GetCovariance( par_x );
-        out_string += " & " + get_string(variance, 3);
-      }
-      out_string += " \\\\ \n ";
-    }
-    out_string += " \\hline \\end{tabular} \n \\end{center} \n";
-    */
-
+        
+    
     TH2D * hist_cov = new TH2D("Covariance", "Covariance", parameters.size(), 0, parameters.size(), parameters.size(), 0, parameters.size());
+    TH2D * hist_cor = new TH2D("Correlation", "Correlation", parameters.size(), 0, parameters.size(), parameters.size(), 0, parameters.size());
     for(int i=1; i <= hist_cov->GetNbinsX(); i++) hist_cov->GetXaxis()->SetBinLabel(i, parameters.at(i-1)->name.c_str() );
     for(int i=1; i <= hist_cov->GetNbinsX(); i++) hist_cov->GetYaxis()->SetBinLabel(i, parameters.at(i-1)->name.c_str() );
+    for(int i=1; i <= hist_cor->GetNbinsX(); i++) hist_cor->GetXaxis()->SetBinLabel(i, parameters.at(i-1)->name.c_str() );
+    for(int i=1; i <= hist_cor->GetNbinsX(); i++) hist_cor->GetYaxis()->SetBinLabel(i, parameters.at(i-1)->name.c_str() );
     for(int x = 0; x < parameters.size(); x++){
       for(int y = 0; y < parameters.size(); y++){
         double variance = parameters.at(y)->GetCovariance( parameters.at(x) );
+        double correlation = parameters.at(y)->GetCorrelation( parameters.at(x) );
+        
         if(x == y) mRoot::msg( x, y, variance );
         hist_cov->Fill(x, y, variance);
+        hist_cor->Fill(x, y, correlation );
       }
     }
 
@@ -330,20 +359,7 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
 
     mRoot::msg("add CORRELATION TABLE ...");
     out_string += "\n \\\\ \\textbf{CORRELATION TABLE} \\\\ \n";
-    TH2D * hist_cor = new TH2D("Correlation", "Correlation", parameters.size(), 0, parameters.size(), parameters.size(), 0, parameters.size());
-    for(int i=1; i <= hist_cor->GetNbinsX(); i++) hist_cor->GetXaxis()->SetBinLabel(i, parameters.at(i-1)->name.c_str() );
-    for(int i=1; i <= hist_cor->GetNbinsX(); i++) hist_cor->GetYaxis()->SetBinLabel(i, parameters.at(i-1)->name.c_str() );
-    for(int x = 0; x < parameters.size(); x++){
-      for(int y = 0; y < parameters.size(); y++){
-        double variance = parameters.at(y)->GetCorrelation( parameters.at(x) );
-        //hist_cor->Fill(x, y, int(abs(variance)*100));
-        hist_cor->Fill(x, y, abs(variance)*100 );
-        //cout << variance << " " << parameters.at(y)->name << " " << parameters.at(x)->name << endl;
-        //cout << parameters.at(y)->GetRMS() << " " << parameters.at(x)->GetRMS() << endl;
-        //cout << parameters.at(y)->GetMean() << " " << parameters.at(x)->GetMean() << endl;
-      }
-    }
-
+   
     canv = mRoot::plotCorrelationHist( hist_cor, 2 );
     string cor_hist_out_name = "Cor" + postfix + ".png";
     canv->Print(cor_hist_out_name.c_str());
@@ -354,7 +370,7 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
     out_string += "\n \\newpage \n";
     out_string += "\n \\textbf{Model vs Data} \\\\ \n";
     
-//    ReplaceStringInPlace(after_name, string("_"), string("X"));
+    //    ReplaceStringInPlace(after_name, string("_"), string("X"));
     
     //if (postfix == "sm") {postfix1 = "SM";}
     if (postfix == "sm2d") {postfix1 = "SM2D";}
@@ -373,33 +389,25 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
     out_string += "\n \\includegraphics[width=0.9\\linewidth]{" + after_name + "} \n";
     cout << before_name << endl;
 
-
+   
     // ALL MCMC CHAINS TABLE ===================================================================
     out_string += "\n \\newpage \n";
     out_string += "\n \\textbf{MCMC OUTPUT CHAINS} \\\\ \n";
     int new_line = 0;
     string chains_path = ("chains_" + postfix);
     ReplaceStringInPlace(chains_path, string("_"), string("X"));
-    gSystem->mkdir( chains_path.c_str() );
     for(auto param : parameters){
       TH1D * hist = param->hist;
-      TCanvas * canv = mRoot::get_canvas();
-      mRoot::tune_hist(hist);
-      hist->Draw("HIST");
-    
-      canv->Update();
       string hname = chains_path + "/" + hist->GetTitle() + "_" + postfix + ".png";
       ReplaceStringInPlace(hname, string("_"), string("X"));
-      canv->Print( hname.c_str() );
-
       out_string += " \\includegraphics[width=0.33\\linewidth]{" + hname + "} ";
       if(new_line == 2) { out_string += " \\ \\ \n "; new_line = 0; }
       else         out_string += "  ";
-      new_line++;
+      new_line++;     
+      delete hist;  
     }
-
     out_string += "\n \\newpage \n";
-    }    
+  }  
   }
   
   // ALL HISTOGRAMMS =================================================================== 
@@ -422,7 +430,7 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
       else if( pattern == "FcncTcgModel" ) pattern = "FCNC_tcg";
       if( name.find( pattern ) == string::npos) continue;
       cout << "!!!!!!!!!!!!!!!!!!!!1" << name << endl;
-      name = " \\includegraphics[width=0.7\\linewidth]{" + hists_path + name + "} \\\\ \n ";
+      name = " \\includegraphics[width=1.0\\linewidth]{" + hists_path + name + "} \\\\ \n ";
       ReplaceStringInPlace( name, string("_"), string("@@@@@@@@"));
       out_string += name;
     } 
@@ -443,7 +451,7 @@ double getTable(string filename, string postfix, double def_bfrac, string hists_
   cout << "getTable_" + postfix + ".tex" << endl;  
   out << out_string << endl;
   out.close();
-
+  //fout.close();
   return 0;
 }
 
@@ -482,48 +490,6 @@ vector <MyParameter*> * get_par_vector(string filename, double def_bfrac, string
   }
 
   return parameters;
-}
-
-double getTable(string filename_A, string filename_B, double bfrac_A, double bfrac_B, double non){
-  vector <MyParameter*> *parameters_A = get_par_vector(filename_A, bfrac_A, "_theta");
-  vector <MyParameter*> *parameters_B = get_par_vector(filename_B, bfrac_B, "_cl");
-  
-  string chains_path = ("chains_comp");
-  gSystem->mkdir( chains_path.c_str() );
-  for(auto pa : *parameters_A){
-    MyParameter* pb = nullptr;
-    for(int i =0 ; i < parameters_B->size(); i++)
-      if(parameters_B->at(i)->name == pa->name) pb = parameters_B->at(i);
-  
-    if(pb == nullptr) {
-      cout << "Cant find parameter name ... " << pa->name << endl;
-      continue;
-    }
-
-    TCanvas * canv = mRoot::get_canvas();
-
-    TH1D * hist_a = pa->hist;
-    mRoot::tune_hist(hist_a);
-    hist_a->Scale(1./hist_a->Integral(), "width");
-    hist_a->Draw("HIST");
-    hist_a->SetLineColor(2);
-    hist_a->SetLineWidth(3);
-
-    TH1D * hist_b = pb->hist;
-    mRoot::tune_hist(hist_b);
-    hist_b->Rebin( hist_b->GetXaxis()->GetNbins()/hist_a->GetXaxis()->GetNbins());
-    hist_b->Scale(1./hist_b->Integral(), "width");
-    hist_b->Draw("HIST same");
-    hist_b->SetLineWidth(2);
-
-    hist_a->SetMaximum( std::max( hist_b->GetMaximum(), hist_a->GetMaximum()) * 1.01 );
-
-    canv->Update();
-    string hname = chains_path + "/" + pa->name + ".png";
-    canv->Print( hname.c_str() );
-  }
-
-  return 0;
 }
 
 

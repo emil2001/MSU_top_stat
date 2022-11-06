@@ -165,7 +165,8 @@ namespace mRoot{
     string tree_name,                // name of tree
     string value_rule,               // formula of value to evaluate
     string weight_rule,              // formula of weight to evaluate
-    EventsExcluder * event_excluder = nullptr  // contain list of events per file
+    EventsExcluder * event_excluder = nullptr,  // contains list of events per file
+    double QCD_norm = .0 //QCD normalization factor (for expected data)
   ){
     cout << " fill_hist(): process " << hist_name << " with value rule = " << "\"" << value_rule << "\"" << ", weight rule = " << "\"" << weight_rule << "\"" << endl;
     // open file
@@ -179,7 +180,7 @@ namespace mRoot{
     double weight = 0;
     int event_index = 0;
     int print_n_entries = 0;
-   //string weight_rule1;
+    string weight_rule1;
     for(auto name : input_file_names){
       TFile * file = TFile::Open( (prefix + name).c_str() );
       if(!file or file->IsZombie()){
@@ -196,15 +197,16 @@ namespace mRoot{
 
       // reader->GetTree()->Print();
       cout << "process ... " << name << " " << reader->GetTree()->GetEntries() << endl;
-      /*
+      
       if (hist_name == "data" && name == "QCD_MC.root"){
-	weight_rule1 = weight_rule + " * 0.233363";
+	      weight_rule1 = weight_rule + " * " + to_string(QCD_norm);
+        cout << QCD_norm << endl;
       }
       
       else weight_rule1 = weight_rule;
-      */
+      
       TTreeFormula value_f(value_rule.c_str(), value_rule.c_str(), reader->GetTree());
-      TTreeFormula weight_f(weight_rule.c_str(), weight_rule.c_str(), reader->GetTree());
+      TTreeFormula weight_f(weight_rule1.c_str(), weight_rule1.c_str(), reader->GetTree());
 
       if( value_f.GetNdim()==0 or weight_f.GetNdim()==0){
         reader->GetTree()->Print();
@@ -217,6 +219,7 @@ namespace mRoot{
       while(reader->Next()){
         event_index++;
         weight = weight_f.EvalInstance();
+        //if(weight > 10000 and name == "Wjets.root") continue;
         totl_weight += weight;
         if(event_excluder != nullptr and event_excluder->IsExcludedMod( event_index )){
           excl_weight += weight;
@@ -255,6 +258,51 @@ namespace mRoot{
     output_file->cd();
     hist->Write();
   }
+
+
+//Function for expected data sum
+  void sum_expected_data(vector<string> process_names, // MC hists names
+    int nbins,                 // number of bins
+    double rmin,               // x-axis range min
+    double rmax,               // x-axis range max
+     TFile * output_file       // output file
+  ){
+    // open file
+    output_file->cd();
+    TH1D * hist_sum = new TH1D("data", "data", nbins, rmin, rmax);
+    hist_sum->Sumw2();
+
+    for(auto name : process_names){
+      TH1D * hist = (TH1D*)output_file->Get(name.c_str());
+      hist_sum->Add(hist);
+    } 
+    // save, exit
+    output_file->cd();
+    hist_sum->Write();
+  }
+
+  void sum_expected_data_2d(vector<string> process_names, // MC hists names
+    int nbins,                 // number of bins
+    double rmin,               // x-axis range min
+    double rmax,               // x-axis range max
+    vector<TH2D*> * out_hists  // output vector
+  ){
+    cout << "filling expected data..." << endl;
+    TH2D * hist_sum = new TH2D("data", "data", nbins, rmin, rmax, nbins, rmin, rmax);
+    hist_sum->Sumw2(); 
+    for (int i = 0; i < out_hists->size(); i++){
+      TH2D * hist = (TH2D*)out_hists->at(i);      
+      for(auto name : process_names){    
+      if (hist->GetName() == name){  
+        hist_sum->Add(hist);
+        }
+      }
+    } 
+    out_hists->push_back(hist_sum);
+    cout << "done" << endl;
+  }
+
+
 
   void fill_hist_sys(string hist_name, // input TH1D name
     int nbins,                 // number of bins

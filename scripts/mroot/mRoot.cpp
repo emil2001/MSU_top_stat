@@ -68,9 +68,10 @@ namespace mRoot{
     int nbins =     hist->GetXaxis()->GetNbins();
     double bwidth = 0.5*(right_entry - left_entry) / pow(hist->GetEntries(), 1./3.);
     int nbins_new = (hist->GetXaxis()->GetXmax() - hist->GetXaxis()->GetXmin()) / bwidth;
+    //int nbins_new = 500;
 
     for( ;nbins % nbins_new; nbins_new--){}
-    cout << left_entry << " " << right_entry << endl;
+    //cout << left_entry << " " << right_entry << endl;
     hist->Rebin(nbins/nbins_new);
     hist->GetXaxis()->SetRangeUser(left_entry, right_entry);
   }
