@@ -102,6 +102,7 @@ double getTableComb(string filename, string postfix, double def_bfrac, string hi
     // QUANTILES TABLE ===================================================================
     double alpha = 0.3173;
     double l,c,u;
+    double cp = 0, br = 0;
 
     std::ifstream quant("quantiles.txt");
     std::string q_name;
@@ -113,13 +114,19 @@ double getTableComb(string filename, string postfix, double def_bfrac, string hi
     {
         names.push_back(q_name);
         std::getline(quant, line, ' ');
+        if (q_name == "KC" || q_name == "KU") {
+          cp = (float)atof(line.c_str());
+          std::getline(quant, line, '\n');
+          br = (float)atof(line.c_str());
+          continue;
+        }
         l = (float)atof(line.c_str());
         std::getline(quant, line, ' ');
         c = (float)atof(line.c_str());
         std::getline(quant, line, '\n');
         u = (float)atof(line.c_str());
         out_string += q_name + " & " + get_string(l) + " & " + get_string(c) + " & " + get_string(u) + " \\\\ \n ";
-        cout <<q_name << " "<< l << " " << c << " " << u << endl;
+        cout << q_name << " "<< l << " " << c << " " << u << endl;
     }   
     quant.close();
     out_string += " \\hline \\end{tabular} \n \\end{center} \n";
@@ -127,8 +134,9 @@ double getTableComb(string filename, string postfix, double def_bfrac, string hi
 
     out_string += "\\begin{center} \n \\begin{tabular}{ | c | c |} \n";
     out_string += " \\hline parameter & 95 \\% UL \\\\ \n \\hline \n";
+    out_string += string(hist->GetTitle()) + " process coupling & " + get_string(sqrt(up), 3) + " \\\\ \n";
+    out_string += string(hist->GetTitle()) + " branching" + " & " + get_string(Br_1, 3) + " \\\\ \n";
 
-      
     /*
     for(auto param : parameters){
       TH1D * hist = param->hist;
@@ -226,7 +234,7 @@ double getTableComb(string filename, string postfix, double def_bfrac, string hi
     string chains_path = ("chains_" + postfix);
     ReplaceStringInPlace(chains_path, string("_"), string("X"));
     for(auto name : names){
-      string hname = chains_path + "/" + name + "_" + postfix + ".png";
+      string hname = chains_path + "/" + name + "_" + postfix + ".pdf";
       ReplaceStringInPlace(hname, string("_"), string("X"));
       out_string += " \\includegraphics[width=0.33\\linewidth]{" + hname + "} ";
       if(new_line == 2) { out_string += " \\ \\ \n "; new_line = 0; }
@@ -240,6 +248,7 @@ double getTableComb(string filename, string postfix, double def_bfrac, string hi
   out_string += "\n \\textbf{INPUT HISTOGRAMMS} \\\\ \n";
   TSystemDirectory dir(hists_path.c_str(), hists_path.c_str()); 
   TList *files = dir.GetListOfFiles();
+  files->Sort();
   if (files) { 
     TSystemFile *file; 
     TString fname; 

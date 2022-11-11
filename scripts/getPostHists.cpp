@@ -2,10 +2,10 @@
 #include "mroot/mRoot.cpp"
 #include "mroot/mRootStatModel.cpp"
 #include "mroot/msg.hh"
-#include "getTable.cpp"
+#include "plotPosterior.cpp"
 using namespace mRoot;
 
-void getPostHists(string hist_file_name, string model_file, string chan_file_name){
+void getPostHists(string hist_file_name, string model_file, string chan_file_name, int nchains){
 
   // SETUP MODEL
   msg("getPostHists(",hist_file_name,model_file,chan_file_name,") ... SETUP MODEL");
@@ -52,29 +52,32 @@ void getPostHists(string hist_file_name, string model_file, string chan_file_nam
     }
   }
 
-  // LOAD CHAIN RESULT
-  msg("getPostHists() ... LOAD CHAIN RESULT");
-  TFile file( chan_file_name.c_str() );
-  TTree *tree = dynamic_cast<TTree*>(file.Get("chain_1"));
+  // // LOAD CHAIN RESULT
+   msg("getPostHists() ... LOAD CHAIN RESULT");
+   TFile file( chan_file_name.c_str() );
+  // TTree *tree = dynamic_cast<TTree*>(file.Get("chain_5"));
 
-  vector <MyParameter*> parameters;
-  TObjArray * mycopy = tree->GetListOfBranches();
-  TIter iObj(mycopy);
-  while (TObject* obj = iObj()) {
-    if(obj->GetName() == string("weight")) continue;
-    if(obj->GetName() == string("nll_MarkovChain_local_")) continue;
-    MyParameter * parameter = new MyParameter(tree, obj->GetName(), 0.1);
-    parameters.push_back( parameter );
-  }
+   vector <MyParameterPost*> parameters;
+  // TObjArray * mycopy = tree->GetListOfBranches();
+  // TIter iObj(mycopy);
+  // while (TObject* obj = iObj()) {
+  //   if(obj->GetName() == string("weight")) continue;
+  //   if(obj->GetName() == string("nll_MarkovChain_local_")) continue;
+  //   MyParameter * parameter = new MyParameter(tree, obj->GetName(), 0.1);
+  //   parameters.push_back( parameter );
+  // }
 
-  Int_t weight;
-  tree->SetBranchAddress("weight",  &weight);
+  // Int_t weight;
+  // tree->SetBranchAddress("weight",  &weight);
 
-  for(int l = 0; l < (int)tree->GetEntries(); ++l){
-    tree->GetEntry(l);
-    for(auto param : parameters) param->ReadEntrie( weight );
-  }
+  // for(int l = 0; l < (int)tree->GetEntries(); ++l){
+  //   tree->GetEntry(l);
+  //   for(auto param : parameters) param->ReadEntrie( weight );
+  // }
 
+  treeReader(parameters, file, 0.25, nchains);
+
+  
   // GET POSTFIT RESULT
   // FIRST OPTION IS JUST SET ALL MODEL PARAMETERS TO THEY CENTRAL QUANTILES VALUES
   msg("getPostHists() ... GET POSTFIT RESULT");

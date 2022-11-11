@@ -130,6 +130,24 @@ void treeReader(vector <MyParameterPost*> &parameters, TFile &file, double def_b
     }
 }
 
+void PostPlotter(const vector <MyParameterPost*> &parameters, string postfix) {
+
+    string chains_path = ("chains_" + postfix);
+    ReplaceStringInPlace(chains_path, string("_"), string("X"));
+    for(auto param : parameters){
+        TH1D * hist = param->hist;
+        mRoot::tune_hist(hist);
+        string hname = chains_path + "/" + hist->GetTitle() + "_" + postfix + ".pdf";
+        ReplaceStringInPlace(hname, string("_"), string("X"));
+
+        TCanvas * canv = mRoot::get_canvas();
+        hist->Draw("HIST");
+        canv->Update();
+        canv->Print( hname.c_str() ); 
+    }
+}
+
+
 
 int plotPosterior (string filename, string postfix, double def_bfrac, int nchains) {
     // Required for proper multithreading
@@ -153,17 +171,30 @@ int plotPosterior (string filename, string postfix, double def_bfrac, int nchain
     fout.open("quantiles.txt");        
     double alpha = 0.3173;
     double l,c,u;
+    double Cq = 1.1964;
+    double Kappa_q = 0.03;
     string chains_path = ("chains_" + postfix);
     ReplaceStringInPlace(chains_path, string("_"), string("X"));
     gSystem->mkdir( chains_path.c_str() );
     for (auto param: parameters)
     {
+        string hname = param->name;
+        if( hname == "KU" || hname == "KC") {
+            double up = get_qv(hist, 0.95);
+
+            // https://arxiv.org/pdf/0810.3889.pdf
+            double Br_1 = Cq * up * Kappa_q * Kappa_q;
+            fout <<  hist->GetTitle() << " " << get_string(sqrt(up), 3) << " " << get_string(Br_1, 3) + << endl;
+            continue;
+        }
         TH1D * hist = param->hist;
         l = get_qv(hist, alpha*0.5 );
         c = get_qv(hist, 0.5) ;
         u = get_qv(hist,  1. - alpha*0.5 );
         fout << hist->GetTitle() << " " << get_string(l, 3) << " " << get_string(c, 3) << " " << get_string(u, 3) << endl;  
     }
+
+    PostPlotter(parameters, postfix);
 
     t.Start();
 

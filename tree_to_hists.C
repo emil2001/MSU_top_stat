@@ -5,7 +5,7 @@
 #include "scripts/mroot/mRootStackDrawer.cpp"
 #include "scripts/pmlib/pmlib_other.hh"
 
-#include "../theta_slc6/theta/libconfig/libconfig.h"
+#include "../theta_test/theta/libconfig/libconfig.h"
 
 using namespace mRoot;
 
@@ -377,7 +377,7 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
   }
   else if (RELEASE == "2022_UL18")
   {
-    string ppath = "/scratch/common/CMS/2018/tuples_merged2/";
+    string ppath = "/scratch/azaboren/samples/UL18_newBtag/tuples_merged2/";
     PATH_PREFIX = ppath + "";
     PATH_SUSTEMATIC = ppath + "Syst/";
     NN_QCD = "qcd_dnn_all_ch";
@@ -407,7 +407,6 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
       NN_train_events_3D_y = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_tug_ttbar_UL18_trainEvents.txt";
       NN_train_events_3D_z = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_tug_tchan_UL18_trainEvents.txt";
     }
-    use_comphep = false;
     NN_MC_tug = "dnn_fcnc_tug";
     NN_MC_tcg = "dnn_fcnc_tcg";
     NN_train_events = "/eos/user/a/azaboren/SWAN_projects/Dataset_Creator/dnn-master/bnn-hep/2018UL_PUJetIdSF_loose/dnn_sm_super_all_vars_trainEvents.txt";
@@ -419,6 +418,8 @@ int tree_to_hists(string MODE, string RELEASE, string OUTPUT_FILE_NAME, int NBIN
 
     QCD_type = "MC";
     CENTRAL_FOLDER = "Central";
+    use_comphep = false;
+    USE_OTHER_SYS = true;
   }
   else if (RELEASE == "2022_UL16pre")
   {

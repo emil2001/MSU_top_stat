@@ -63,23 +63,23 @@ def SM(args):
   interp_pars  = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2" ]
   #interp_pars += ["PileUp", "pdf"]
   interp_pars += ["PileUp"]
-  interp_pars += ["UnclMET", "MER"] # PUJetIdTag
+  interp_pars += ["UnclMET", "MER"] # PUJetIdTag 
   interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_inf"]
   interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
   #muRmuF_pars  = ["Fac", "Ren", "RenFac"]
   ttbardl_pars = [ "pdf_ttbar_dl", "Ren_ttbar_dl", "Fac_ttbar_dl", "RenFac_ttbar_dl"]
-  #ttbardl_pars += ["UETune_ttbar_dl", "hdamp_ttbar_dl"]
+  ttbardl_pars += ["UETune_ttbar_dl", "hdamp_ttbar_dl"]
   ttbarsl_pars = ["pdf_ttbar_sl", "Ren_ttbar_sl", "Fac_ttbar_sl", "RenFac_ttbar_sl"]
-  #ttbarsl_pars += ["UETune_ttbar_sl", "hdamp_ttbar_sl"]
+  ttbarsl_pars += ["UETune_ttbar_sl", "hdamp_ttbar_sl"]
   DY_pars = ["pdf_DY", "Ren_DY", "Fac_DY", "RenFac_DY"]
-  Diboson_pars = ["pdf_Diboson"]#, "Ren_Diboson", "Fac_Diboson", "RenFac_Diboson"]
-  s_ch_pars = ["pdf_s_ch", "Ren_s_ch", "Fac_s_ch", "RenFac_s_ch"]
+  Diboson_pars = ["pdf_Diboson", "Ren_Diboson", "Fac_Diboson", "RenFac_Diboson"]
+  s_ch_pars = ["pdf_s_ch"]#, "Ren_s_ch", "Fac_s_ch", "RenFac_s_ch"
   Wjets_pars = ["pdf_Wjets", "Ren_Wjets", "Fac_Wjets", "RenFac_Wjets"]
   t_ch_pars = ["pdf_t_ch", "Ren_t_ch", "Fac_t_ch", "RenFac_t_ch"]
-  #t_ch_pars += ["UETune_t_ch", "hdamp_t_ch"]
+  t_ch_pars += ["UETune_t_ch", "hdamp_t_ch"]
   tW_ch_pars = ["pdf_tW_ch", "Ren_tW_ch", "Fac_tW_ch", "RenFac_tW_ch"]
-  #tW_ch_pars += ["UETune_tW_ch", "hdamp_tW_ch"] 
+  tW_ch_pars += ["UETune_tW_ch", "hdamp_tW_ch"] 
   #interp_pars = []
   interp_pars += ttbardl_pars
   interp_pars += ttbarsl_pars
@@ -330,26 +330,31 @@ def fcnc_1d(args, coupling_hist_name):
     coupling_hist_name, 0.0, '(-0.5,0.5)', # 0.10
   ]
 
-  mult_pars = ["lumi"]
-  mult_errs = [0.025]
+  mult_pars = [ "lumi" ]
+  mult_errs = [ 0.025  ]
+
 
   interp_pars  = ["jes", "lf", "hf", "hfstats1", "hfstats2", "lfstats1", "lfstats2", "cferr1", "cferr2" ]
-  #interp_pars += ["PileUp", "pdf"]
+
   interp_pars += ["PileUp"]
-  #interp_pars += ["UnclMET"]
-  interp_pars += ["UnclMET", "MER"] # PUJetIdTag
+  interp_pars += ["UnclMET", "MER"] # PUJetIdTag 
   interp_pars += ["JER_eta0_193", "JER_eta193_25", "JER_eta25_3_p0_50", "JER_eta25_3_p50_inf", "JER_eta3_5_p0_50", "JER_eta3_5_p50_inf"]
   interp_pars += ["JEC_eta0_25", "JEC_eta25_5"]
   interp_pars += ["LepId", "LepTrig", "LepIso"]
-  #muRmuF_pars  = ["Fac", "Ren", "RenFac"]
-  ttbardl_pars = ["pdf_ttbar_dl", "Ren_ttbar_dl", "Fac_ttbar_dl", "RenFac_ttbar_dl"]
+
+  ttbardl_pars = [ "pdf_ttbar_dl", "Ren_ttbar_dl", "Fac_ttbar_dl", "RenFac_ttbar_dl"]
+  ttbardl_pars += ["UETune_ttbar_dl", "hdamp_ttbar_dl"]
   ttbarsl_pars = ["pdf_ttbar_sl", "Ren_ttbar_sl", "Fac_ttbar_sl", "RenFac_ttbar_sl"]
+  ttbarsl_pars += ["UETune_ttbar_sl", "hdamp_ttbar_sl"]
   DY_pars = ["pdf_DY", "Ren_DY", "Fac_DY", "RenFac_DY"]
   Diboson_pars = ["pdf_Diboson"]#, "Ren_Diboson", "Fac_Diboson", "RenFac_Diboson"]
-  s_ch_pars = ["pdf_s_ch", "Ren_s_ch", "Fac_s_ch", "RenFac_s_ch"]
+  s_ch_pars = ["pdf_s_ch"]#, "Ren_s_ch", "Fac_s_ch", "RenFac_s_ch"
   Wjets_pars = ["pdf_Wjets", "Ren_Wjets", "Fac_Wjets", "RenFac_Wjets"]
   t_ch_pars = ["pdf_t_ch", "Ren_t_ch", "Fac_t_ch", "RenFac_t_ch"]
-  tW_ch_pars = ["pdf_tW_ch", "Ren_tW_ch", "Fac_tW_ch", "RenFac_tW_ch"] 
+  t_ch_pars += ["UETune_t_ch", "hdamp_t_ch"]
+  tW_ch_pars = ["pdf_tW_ch", "Ren_tW_ch", "Fac_tW_ch", "RenFac_tW_ch"]
+  tW_ch_pars += ["UETune_tW_ch", "hdamp_tW_ch"] 
+
   interp_pars += ttbardl_pars
   interp_pars += ttbarsl_pars
   interp_pars += DY_pars
@@ -358,8 +363,10 @@ def fcnc_1d(args, coupling_hist_name):
   interp_pars += t_ch_pars
   interp_pars += tW_ch_pars  
   interp_pars += Wjets_pars 
+
   xsr_pars     = ["Isr", "Fsr"]
   interp_pars += xsr_pars
+  
   
   pss = ["_G2GG_muR_", "_G2QQ_muR_", "_Q2QG_muR_", "_X2XG_muR_", "_G2GG_cNS_", "_G2QQ_cNS_", "_Q2QG_cNS_", "_X2XG_cNS_"]
   pss = []

@@ -9,7 +9,7 @@ nbins3d=3
 niters=10000000 #500000
 release="2022_UL18" # "2020_novenber_NoIsoCut"
 burn_in_frac=0.25
-nchains=1
+nchains=10
 QCD_norm=0.3
 QCD_cut=0.5
 
@@ -205,7 +205,7 @@ make_analyse_theta(){
   mode=$5 # sm FcncTugModel FcncTcgModel
   module=$6 # theta cl
   
-  #python $cfgdir/create_card.py --fname=$mode --nbins=$nbins_ --niters=$niters_ --input=$input_hists --mode="latex cl mRoot theta" --nchains=$nchains
+  python $cfgdir/create_card.py --fname=$mode --nbins=$nbins_ --niters=$niters_ --input=$input_hists --mode="latex cl mRoot theta" --nchains=$nchains
   if [ "$module" = "cl" ]; then
 
     FILE=$mode"_cl.txt"
@@ -245,14 +245,14 @@ make_analyse_theta(){
   
   #root -q -b -l "$srcdir/burnInStudy.cpp(\""$mode"_theta.root\", \"sigma_ttbar_sl\", \"BurnInStudy"$mode"Theta\", $nchains)"
   
-  #root -q -b -l "$srcdir/burnInStudy.cpp(\""$mode"_theta.root\", \"$POI\", \"BurnInStudy"$mode"Theta\", $nchains)"
-  #root -q -b -l "$srcdir/getPostHists.cpp(\"$input_hists\", \""$mode"_mroot.txt\", \""$mode"_theta.root\")"
-  #root -q -b -l "$srcdir/histsPlot.cpp(\""$mode"Xafter\",\"postfit_hists/posthists.root\")"
+  root -q -b -l "$srcdir/burnInStudy.cpp(\""$mode"_theta.root\", \"$POI\", \"BurnInStudy"$mode"Theta\", $nchains)"
+  root -q -b -l "$srcdir/getPostHists.cpp(\"$input_hists\", \""$mode"_mroot.txt\", \""$mode"_theta.root\", $nchains)"
+  root -q -b -l "$srcdir/histsPlot.cpp(\""$mode"Xafter\",\"postfit_hists/posthists.root\")"
   #root -q -b -l "$srcdir/histsChecker.cpp(\"$input_hists\",\"./postfit_hists/posthists.root\", \"SM_comp_\", $nchains)"
   root -q -b -l "$srcdir/plotPosterior.cpp(\""$mode"_theta.root\", \"$mode\", $burn_in_frac, $nchains)"
-  #root -q -b -l "$srcdir/getTableComb.cpp(\""$mode"_theta.root\", \"$mode\", $burn_in_frac, \"$hist_path\", true, $nchains)"
-  #pdflatex -interaction=batchmode getTable_$mode.tex
-  #pdflatex -interaction=batchmode model_$mode.tex
+  root -q -b -l "$srcdir/getTableComb.cpp(\""$mode"_theta.root\", \"$mode\", $burn_in_frac, \"$hist_path\", true, $nchains)"
+  pdflatex -interaction=batchmode getTable_$mode.tex
+  pdflatex -interaction=batchmode model_$mode.tex
 }
 
 if [ "$mode" = "sm" ] || [ "$mode" = "full" ] || [ "$mode" = "def_run" -a "$submode" = "sm"]; then
